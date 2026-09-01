@@ -38,6 +38,11 @@ Updated: 2026-09-01 16:27 CST (Asia/Shanghai)
   31 patient packets, all structural metrics 1.0). These receipts are
   non-authorizing and do not expose physician report text.
 
+- The remediation dashboard builder now defaults to the clean-worktree
+  template `docs/evisoz_stage0_remediation_dashboard.html` rather than the
+  absent migration-era `code/data_preprocess` path. A default invocation was
+  replayed successfully; embedded JavaScript and PHI/path absence checks pass.
+
 ## Three excluded reports
 
 Receipt (external to this clean worktree):

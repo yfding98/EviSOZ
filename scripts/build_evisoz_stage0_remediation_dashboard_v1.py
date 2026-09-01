@@ -62,7 +62,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(allow_abbrev=False)
     parser.add_argument("--gate", type=Path, default=ROOT / "outputs/evisoz_stage0_gate_v1_20260901_r38/gate.json")
     parser.add_argument("--packet", type=Path, default=ROOT / "outputs/evisoz_stage0_remediation_packet_v1_20260901_r6")
-    parser.add_argument("--template", type=Path, default=ROOT / "code/data_preprocess/templates/evisoz_stage0_remediation_dashboard.html")
+    # The clean worktree keeps the dashboard template under ``docs/``.  The
+    # old migration-era ``code/data_preprocess`` path is not present here and
+    # must not be required for a reproducible default invocation.
+    parser.add_argument("--template", type=Path, default=ROOT / "docs/evisoz_stage0_remediation_dashboard.html")
     parser.add_argument("--output", type=Path, default=ROOT / "outputs/evisoz_stage0_remediation_packet_v1_20260901_r6/evisoz_stage0_remediation_dashboard.html")
     args = parser.parse_args(argv)
     template = args.template.resolve(strict=True).read_text(encoding="utf-8")
