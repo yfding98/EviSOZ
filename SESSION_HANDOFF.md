@@ -28,6 +28,13 @@ Updated: 2026-09-01 18:45 CST (Asia/Shanghai)
   `outputs/clean_freeze_audit_target_v1_20260901_r20.json` was `GO` with
   `git_clean=true` (receipt SHA-256
   `5c0b8a8b4d60242a1cabfcbd2a609ff584f249b6138e165ebe2a22d492470d0b`).
+- A new execution-plan replay against Stage-0 gate r85 is
+  `outputs/evisoz_execution_plan_v1_20260901_r44/plan.json` with status
+  `STAGE0_NO_GO` and receipt SHA-256
+  `c3c7d52e4ad053596dffba8d8a4b42f72f898e76a568b3247b4b2e2b8ff00615`.
+- The subsequent handoff-only commit is `9a595e3`; regenerate the
+  non-authorizing clean-freeze audit after this commit before treating r20 as
+  current.
 
 - All commands for this turn were run from the clean worktree
   `/mnt/hd1/dyf/workspace/laptop/EviSOZ`; `EEG_Seizure` was used only through
