@@ -49,6 +49,15 @@ Updated: 2026-09-01 16:27 CST (Asia/Shanghai)
   that model, optimizer, training loader, teacher runtime, Qwen generation and
   residual were all kept closed under `NO_GO`.
 
+- Qwen connector synthetic smoke is recorded at
+  `outputs/evisoz_qwen_connector_synthetic_smoke_v1_20260901_r1.json` with
+  status `synthetic_qwen_connector_smoke_pass`. It verifies the 32x5120
+  evidence-token contract, embedding insertion, multi-positive MIL and
+  evidence-guided masking without importing a Qwen runtime or loading a
+  checkpoint. The 88-event real shadow smoke contains 119 event/patient Qwen
+  packets; all remain `shadow_input_no_generation` with patient-fact,
+  localization-change and generation permissions disabled.
+
 ## Three excluded reports
 
 Receipt (external to this clean worktree):
