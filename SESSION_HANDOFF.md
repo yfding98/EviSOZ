@@ -62,6 +62,16 @@ of the parent repository. Generated outputs are intentionally not migrated.
 Recreate target-relative audit receipts after migration; do not copy old
 receipts into this repository and do not treat them as authorization.
 
+## Method documents
+
+The current implementation contract and its Evidence JSON runtime map are
+maintained in [`docs/method/`](docs/method/). The primary design document is
+[`evisoz_lm_repository_aligned_design_v1_20260830_zh.md`](docs/method/evisoz_lm_repository_aligned_design_v1_20260830_zh.md);
+the companion runtime map is
+[`evisoz_evidence_json_runtime_usage_v1_20260901_zh.md`](docs/method/evisoz_evidence_json_runtime_usage_v1_20260901_zh.md).
+Historical research notes remain in the parent workspace and are not required
+for a clean-worktree replay.
+
 ## Fresh-session checks
 
 ```bash
