@@ -43,6 +43,12 @@ Updated: 2026-09-01 16:27 CST (Asia/Shanghai)
   absent migration-era `code/data_preprocess` path. A default invocation was
   replayed successfully; embedded JavaScript and PHI/path absence checks pass.
 
+- Stage-1 guard-only replay against gate r74 is recorded at
+  `outputs/evisoz_stage1_evidence_training_v1_20260901_r8/receipt.json` with
+  status `blocked_before_model_or_loader_construction`. The receipt validates
+  that model, optimizer, training loader, teacher runtime, Qwen generation and
+  residual were all kept closed under `NO_GO`.
+
 ## Three excluded reports
 
 Receipt (external to this clean worktree):
