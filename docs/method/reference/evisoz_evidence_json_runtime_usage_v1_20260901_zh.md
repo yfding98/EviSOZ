@@ -382,3 +382,27 @@ ELM 当前最新 discovery 为
 4 个 checkpoint/config 文件已完整哈希，但状态仍为 `found_unvalidated`，没有
 candidate cache、预处理/exposure manifest 或 fold-local calibration。该 receipt
 不授权 teacher runtime、训练或定位监督。
+
+## 14. ELM runtime probe 与 Evidence JSON admission 的边界（2026-09-01）
+
+ELM 的公开代码固定在 commit
+`fcd929a57ce3dc9a409be37a71f4ee80ee59979d`。配置和 5s/60s checkpoint 只允许从
+仓库外的
+`/mnt/hd1/dyf/workspace/laptop/EviSOZ_artifacts/elm_public_artifacts_v1_20260901_r1`
+读取；它们不是 Git 内容，也不能被打包进 Evidence JSON。对应源码 checkout
+位于 `/tmp/evisoz_elm_source`。
+
+`scripts/validate_evisoz_elm_runtime_v1.py` 产生的
+`outputs/evisoz_elm_runtime_probe_v1_20260901_r1/receipt.json` 是
+`synthetic_forward_pass_only`：仅用 CPU synthetic zeros 严格加载 checkpoint，
+验证 `[1,20,500]`/`[1,20,6000] → [1,96]`/`[1,256]` 的 finite 和重复前向一致性。
+该回执不含患者值、报告文本、标签或 candidate rows。
+
+因此此 probe 不是 `evisoz_teacher_candidate_cache_v1`，不能填充
+`teacher_candidate_refs`，也不能声明 ELM OOF、exposure independence、校准或
+训练授权。只有当 ELM 的 preprocessing、patient-level exposure/roster、每折
+candidate admission 和 fold-local calibration 均产生独立内容寻址 receipt，并
+通过最新 Stage-0 gate 后，才能把 ELM 输出以
+`authority=offline_teacher`、`status=candidate_only`、`soft_auxiliary_only=true`
+的 lane 绑定到 Findings/claim graph；它仍不得成为 hard SOZ truth 或 TCP22→node
+endpoint 展开规则。

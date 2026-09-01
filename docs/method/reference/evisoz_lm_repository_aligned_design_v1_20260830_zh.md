@@ -1574,3 +1574,28 @@ identity 审计。即使报告 linkage 通过 exclusion closure，`private_field
 仍是 evaluator-only，`private_report_text_release` 仍为 `NO_GO`，所以所有
 正式 Query/Residual、Qwen SFT、alignment、非零 residual 和私有 label training
 继续保持 fail-closed。
+
+## 23. ELM 公共权重的 clean-worktree runtime probe（2026-09-01）
+
+ELM 仅作为离线 candidate teacher；其公开源码固定到
+`https://github.com/SamGijsen/ELM` commit
+`fcd929a57ce3dc9a409be37a71f4ee80ee59979d`。5 秒和 60 秒 checkpoint、配置及
+源码均保存在仓库外的受控目录
+`/mnt/hd1/dyf/workspace/laptop/EviSOZ_artifacts/elm_public_artifacts_v1_20260901_r1`
+（源码 probe 根为 `/tmp/evisoz_elm_source`），不复制进 EviSOZ Git worktree。
+
+`scripts/validate_evisoz_elm_runtime_v1.py` 只加载上述公开 checkpoint，在 CPU
+上对 synthetic zero tensor 做严格 state-dict forward：输入分别为 `[1,20,500]`
+和 `[1,20,6000]`，输出 raw `[1,96]`、projected `[1,256]`，并检查 finite 与
+重复 forward 的 bitwise equality。当前 probe receipt 为
+`outputs/evisoz_elm_runtime_probe_v1_20260901_r1/receipt.json`，状态是
+`synthetic_forward_pass_only`，receipt SHA-256 为
+`e6db2f0e6e3040ede7770d527194954746a6a195cc43300f8317f3f084e2e576`。
+
+该 probe 只证明源码、配置和公开 checkpoint 的运行时兼容性：不读取患者 EEG、
+EDF/DOCX、患者标签或 Qwen，不物化 ELM candidate cache，不执行大规模 teacher
+inference，不进行训练、校准或优化器构造，也不提供 ELM 的 OOF/exposure
+independence receipt。因此它不能解除 `elm_candidate_artifact_missing`、
+`fold_local_calibration_receipts_missing` 或 Stage-0 aggregate `NO_GO`；只有
+在患者级 exposure/预处理合同、fold-local calibration 和相应外部治理凭据闭合后，
+才可按独立 receipt 运行小规模 candidate admission。

@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evisoz_elm_runtime_probe_v1.schema.json",
+  "title": "EviSOZ public ELM synthetic runtime probe v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "probe_id", "status", "source", "variants", "probe", "safety", "receipt_sha256"],
+  "properties": {
+    "schema_version": {"const": "evisoz_elm_runtime_probe_v1"},
+    "probe_id": {"type": "string", "pattern": "^EVISOZ-ELM-PROBE-[0-9a-f]{24}$"},
+    "status": {"const": "synthetic_forward_pass_only"},
+    "source": {
+      "type": "object", "additionalProperties": false,
+      "required": ["repository", "commit", "source_commit_verified", "source_root", "model_artifacts", "software"],
+      "properties": {
+        "repository": {"const": "https://github.com/SamGijsen/ELM"},
+        "commit": {"const": "fcd929a57ce3dc9a409be37a71f4ee80ee59979d"},
+        "source_commit_verified": {"const": true},
+        "source_root": {"type": "string", "minLength": 1},
+        "model_artifacts": {
+          "type": "object", "additionalProperties": false,
+          "required": ["5s", "60s"],
+          "properties": {
+            "5s": {"$ref": "#/$defs/model_artifacts"},
+            "60s": {"$ref": "#/$defs/model_artifacts"}
+          }
+        },
+        "software": {
+          "type": "object", "additionalProperties": false,
+          "required": ["python", "torch", "source_requirements_sha256"],
+          "properties": {
+            "python": {"type": "string", "minLength": 1},
+            "torch": {"type": "string", "minLength": 1},
+            "source_requirements_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+          }
+        }
+      }
+    },
+    "variants": {
+      "type": "array", "prefixItems": [
+        {"$ref": "#/$defs/variant"}, {"$ref": "#/$defs/variant"}
+      ], "minItems": 2, "maxItems": 2
+    },
+    "probe": {
+      "type": "object", "additionalProperties": false,
+      "required": ["input_kind", "batch_size", "patient_data_opened", "forward_count"],
+      "properties": {
+        "input_kind": {"const": "synthetic_zeros"},
+        "batch_size": {"const": 1},
+        "patient_data_opened": {"const": false},
+        "forward_count": {"const": 4}
+      }
+    },
+    "safety": {
+      "type": "object", "additionalProperties": false,
+      "required": ["weights_loaded_for_synthetic_forward", "candidate_cache_materialized", "large_scale_teacher_inference", "training", "optimizer", "patient_data", "physician_report_text", "qwen_generation", "training_authorized"],
+      "properties": {
+        "weights_loaded_for_synthetic_forward": {"const": true},
+        "candidate_cache_materialized": {"const": false},
+        "large_scale_teacher_inference": {"const": false},
+        "training": {"const": false},
+        "optimizer": {"const": false},
+        "patient_data": {"const": false},
+        "physician_report_text": {"const": false},
+        "qwen_generation": {"const": false},
+        "training_authorized": {"const": false}
+      }
+    },
+    "receipt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "$defs": {
+    "model_artifacts": {
+      "type": "object", "additionalProperties": false,
+      "required": ["config_ref", "checkpoint_ref"],
+      "properties": {
+        "config_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+        "checkpoint_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"}
+      }
+    },
+    "variant": {
+      "type": "object", "additionalProperties": false,
+      "required": ["variant", "input_shape", "raw_embedding_shape", "projected_embedding_shape", "finite", "repeat_exact"],
+      "properties": {
+        "variant": {"enum": ["5s", "60s"]},
+        "input_shape": {"type": "array", "enum": [[1, 20, 500], [1, 20, 6000]]},
+        "raw_embedding_shape": {"const": [1, 96]},
+        "projected_embedding_shape": {"const": [1, 256]},
+        "finite": {"const": true},
+        "repeat_exact": {"const": true}
+      }
+    }
+  }
+}

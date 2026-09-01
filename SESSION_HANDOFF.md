@@ -2,6 +2,31 @@
 
 Updated: 2026-09-01 18:45 CST (Asia/Shanghai)
 
+## Current-turn update (ELM runtime probe and worktree alignment)
+
+- All work for this turn remains rooted at
+  `/mnt/hd1/dyf/workspace/laptop/EviSOZ`; no code, output, or model bytes were
+  written to `EEG_Seizure`.
+- Added the schema/validator pair for
+  `evisoz_elm_runtime_probe_v1` and registered it in the clean-worktree schema
+  registry. The probe pins ELM source commit
+  `fcd929a57ce3dc9a409be37a71f4ee80ee59979d` and reads only the external public
+  artifact root
+  `/mnt/hd1/dyf/workspace/laptop/EviSOZ_artifacts/elm_public_artifacts_v1_20260901_r1`.
+- `outputs/evisoz_elm_runtime_probe_v1_20260901_r1/receipt.json` is a
+  `synthetic_forward_pass_only` receipt (CPU zeros, strict 5s/60s checkpoint
+  load, finite and bitwise-repeat checks). It does not open patient EEG,
+  reports, labels, Qwen, or a teacher candidate cache, and does not authorize
+  inference, calibration or training.
+- Appended the ELM probe boundary to both method references. The probe remains
+  weaker than ELM candidate admission: preprocessing/exposure provenance,
+  fold-local calibration, and the current aggregate Stage-0 gate are still
+  required before any candidate lane can be materialized.
+- The repository currently has uncommitted schema/runtime/doc changes. After
+  validation, commit them, regenerate a new clean-freeze audit, and replay
+  Stage-0 with the new registry/freeze; historical r85/r22 receipts must remain
+  untouched.
+
 ## Current-turn update
 
 - Updated `scripts/materialize_evisoz_qwen_patient_shadow_v1.py` so its

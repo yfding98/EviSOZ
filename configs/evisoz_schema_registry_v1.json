@@ -1,6 +1,6 @@
 {
   "schema_version": "evisoz_schema_registry_v1",
-  "registry_id": "EVISOZ-SCHEMAS-f971707bcf15167655f8210f",
+  "registry_id": "EVISOZ-SCHEMAS-2a7d3a87859319f017673172",
   "entries": [
     {
       "bound_schema_version": "clinical_eeg_montage_reference_observability_v1",
@@ -455,6 +455,44 @@
           },
           "payload_schema_version": null,
           "ref_sha256": "8f23b0c7ac1540307033ea840736df4333a579dd7a107797409e2fd22f9fe93c"
+        }
+      }
+    },
+    {
+      "bound_schema_version": "evisoz_elm_runtime_probe_v1",
+      "schema_id": "evisoz_elm_runtime_probe_v1.schema.json",
+      "schema_path": "schemas/evisoz_elm_runtime_probe_v1.schema.json",
+      "schema_artifact_ref": {
+        "schema_version": "evisoz_artifact_ref_v1",
+        "artifact_id": "EVISOZ-ART-7118f1ded31b0a0b6bbd7faf",
+        "artifact_kind": "json_schema",
+        "media_type": "application/schema+json",
+        "content_hash": {
+          "domain": "raw_bytes_v1",
+          "sha256": "b2f9ffdfd6ed1bd5e151146816b58c01029232f3fbf248a87f2c84444aaa605f",
+          "size_bytes": 4000
+        },
+        "payload_schema_version": "evisoz_elm_runtime_probe_v1",
+        "ref_sha256": "6ef16913f3c912114f1164132b7644778eb3454fef8d7122626a547894e5dc5c"
+      },
+      "validator": {
+        "validator_id": "evisoz_elm_runtime_probe_v1_validator",
+        "implementation_version": "1",
+        "module": "src.evisoz.forge.elm_runtime_probe",
+        "callable": "validate_elm_runtime_probe_receipt",
+        "implementation_path": "src/evisoz/forge/elm_runtime_probe.py",
+        "implementation_artifact_ref": {
+          "schema_version": "evisoz_artifact_ref_v1",
+          "artifact_id": "EVISOZ-ART-90d95acf8878f7e62a852e8a",
+          "artifact_kind": "validator_implementation",
+          "media_type": "text/x-python",
+          "content_hash": {
+            "domain": "raw_bytes_v1",
+            "sha256": "0bf74f3f838b62ba194da4d9ef43e2cdfef70c9d13cf36f3bcb4423c29afe427",
+            "size_bytes": 7861
+          },
+          "payload_schema_version": null,
+          "ref_sha256": "5c89e9e93a8c6087f0d8cb75a565315d11b76eba7df4f1b712adca11ba97ae17"
         }
       }
     },
@@ -2093,5 +2131,5 @@
       }
     }
   ],
-  "registry_sha256": "54d10c462e26c5af51b6ab1c5a54d4b1f7ca5c26ac57b9cfe8e53f2a25f88e23"
+  "registry_sha256": "8228548e41da355eca968aa3f5ac4b87926d4a1299e3f0675b8c9879575cfc1a"
 }
