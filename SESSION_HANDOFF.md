@@ -29,6 +29,15 @@ Updated: 2026-09-01 16:27 CST (Asia/Shanghai)
   repository `outputs/`. The packet remains evidence-request-only and does
   not authorize training or report release.
 
+- Latest clean-worktree replay receipts (2026-09-01): aggregate gate
+  `outputs/evisoz_stage0_gate_v1_20260901_r73/gate.json` remains `NO_GO`;
+  bound-evidence loader replay is
+  `outputs/evisoz_stage0_bound_evidence_loader_replay_v1_20260901_r1` (88
+  events/31 patients); full structural shadow smoke is
+  `outputs/evisoz_stage0_shadow_inference_smoke_v1_20260901_r14/` (88 events,
+  31 patient packets, all structural metrics 1.0). These receipts are
+  non-authorizing and do not expose physician report text.
+
 ## Three excluded reports
 
 Receipt (external to this clean worktree):
