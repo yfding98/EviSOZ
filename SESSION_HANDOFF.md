@@ -27,6 +27,39 @@ Updated: 2026-09-01 18:45 CST (Asia/Shanghai)
   Stage-0 with the new registry/freeze; historical r85/r22 receipts must remain
   untouched.
 
+## Current Stage-0 replay after the ELM contract commit (r86)
+
+- Commit `b5923bb7c66891a95c5dcd0277e21d694288a5d1` is the current clean
+  snapshot. The post-commit audit is
+  `outputs/clean_freeze_audit_target_v1_20260901_r23.json` with
+  `status=GO`, `git_clean=true`, `training_authorized=false`, and receipt
+  SHA-256 `7853d156b1196346dff31d1e3a0654d66cbbd97eaf6a3cd10b40960b12834ded`.
+- Schema registry check and `python3 -m compileall -q src scripts code` both
+  pass. The registry now includes the 56th
+  `evisoz_elm_runtime_probe_v1` binding.
+- A fresh ELM synthetic replay is
+  `outputs/evisoz_elm_runtime_probe_v1_20260901_r2/receipt.json`; it has the
+  same content receipt SHA-256 as r1
+  (`e6db2f0e6e3040ede7770d527194954746a6a195cc43300f8317f3f084e2e576`) and
+  remains `synthetic_forward_pass_only`.
+- Stage-0 was replayed with the new registry and r23 freeze, explicit external
+  private/public inputs, the active 40-row report candidate bundle and the
+  SUAT-signed report-release receipt. The new aggregate gate is
+  `outputs/evisoz_stage0_gate_v1_20260901_r86/gate.json` with
+  `status=NO_GO`, gate ID `EVISOZ-STAGE0-77db9b2db92c34bfe79e964a`, and
+  receipt SHA-256
+  `1a9c87c0f04a7050d25b55b3f84cb55235257e77f4eee2647b2550a03d82307f`.
+- r86 checks for schema, canonical v29 reference, dual-montage qualification,
+  report linkage/release, knowledge, Findings/claim/report, bound evidence and
+  clean freeze are green or qualified. Remaining blockers are exactly:
+  `private_data_governance_training_authority_missing`,
+  `near_or_partial_overlap_closure_incomplete`,
+  `tuev_eval_patient_identity_opaque`,
+  `elm_candidate_artifact_missing`, and
+  `fold_local_calibration_receipts_missing`. Formal DataLoader, optimizer,
+  private-label training, Qwen SFT/alignment, non-zero residual and large-scale
+  teacher inference remain closed.
+
 ## Current-turn update
 
 - Updated `scripts/materialize_evisoz_qwen_patient_shadow_v1.py` so its
