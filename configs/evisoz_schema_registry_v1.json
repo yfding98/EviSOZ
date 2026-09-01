@@ -1,6 +1,6 @@
 {
   "schema_version": "evisoz_schema_registry_v1",
-  "registry_id": "EVISOZ-SCHEMAS-4fddba2ef88e126cc0593bc9",
+  "registry_id": "EVISOZ-SCHEMAS-f971707bcf15167655f8210f",
   "entries": [
     {
       "bound_schema_version": "clinical_eeg_montage_reference_observability_v1",
@@ -1699,16 +1699,16 @@
         "implementation_path": "src/evisoz/data/stage0_gate.py",
         "implementation_artifact_ref": {
           "schema_version": "evisoz_artifact_ref_v1",
-          "artifact_id": "EVISOZ-ART-9c684a9441235d21770aa9b0",
+          "artifact_id": "EVISOZ-ART-a8b52acefbef8280eb864bbc",
           "artifact_kind": "validator_implementation",
           "media_type": "text/x-python",
           "content_hash": {
             "domain": "raw_bytes_v1",
-            "sha256": "5b6e12241a8b2e0b7a9e546f7305f13c8eb286e11467f43968ffa17d08c3a541",
-            "size_bytes": 38009
+            "sha256": "898ec3a77c78ff41e8adb9ec13da89e707d4b3e4aac6ab61e6270d0fccacb32b",
+            "size_bytes": 40319
           },
           "payload_schema_version": null,
-          "ref_sha256": "d4f397c15d602529d14a787e05769239d6d8e264cb1752eb1e9a640303f37ab2"
+          "ref_sha256": "166a7b834434230d8e325e514e6b78ab80ea623ad360ee6eb31745d26451aa6a"
         }
       }
     },
@@ -2093,5 +2093,5 @@
       }
     }
   ],
-  "registry_sha256": "b7725606e6e2a30d049d36668bb7cec40e247310a28760f9b402799ef28ce63b"
+  "registry_sha256": "54d10c462e26c5af51b6ab1c5a54d4b1f7ca5c26ac57b9cfe8e53f2a25f88e23"
 }
