@@ -27,9 +27,9 @@ Updated: 2026-09-01 18:45 CST (Asia/Shanghai)
   Stage-0 with the new registry/freeze; historical r85/r22 receipts must remain
   untouched.
 
-## Current Stage-0 replay after the ELM contract commit (r86)
+## Stage-0 replay after the ELM contract commit (r86; pre-handoff commit)
 
-- Commit `b5923bb7c66891a95c5dcd0277e21d694288a5d1` is the current clean
+- Commit `b5923bb7c66891a95c5dcd0277e21d694288a5d1` was the clean
   snapshot. The post-commit audit is
   `outputs/clean_freeze_audit_target_v1_20260901_r23.json` with
   `status=GO`, `git_clean=true`, `training_authorized=false`, and receipt
@@ -59,6 +59,14 @@ Updated: 2026-09-01 18:45 CST (Asia/Shanghai)
   `fold_local_calibration_receipts_missing`. Formal DataLoader, optimizer,
   private-label training, Qwen SFT/alignment, non-zero residual and large-scale
   teacher inference remain closed.
+
+The handoff-only commit that records r86 is now `b1ea372`; r23/r86 are
+historical and must not be treated as the current freeze/gate. The current
+post-commit audit is
+`outputs/clean_freeze_audit_target_v1_20260901_r24.json` (`status=GO`,
+`git_clean=true`, `training_authorized=false`, receipt SHA-256
+`9e35fbb785b725ebfb4854d2428a5ac1924f1c734f6ac0d2354ec0c118cd4723`). A
+fresh gate replay against r24 is required before any stage transition.
 
 ## Current-turn update
 
