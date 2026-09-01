@@ -68,14 +68,23 @@ def _write_json(path: Path, value: Mapping[str, Any]) -> None:
     path.write_bytes(canonical_json_bytes(value) + b"\n")
 
 
-def _build_teacher_inventory(root: Path, gate: Mapping[str, Any]) -> dict[str, Any]:
+def _build_teacher_inventory(
+    root: Path,
+    gate: Mapping[str, Any],
+    *,
+    cerebragloss_audit_path: Path | None = None,
+    cerebragloss_manifest_path: Path | None = None,
+) -> dict[str, Any]:
     checkpoint = Path("/mnt/hd1/dyf/dataset/CerebraGloss_ICLR2026/DataEngine/checkpoints/model.pkl")
-    audit_path = root / "configs/cerebragloss_positive_box_external_audit_v22.json"
+    audit_path = cerebragloss_audit_path or root / "configs/cerebragloss_positive_box_external_audit_v22.json"
     audit = _load(audit_path)
-    cg_manifests = sorted(
-        p for p in (root / "outputs").glob("evisoz_stage0_cerebragloss_candidates_v*/manifest.json")
-        if p.is_file() and not p.is_symlink()
-    )
+    if cerebragloss_manifest_path is not None:
+        cg_manifests = [cerebragloss_manifest_path]
+    else:
+        cg_manifests = sorted(
+            p for p in (root / "outputs").glob("evisoz_stage0_cerebragloss_candidates_v*/manifest.json")
+            if p.is_file() and not p.is_symlink()
+        )
     cg_materialization = _load(cg_manifests[-1]) if cg_manifests else None
     cerebragloss: dict[str, Any] = {
         "teacher_id": "cerebragloss",
@@ -360,18 +369,61 @@ evaluation, or release of report text.
     )
 
 
-def build_packet(root: Path, output: Path, gate_path: Path | None = None) -> None:
+def build_packet(
+    root: Path,
+    output: Path,
+    gate_path: Path | None = None,
+    *,
+    inventory_path: Path | None = None,
+    deid_path: Path | None = None,
+    exposure_path: Path | None = None,
+    field_release_path: Path | None = None,
+    crosswalk_path: Path | None = None,
+    cerebragloss_audit_path: Path | None = None,
+    cerebragloss_manifest_path: Path | None = None,
+) -> None:
+    """Build a privacy-safe packet from explicit controlled inputs.
+
+    The clean worktree intentionally does not contain private report
+    inventories or public exposure bundles.  Callers may therefore point the
+    materializer at externally controlled, regular JSON files.  The files are
+    read-only inputs; only hashes/counts and blank controller action fields are
+    written to ``output``.
+    """
     if output.exists() or output.is_symlink():
         raise FileExistsError(output)
     gate_path = gate_path or _latest_gate(root)
     gate = _load(gate_path)
-    inventory = _load(root / "outputs/evisoz_stage0_private_physician_report_inventory_v1_20260831/inventory.json")
-    deid = _load(root / "outputs/evisoz_stage0_private_report_deid_candidates_v1_20260831/manifest.json")
-    exposure = _load(root / "outputs/evisoz_public_auxiliary_exposure_projection_v1_20260831/projection.json")
-    field_release = _load(root / "outputs/evisoz_public_auxiliary_field_release_v1_20260831/field_release.json")
-    crosswalk = _load(root / "outputs/evisoz_public_v29_tusz_crosswalk_v1_20260831/crosswalk.json")
+    inventory = _load(
+        inventory_path
+        or root / "outputs/evisoz_stage0_private_physician_report_inventory_v1_20260831/inventory.json"
+    )
+    deid = _load(
+        deid_path
+        or root / "outputs/evisoz_stage0_private_report_deid_candidates_v1_20260831/manifest.json"
+    )
+    exposure = _load(
+        exposure_path
+        or root / "outputs/evisoz_public_auxiliary_exposure_projection_v1_20260831/projection.json"
+    )
+    field_release = _load(
+        field_release_path
+        or root / "outputs/evisoz_public_auxiliary_field_release_v1_20260831/field_release.json"
+    )
+    crosswalk = _load(
+        crosswalk_path
+        or root / "outputs/evisoz_public_v29_tusz_crosswalk_v1_20260831/crosswalk.json"
+    )
     output.mkdir(parents=True)
-    _write_json(output / "teacher_artifact_inventory.json", _build_teacher_inventory(root, gate))
+    _write_json(
+        output / "teacher_artifact_inventory.json",
+        _build_teacher_inventory(
+            root,
+            gate,
+            cerebragloss_audit_path=cerebragloss_audit_path,
+            cerebragloss_manifest_path=cerebragloss_manifest_path,
+        ),
+    )
     _write_json(output / "private_report_mapping_resolution_packet.json", _build_mapping_packet(root, inventory))
     matrix, rows = _build_review_matrix(root, deid)
     _write_json(output / "private_report_manual_review_matrix.json", matrix)
@@ -401,8 +453,26 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(allow_abbrev=False)
     parser.add_argument("--output", type=Path, default=ROOT / "outputs/evisoz_stage0_remediation_packet_v1_20260901")
     parser.add_argument("--gate", type=Path)
+    parser.add_argument("--inventory", type=Path, help="controlled private report inventory JSON")
+    parser.add_argument("--deid", type=Path, help="controlled de-identification candidates manifest JSON")
+    parser.add_argument("--exposure", type=Path, help="controlled public auxiliary exposure projection JSON")
+    parser.add_argument("--field-release", type=Path, help="controlled public auxiliary field-release JSON")
+    parser.add_argument("--crosswalk", type=Path, help="controlled public v29-to-TUSZ crosswalk JSON")
+    parser.add_argument("--cerebragloss-audit", type=Path, help="controlled CerebraGloss preflight audit JSON")
+    parser.add_argument("--cerebragloss-manifest", type=Path, help="controlled CerebraGloss candidate manifest JSON")
     args = parser.parse_args(argv)
-    build_packet(ROOT, args.output.resolve(), args.gate.resolve() if args.gate else None)
+    build_packet(
+        ROOT,
+        args.output.resolve(),
+        args.gate.resolve() if args.gate else None,
+        inventory_path=args.inventory.resolve() if args.inventory else None,
+        deid_path=args.deid.resolve() if args.deid else None,
+        exposure_path=args.exposure.resolve() if args.exposure else None,
+        field_release_path=args.field_release.resolve() if args.field_release else None,
+        crosswalk_path=args.crosswalk.resolve() if args.crosswalk else None,
+        cerebragloss_audit_path=args.cerebragloss_audit.resolve() if args.cerebragloss_audit else None,
+        cerebragloss_manifest_path=args.cerebragloss_manifest.resolve() if args.cerebragloss_manifest else None,
+    )
     return 0
 
 

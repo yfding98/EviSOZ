@@ -1,11 +1,13 @@
 # EviSOZ session handoff
 
-Updated: 2026-09-01 (Asia/Shanghai)
+Updated: 2026-09-01 16:27 CST (Asia/Shanghai)
 
 ## Current state
 
-- Stage-0 replay: `NO_GO` at
-  `/mnt/hd1/dyf/workspace/laptop/EEG_Seizure/outputs/evisoz_stage0_gate_v1_20260901_r68/gate.json`.
+- Stage-0 replay: `NO_GO` at the current clean-worktree gate
+  `outputs/evisoz_stage0_gate_v1_20260901_r72/gate.json` (blocking checks:
+  offline teacher/calibration, private governance authority, report text
+  release, and public auxiliary exposure ledger).
 - `private_report_linkage`: `GO` after an explicit operational quarantine receipt.
 - Independent EviSOZ clean-freeze audit: `GO` at the target worktree's ignored
   `outputs/clean_freeze_audit_migration_v4.json`. The receipt is regenerated
@@ -15,6 +17,15 @@ Updated: 2026-09-01 (Asia/Shanghai)
   authority, report manual review/release, public overlap/TUEV identity,
   CerebraGloss/ELM candidates and fold-local calibration, plus the parent
   worktree clean-freeze audit.
+
+- Remediation packet r4 was materialized in this clean worktree using explicit
+  controlled external JSON inputs (no private/raw bytes copied):
+  `outputs/evisoz_stage0_remediation_packet_v1_20260901_r4/`. The materializer
+  now accepts `--inventory`, `--deid`, `--exposure`, `--field-release`,
+  `--crosswalk`, `--cerebragloss-audit`, and `--cerebragloss-manifest` so a
+  clean migration can replay external inputs without assuming they exist under
+  repository `outputs/`. The packet remains evidence-request-only and does
+  not authorize training or report release.
 
 ## Three excluded reports
 
@@ -90,3 +101,11 @@ PYTHONPATH=. python3 scripts/materialize_evisoz_clean_freeze_audit_v1.py \
 The last command writes an ignored local artifact. The Stage-0 gate must be
 replayed with explicit external artifact paths before any training loader,
 optimizer, Qwen SFT, alignment or non-zero residual is constructed.
+
+## Verification in this handoff
+
+- `python3 -m py_compile scripts/materialize_evisoz_stage0_remediation_packet_v1.py`: pass.
+- `python3 -m compileall -q src scripts`: pass.
+- `python3 scripts/materialize_evisoz_schema_registry_v1.py --check`: pass.
+- Remediation packet r4 privacy scan: pass; no controlled source path, DOCX
+  suffix, report text, or patient-name token is present in the packet.
