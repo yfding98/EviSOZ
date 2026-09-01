@@ -54,6 +54,10 @@ from src.evisoz.data.private_report_exclusion import (
     PRIVATE_REPORT_EXCLUSION_SCHEMA_VERSION,
     validate_private_report_exclusion,
 )
+from src.evisoz.data.private_physician_report_release import (
+    PHYSICIAN_REPORT_RELEASE_SCHEMA_VERSION,
+    validate_private_physician_report_release,
+)
 from src.evisoz.data.schema_registry import validate_schema_registry
 from src.evisoz.data.split_ledger import validate_split_roster
 from src.evisoz.forge.private_report_deidentification import (
@@ -169,6 +173,7 @@ def build_stage0_gate(
     candidate_exposure_ledger_root: Path | None = None,
     private_report_mapping_intake_root: Path | None = None,
     private_report_exclusion_path: Path | None = None,
+    private_report_release_path: Path | None = None,
     bound_evidence_root: Path | None = None,
     teacher_cerebragloss_root: Path | None = None,
     teacher_elm_root: Path | None = None,
@@ -264,6 +269,16 @@ def build_stage0_gate(
         _json(private_report_deid_root / "manifest.json"),
         output_root=private_report_deid_root,
     )
+    private_report_release: dict[str, Any] | None = None
+    if private_report_release_path is not None:
+        release_path = private_report_release_path.resolve()
+        if release_path.is_symlink() or not release_path.is_file():
+            raise ValueError("private physician report release must be a regular JSON file")
+        private_report_release = validate_private_physician_report_release(
+            _json(release_path),
+            candidate_bundle=deid_candidates,
+            candidate_output_root=private_report_deid_root,
+        )
     knowledge = validate_knowledge_system(knowledge_root)
     exposure = validate_public_auxiliary_exposure_projection(
         _json(public_exposure_projection_path)
@@ -392,6 +407,18 @@ def build_stage0_gate(
     if public_overlap_audit is not None and public_overlap_audit["status"] == "complete":
         public_auxiliary_blockers.remove("near_or_partial_overlap_closure_incomplete")
         public_auxiliary_blockers.remove("tuev_eval_patient_identity_opaque")
+    deid_counts = deid_candidates["counts"]
+    release_counts = (
+        private_report_release["counts"] if private_report_release is not None else {}
+    )
+    release_complete = (
+        private_report_release is not None
+        and release_counts.get("released_row_count") == deid_counts["candidate_count"]
+        and release_counts.get("development_qwen_training_count")
+        == deid_counts["split_role_candidate_counts"].get("development_cv", 0)
+        and release_counts.get("locked_language_evaluation_count")
+        == deid_counts["split_role_candidate_counts"].get("locked_test", 0)
+    )
     checks: list[dict[str, object]] = [
         {
             "check_id": "schema_registry",
@@ -528,25 +555,43 @@ def build_stage0_gate(
         },
         {
             "check_id": "private_report_text_release",
-            "status": "NO_GO",
-            "evidence_ref": _ref(
-                deid_candidates,
-                kind="physician_report_deidentification_candidates",
-                schema_version=PRIVATE_REPORT_DEID_CANDIDATES_SCHEMA_VERSION,
+            "status": "GO" if release_complete else "NO_GO",
+            "evidence_ref": (
+                _ref(
+                    private_report_release,
+                    kind="private_physician_report_release",
+                    schema_version=PHYSICIAN_REPORT_RELEASE_SCHEMA_VERSION,
+                )
+                if private_report_release is not None
+                else _ref(
+                    deid_candidates,
+                    kind="physician_report_deidentification_candidates",
+                    schema_version=PRIVATE_REPORT_DEID_CANDIDATES_SCHEMA_VERSION,
+                )
             ),
             "facts": {
-                "candidate_count": deid_candidates["counts"]["candidate_count"],
-                "automated_phi_scan_pass_count": deid_candidates["counts"][
-                    "automated_phi_scan_pass_count"
-                ],
-                "manual_review_pass_count": deid_candidates["counts"][
-                    "manual_review_pass_count"
-                ],
-                "qwen_training_release_count": deid_candidates["counts"][
-                    "development_qwen_training_release_count"
-                ],
+                "candidate_count": deid_counts["candidate_count"],
+                "automated_phi_scan_pass_count": deid_counts["automated_phi_scan_pass_count"],
+                "manual_review_pass_count": (
+                    release_counts.get("released_row_count", 0)
+                    if private_report_release is not None
+                    else deid_counts["manual_review_pass_count"]
+                ),
+                "qwen_training_release_count": (
+                    release_counts.get("development_qwen_training_count", 0)
+                    if private_report_release is not None
+                    else deid_counts["development_qwen_training_release_count"]
+                ),
+                "locked_language_evaluation_release_count": (
+                    release_counts.get("locked_language_evaluation_count", 0)
+                    if private_report_release is not None
+                    else deid_counts["locked_language_evaluation_release_count"]
+                ),
+                "release_complete": release_complete,
             },
-            "blocker_codes": [
+            "blocker_codes": []
+            if release_complete
+            else [
                 "manual_deidentification_review_missing",
                 "development_and_evaluator_report_releases_missing",
             ],

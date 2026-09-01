@@ -1,6 +1,24 @@
 # EviSOZ session handoff
 
-Updated: 2026-09-01 17:20 CST (Asia/Shanghai)
+Updated: 2026-09-01 18:05 CST (Asia/Shanghai)
+
+## Current-turn update
+
+- All commands for this turn were run from the clean worktree
+  `/mnt/hd1/dyf/workspace/laptop/EviSOZ`; `EEG_Seizure` was used only through
+  explicit read-only external paths. No raw EDF/DOCX, patient mapping or
+  checkpoint bytes were copied into this repository.
+- Added an optional `--private-report-release` input to the Stage-0 gate. The
+  gate now validates an externally authorized
+  `evisoz_private_physician_report_release_v1` against the exact candidate
+  manifest and candidate text bytes before it can mark
+  `private_report_text_release=GO`; absent or incomplete release remains
+  `NO_GO`. This change does not authorize EEG training, localization loss or
+  Qwen generation.
+- The external SUAT release replay was independently validated for 40 rows
+  (33 development Qwen-training rows and 7 locked language-evaluation rows),
+  while the controller authorization remains outside the repository. A fresh
+  aggregate gate must be generated after the code commit and clean-freeze.
 
 ## Current state
 

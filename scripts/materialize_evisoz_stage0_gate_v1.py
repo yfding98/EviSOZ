@@ -30,6 +30,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--private-report-deid", type=Path, default=ROOT / "outputs/evisoz_stage0_private_report_deid_candidates_v1_20260831")
     parser.add_argument("--private-report-mapping-intake", type=Path, default=ROOT / "outputs/evisoz_stage0_private_report_mapping_intake_v1_20260831")
     parser.add_argument("--private-report-exclusion", type=Path, default=ROOT / "outputs/private_public_mapping_split_deid_v1_20260901_r4/private_reports/exclusion_manifest.json", help="explicit unresolved-report quarantine receipt")
+    parser.add_argument("--private-report-release", type=Path, help="optional externally authorized physician-report release receipt")
     parser.add_argument("--knowledge-root", type=Path, default=ROOT / "knowledge/eeg")
     parser.add_argument("--public-exposure-projection", type=Path, default=ROOT / "outputs/evisoz_public_auxiliary_exposure_projection_v1_20260831/projection.json")
     parser.add_argument("--public-v29-tusz-crosswalk", type=Path, default=ROOT / "outputs/evisoz_public_v29_tusz_crosswalk_v1_20260831/crosswalk.json")
@@ -74,6 +75,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         private_report_deid_root=args.private_report_deid,
         private_report_mapping_intake_root=args.private_report_mapping_intake,
         private_report_exclusion_path=args.private_report_exclusion,
+        private_report_release_path=args.private_report_release,
         knowledge_root=args.knowledge_root,
         public_exposure_projection_path=args.public_exposure_projection,
         public_v29_tusz_crosswalk_path=args.public_v29_tusz_crosswalk,
