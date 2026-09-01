@@ -68,6 +68,26 @@ post-commit audit is
 `9e35fbb785b725ebfb4854d2428a5ac1924f1c734f6ac0d2354ec0c118cd4723`). A
 fresh gate replay against r24 is required before any stage transition.
 
+## Current clean snapshot replay (r87)
+
+- The handoff correction is committed as `00c0a25`. Its current freeze audit is
+  `outputs/clean_freeze_audit_target_v1_20260901_r25.json` with
+  `status=GO`, `git_clean=true`, `training_authorized=false`, and receipt
+  SHA-256 `368a2e1af201d00adb78a8f5f68c7f92e0941fb0754ea2bf796507f625e9ecc5`.
+- Gate r87 is
+  `outputs/evisoz_stage0_gate_v1_20260901_r87/gate.json`, status `NO_GO`, gate
+  ID `EVISOZ-STAGE0-e4469db1f3e9b45e2eb5bcf0`, receipt SHA-256
+  `7a904fbc129b103c9e31081e13945503e3e58506daf8163ac099eda171fb0363`.
+  The blocking checks are `offline_teacher_and_derived_candidates`,
+  `private_field_envelopes`, and `public_auxiliary_patient_exposure_ledger`;
+  their blocker codes are respectively ELM candidate/fold-local calibration,
+  missing private training governance authority, and near/partial overlap plus
+  opaque TUEV evaluation identity.
+- r87 confirms `private_report_linkage=GO` through explicit quarantine of the
+  three unresolved reports and `private_report_text_release=GO` through the
+  externally authorized SUAT release. These statuses do not open localization
+  supervision, Qwen generation, or any formal training lane.
+
 ## Current-turn update
 
 - Updated `scripts/materialize_evisoz_qwen_patient_shadow_v1.py` so its
