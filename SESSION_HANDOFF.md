@@ -30,11 +30,12 @@ Updated: 2026-09-01 17:20 CST (Asia/Shanghai)
   discovery receipt explicitly via `--elm-discovery`; it does not promote ELM
   candidates or copy model bytes into the repository.
 
-- Post-change clean-freeze audit
-  `outputs/clean_freeze_audit_target_v1_20260901_r12.json` is `GO` after commit
-  `0e71671` (`tracked_modified=0`, no untracked files). The superseded r11
-  audit was the expected transient `NO_GO` while the patch was uncommitted;
-  r12 is the current clean snapshot and remains non-authorizing for training.
+- The post-change clean-freeze audit
+  `outputs/clean_freeze_audit_target_v1_20260901_r12.json` was `GO` at commit
+  `0e71671` (`tracked_modified=0`, no untracked files). It is retained as a
+  historical pre-handoff snapshot; after any subsequent commit the audit must
+  be regenerated before claiming the current clean freeze. All such audits
+  remain non-authorizing for training.
 
 - Remediation packet r4 was materialized in this clean worktree using explicit
   controlled external JSON inputs (no private/raw bytes copied):
