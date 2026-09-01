@@ -10,6 +10,9 @@ import sys
 from typing import Any, Sequence
 
 ROOT = Path(__file__).resolve().parents[1]
+EXTERNAL_OUTPUTS = Path(
+    "/mnt/hd1/dyf/workspace/laptop/EEG_Seizure/outputs"
+)
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
@@ -45,12 +48,42 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--shadow-root",
         type=Path,
-        default=ROOT / "outputs/evisoz_stage0_shadow_inference_smoke_v1_20260901_r10",
+        default=ROOT / "outputs/evisoz_stage0_shadow_inference_smoke_v1_20260901_r17",
+    )
+    parser.add_argument(
+        "--bound-evidence",
+        type=Path,
+        default=ROOT / "outputs/evisoz_stage0_bound_evidence_v1_20260901_r51",
+        help="current Stage-0 bound-evidence root (repository output only)",
+    )
+    parser.add_argument(
+        "--private-examples",
+        type=Path,
+        default=EXTERNAL_OUTPUTS / "evisoz_stage0_private_real_examples_v1_20260831",
+        help="controlled read-only private examples root",
+    )
+    parser.add_argument(
+        "--findings-claim-reports",
+        type=Path,
+        default=EXTERNAL_OUTPUTS / "evisoz_stage0_findings_claim_reports_v1_20260901_r3",
+        help="controlled read-only Findings/claim/report root",
+    )
+    parser.add_argument(
+        "--private-cohort",
+        type=Path,
+        default=EXTERNAL_OUTPUTS / "evisoz_stage0_private_real_dual_montage_v1_20260831",
+        help="controlled read-only dual-montage cohort root",
+    )
+    parser.add_argument(
+        "--split-roster",
+        type=Path,
+        default=EXTERNAL_OUTPUTS / "evisoz_stage0_private_split_v1_20260831" / "split_roster.json",
+        help="controlled read-only patient split roster",
     )
     parser.add_argument(
         "--output",
         type=Path,
-        default=ROOT / "outputs/evisoz_stage0_qwen_patient_shadow_v1_20260901_r5",
+        default=ROOT / "outputs/evisoz_stage0_qwen_patient_shadow_v1_20260901_r2",
     )
     parser.add_argument("--limit", type=int, default=88)
     parser.add_argument(
@@ -71,11 +104,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         _read_json(shadow_root / "evaluation.json")
     )
     roots = {
-        "bound_evidence_root": ROOT / "outputs/evisoz_stage0_bound_evidence_v1_20260901_r27",
-        "private_examples_root": ROOT / "outputs/evisoz_stage0_private_real_examples_v1_20260831",
-        "findings_claim_report_root": ROOT / "outputs/evisoz_stage0_findings_claim_reports_v1_20260901_r3",
-        "private_cohort_root": ROOT / "outputs/evisoz_stage0_private_real_dual_montage_v1_20260831",
-        "split_roster_path": ROOT / "outputs/evisoz_stage0_private_split_v1_20260831/split_roster.json",
+        "bound_evidence_root": args.bound_evidence,
+        "private_examples_root": args.private_examples,
+        "findings_claim_report_root": args.findings_claim_reports,
+        "private_cohort_root": args.private_cohort,
+        "split_roster_path": args.split_roster,
         "evisoz_role": args.evisoz_role,
         "limit": args.limit,
     }

@@ -1,8 +1,27 @@
 # EviSOZ session handoff
 
-Updated: 2026-09-01 18:05 CST (Asia/Shanghai)
+Updated: 2026-09-01 18:45 CST (Asia/Shanghai)
 
 ## Current-turn update
+
+- Updated `scripts/materialize_evisoz_qwen_patient_shadow_v1.py` so its
+  bound-evidence, private examples, Findings/claim/report, dual-montage and
+  split-roster inputs are explicit CLI parameters. Defaults now point to the
+  current repository bound-evidence r51 and the controlled read-only
+  `EEG_Seizure/outputs` roots; the script never copies raw EDF/DOCX or report
+  text and remains no-generation.
+- Replayed the current 88-event bound evidence with the deterministic shadow
+  smoke at `outputs/evisoz_stage0_shadow_inference_smoke_v1_20260901_r17/`
+  (88 events, 31 patients), then materialized the patient-level Qwen shadow at
+  `outputs/evisoz_stage0_qwen_patient_shadow_v1_20260901_r1/` (31 packets;
+  23 development and 8 locked-test patients). Patient graph/report/selection
+  replay rates are all 1.0. Runtime policy remains
+  `qwen_generation_allowed=false`, `training_allowed=false`,
+  `embeddings_materialized=false`, and `patient_fact_creation_allowed=false`.
+- The new patient-shadow materialization receipt is
+  `9191f6c84435a19e19c2fd70125b0fa06754b876b6e4c911c2a22cf4eed48cd4` and its
+  patient evaluation receipt is
+  `ef05f837d8c9d4ffbc7b05c8e0dd0b6ca016fb672af62107255b1fc3b35dc052`.
 
 - All commands for this turn were run from the clean worktree
   `/mnt/hd1/dyf/workspace/laptop/EviSOZ`; `EEG_Seizure` was used only through
