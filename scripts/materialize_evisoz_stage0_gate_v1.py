@@ -25,12 +25,15 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--private-real-cohort", type=Path, default=ROOT / "outputs/evisoz_stage0_private_real_dual_montage_v1_20260831")
     parser.add_argument("--private-split-roster", type=Path, default=ROOT / "outputs/evisoz_stage0_private_split_v1_20260831/split_roster.json")
     parser.add_argument("--private-signal-roster", type=Path, default=ROOT / "outputs/labram_private_zero_adaptation_bundle_v18_20260814/signal_roster.csv")
+    parser.add_argument("--private-target-ledger", type=Path, default=ROOT / "outputs/labram_private_zero_adaptation_bundle_v18_20260814/target_ledger.csv")
+    parser.add_argument("--private-source-manifest", type=Path, default=ROOT / "outputs/soz_pre/private_edf_soz_manifest.csv")
     parser.add_argument("--private-examples", type=Path, default=ROOT / "outputs/evisoz_stage0_private_real_examples_v1_20260831")
     parser.add_argument("--private-report-inventory", type=Path, default=ROOT / "outputs/evisoz_stage0_private_physician_report_inventory_v1_20260831/inventory.json")
     parser.add_argument("--private-report-deid", type=Path, default=ROOT / "outputs/evisoz_stage0_private_report_deid_candidates_v1_20260831")
     parser.add_argument("--private-report-mapping-intake", type=Path, default=ROOT / "outputs/evisoz_stage0_private_report_mapping_intake_v1_20260831")
     parser.add_argument("--private-report-exclusion", type=Path, default=ROOT / "outputs/private_public_mapping_split_deid_v1_20260901_r4/private_reports/exclusion_manifest.json", help="explicit unresolved-report quarantine receipt")
     parser.add_argument("--private-report-release", type=Path, help="optional externally authorized physician-report release receipt")
+    parser.add_argument("--private-training-authorization", type=Path, help="optional external data-controller authorization for private clinical-label loss ports")
     parser.add_argument("--knowledge-root", type=Path, default=ROOT / "knowledge/eeg")
     parser.add_argument("--public-exposure-projection", type=Path, default=ROOT / "outputs/evisoz_public_auxiliary_exposure_projection_v1_20260831/projection.json")
     parser.add_argument("--public-v29-tusz-crosswalk", type=Path, default=ROOT / "outputs/evisoz_public_v29_tusz_crosswalk_v1_20260831/crosswalk.json")
@@ -70,12 +73,15 @@ def main(argv: Sequence[str] | None = None) -> int:
         private_real_cohort_root=args.private_real_cohort,
         private_split_roster_path=args.private_split_roster,
         private_signal_roster_path=args.private_signal_roster,
+        private_target_ledger_path=args.private_target_ledger,
+        private_source_manifest_path=args.private_source_manifest,
         private_examples_root=args.private_examples,
         private_report_inventory_path=args.private_report_inventory,
         private_report_deid_root=args.private_report_deid,
         private_report_mapping_intake_root=args.private_report_mapping_intake,
         private_report_exclusion_path=args.private_report_exclusion,
         private_report_release_path=args.private_report_release,
+        private_training_authorization_path=args.private_training_authorization,
         knowledge_root=args.knowledge_root,
         public_exposure_projection_path=args.public_exposure_projection,
         public_v29_tusz_crosswalk_path=args.public_v29_tusz_crosswalk,

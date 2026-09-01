@@ -352,3 +352,121 @@ optimizer, Qwen SFT, alignment or non-zero residual is constructed.
 - `python3 scripts/materialize_evisoz_schema_registry_v1.py --check`: pass.
 - Remediation packet r4 privacy scan: pass; no controlled source path, DOCX
   suffix, report text, or patient-name token is present in the packet.
+
+## Continuation: explicit private training authorization boundary (2026-09-01)
+
+All commands in this continuation were run from
+`/mnt/hd1/dyf/workspace/laptop/EviSOZ`.  The controlled `EEG_Seizure` tree was
+used only through explicit read-only input paths.  ELM checkpoints remain
+outside this repository under the external `EviSOZ_artifacts` store; no raw
+EDF/DOCX, patient mapping, or checkpoint was copied into Git.
+
+The external SUAT signed binding currently available is a physician-report
+text authorization only: it covers 33 development Qwen-text rows and 7 locked
+language-evaluation rows, and explicitly does not authorize locked-test
+training or clinical-label/node loss.  It is therefore rejected by the new
+private-label authorization path rather than being interpreted as a general
+training grant.
+
+Added contracts and entry points:
+
+- `evisoz_private_training_authorization_v1` schema and validator require an
+  active data-controller authorization, detached-signature verification
+  receipt, exact split/signal/target/source ledger bindings, development-only
+  field/port scope, and permanently disabled report-text/prompt/RAG/locked-test
+  permissions.
+- Private Stage-0 examples now materialize as v2.  Without an authorization
+  input they remain evaluator-only with `enabled_loss_ports=[]`; with an
+  authorization input, only matching high-confidence development fields can
+  receive the explicitly listed EEG loss ports.  The raw authorization file
+  is bound by an ArtifactRef and is never copied into the manifest payload.
+- `scripts/validate_evisoz_private_training_authorization_v1.py` replays an
+  external authorization against the exact controlled ledgers without opening
+  EDF/DOCX or constructing a training object.
+- Stage-0 gate accepts `--private-training-authorization`,
+  `--private-target-ledger` and `--private-source-manifest`; a validated
+  private-label authorization changes only `private_field_envelopes` to
+  `QUALIFIED_GO`.  Aggregate Stage-0 remains independently fail-closed.
+
+New non-overwriting receipts:
+
+- `outputs/evisoz_stage0_private_real_examples_v2_20260901_r3/manifest.json`:
+  88 events (65 development, 23 locked-test), no enabled loss ports,
+  receipt `50ecae3c7be4cbc17f74b81a578d8f39e13be5930ba5d4583713dabb44fe23fc`.
+- `outputs/evisoz_stage0_findings_claim_reports_v1_20260901_r4/`:
+  88 event Findings, 31 patient graphs/reports, generated-text fact count 0.
+- `outputs/evisoz_stage0_bound_evidence_v1_20260901_r52/` and
+  `outputs/evisoz_stage0_bound_evidence_loader_replay_v1_20260901_r53/receipt.json`:
+  88-event/31-patient structural replay, training remains disabled.
+- `outputs/evisoz_stage0_gate_v1_20260901_r92/gate.json`:
+  `NO_GO`, receipt
+  `c0f43ecf7ceaee8761d875370dddb0b9614e7e7a3fda9f6d282f2fb0a5651974`.
+  The private-field blocker remains because no real clinical-label
+  authorization receipt has been supplied; independent blockers remain
+  offline teacher/calibration and public overlap/TUEV identity.
+- `outputs/evisoz_execution_plan_v1_20260901_r48/plan.json` and
+  `outputs/evisoz_stage0_remediation_packet_v1_20260901_r18/` are projections
+  of gate r92 and retain `STAGE0_NO_GO` / external-evidence-required status.
+
+Synthetic authorization tests (including a temporary authorized materializer
+and gate smoke) ran only in `/tmp` and were not persisted as evidence.  They
+verified that a correctly bound development-only receipt produces
+`private_field_envelopes=QUALIFIED_GO` while aggregate Stage-0 remains
+`NO_GO`; the existing SUAT report binding was separately verified to fail
+closed.  The repository test suite currently reports 4 passing tests, and
+schema-registry check plus `compileall` pass after the new bindings.
+
+The subsequent current-snapshot replay supersedes only the pointers above
+(historical receipts remain immutable): clean-freeze r29 is `NO_GO` because
+the authorization-contract changes are uncommitted; Stage-0 gate r93 is
+`NO_GO` with blocking checks `clean_freeze_audit`,
+`offline_teacher_and_derived_candidates`, `private_field_envelopes`, and
+`public_auxiliary_patient_exposure_ledger` (receipt
+`2854507d4a018fc178ebf5b69048b07181e7569a06f4d6147c2cc2c3b8c37210`);
+execution plan r49 and remediation packet r19 are projections of that gate.
+The v2 no-authorization examples replay remains loss-closed, and the
+v2-aware Findings/claim/report and bound-loader replays remain structural and
+non-authorizing.
+
+## Continuation: current clean-worktree remediation replay (2026-09-01 20:26 CST)
+
+All commands in this continuation were run from
+`/mnt/hd1/dyf/workspace/laptop/EviSOZ`.  The controlled `EEG_Seizure` tree was
+used only through explicit read-only paths.  No raw EDF/DOCX, patient mapping,
+private checkpoint, or generated bundle was copied into this repository.
+
+- The authoritative current gate remains
+  `outputs/evisoz_stage0_gate_v1_20260901_r93/gate.json`, status `NO_GO`,
+  receipt SHA-256
+  `2854507d4a018fc178ebf5b69048b07181e7569a06f4d6147c2cc2c3b8c37210`.
+  Its blockers are `clean_freeze_audit`,
+  `offline_teacher_and_derived_candidates`, `private_field_envelopes`, and
+  `public_auxiliary_patient_exposure_ledger`.
+- A new fail-closed execution plan was materialized without replacing prior
+  receipts at
+  `outputs/evisoz_execution_plan_v1_20260901_r50/plan.json`.
+  It is `STAGE0_NO_GO`, plan ID
+  `EVISOZ-PLAN-2c26d37a0a7fae3c16f196bf`, receipt SHA-256
+  `abe7972f82c89b0db7fc53252ca1223b16471b631f77c8c57cd58f2fdee24fba`.
+- A new privacy-safe remediation packet was materialized at
+  `outputs/evisoz_stage0_remediation_packet_v1_20260901_r21/`.  Its status is
+  `prepared_external_evidence_required`, receipt SHA-256
+  `a7e02f68675754ceccbb26a4547c5223a91ccb91e45c776f7a8bffcf430a1c99`.
+  The packet keeps the three unresolved report rows pending, records the ELM
+  discovery as `found_unvalidated`, keeps fold-local calibration count at
+  zero, and contains no report text or patient identifiers.
+- The existing signed SUAT physician-report binding was replayed against the
+  new `evisoz_private_training_authorization_v1` validator using the exact
+  private ledgers.  It failed closed with schema/contract mismatch, as
+  required: report-text authorization is not clinical-label/node-loss
+  authorization.
+- Verification passed: `git diff --check`, the four
+  `test_evisoz_private_training_authorization.py` tests, schema registry check,
+  and `python3 -m compileall -q src scripts code`.
+- ELM model bytes remain outside Git under
+  `/mnt/hd1/dyf/workspace/laptop/EviSOZ_artifacts/elm_public_artifacts_v1_20260901_r1`;
+  only its discovery/runtime receipts are read by this clean worktree.
+
+Formal DataLoader/optimizer construction, private-label fitting, Qwen SFT,
+EEG-to-Qwen alignment, non-zero residual, and large-scale teacher inference
+remain prohibited until a newly replayed aggregate Stage-0 gate is `GO`.

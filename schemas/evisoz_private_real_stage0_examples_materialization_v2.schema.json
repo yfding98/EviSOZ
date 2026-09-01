@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evisoz_private_real_stage0_examples_materialization_v2.schema.json",
+  "title": "Private real Stage-0 field release and training-envelope materialization v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "status", "source_bindings", "events", "counts", "release_policy", "receipt_sha256"],
+  "properties": {
+    "schema_version": {"const": "evisoz_private_real_stage0_examples_materialization_v2"},
+    "status": {"const": "completed_private_real_stage0_field_and_envelope_materialization"},
+    "source_bindings": {"$ref": "#/$defs/sourceBindings"},
+    "events": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/event"}},
+    "counts": {"$ref": "#/$defs/counts"},
+    "release_policy": {"$ref": "#/$defs/releasePolicy"},
+    "receipt_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "artifactRef": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+    "integerMap": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0}},
+    "sourceBindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["real_cohort_manifest_ref", "split_roster_ref", "signal_roster_ref", "target_ledger_ref", "source_manifest_ref", "private_training_authorization_ref"],
+      "properties": {
+        "real_cohort_manifest_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+        "split_roster_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+        "signal_roster_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+        "target_ledger_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+        "source_manifest_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+        "private_training_authorization_ref": {
+          "oneOf": [{"type": "null"}, {"$ref": "evisoz_artifact_ref_v1.schema.json"}]
+        }
+      }
+    },
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["event_id", "sample_id", "linkage_group_id", "evisoz_role", "outer_holdout_fold", "field_release_ref", "training_example_ref", "provided_field_ids", "loss_enabled_field_ids", "enabled_loss_ports", "relative_field_release_path", "relative_training_example_path"],
+      "properties": {
+        "event_id": {"type": "string", "minLength": 1},
+        "sample_id": {"type": "string", "minLength": 1},
+        "linkage_group_id": {"type": "string", "pattern": "^EVISOZ-PAT-[0-9a-f]{24}$"},
+        "evisoz_role": {"enum": ["development_cv", "locked_test"]},
+        "outer_holdout_fold": {"type": ["integer", "null"], "minimum": 0},
+        "field_release_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+        "training_example_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+        "provided_field_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "loss_enabled_field_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "enabled_loss_ports": {"type": "array", "uniqueItems": true, "items": {"enum": ["typed_slot_loss", "node_localization_loss", "report_text_loss"]}},
+        "relative_field_release_path": {"type": "string", "minLength": 1},
+        "relative_training_example_path": {"type": "string", "minLength": 1}
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["event_count", "role_event_counts", "enabled_loss_port_event_counts", "provided_field_event_counts", "loss_enabled_field_event_counts", "physician_report_text_provided_count", "physician_report_text_training_count"],
+      "properties": {
+        "event_count": {"type": "integer", "minimum": 1},
+        "role_event_counts": {"$ref": "#/$defs/integerMap"},
+        "enabled_loss_port_event_counts": {"$ref": "#/$defs/integerMap"},
+        "provided_field_event_counts": {"$ref": "#/$defs/integerMap"},
+        "loss_enabled_field_event_counts": {"$ref": "#/$defs/integerMap"},
+        "physician_report_text_provided_count": {"const": 0},
+        "physician_report_text_training_count": {"const": 0}
+      }
+    },
+    "releasePolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["private_training_authority_present", "private_training_authority_status", "authorized_field_ids", "authorized_loss_ports", "direct_fields_are_evaluator_only", "development_high_confidence_direct_fields_can_train", "low_confidence_fields_are_visible_but_loss_disabled", "locked_test_fields_can_train", "empty_positive_set_is_not_converted_to_negative", "missing_diffuse_token_is_not_converted_to_absence", "morphology_evolution_localizability_quality_unprovided", "physician_report_text_unprovided_pending_deidentification", "generated_text_can_supervise_localization", "report_text_can_supervise_localization"],
+      "properties": {
+        "private_training_authority_present": {"type": "boolean"},
+        "private_training_authority_status": {"enum": ["not_provided", "validated_external"]},
+        "authorized_field_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "authorized_loss_ports": {"type": "array", "uniqueItems": true, "items": {"enum": ["typed_slot_loss", "node_localization_loss"]}},
+        "direct_fields_are_evaluator_only": {"type": "boolean"},
+        "development_high_confidence_direct_fields_can_train": {"type": "boolean"},
+        "low_confidence_fields_are_visible_but_loss_disabled": {"const": true},
+        "locked_test_fields_can_train": {"const": false},
+        "empty_positive_set_is_not_converted_to_negative": {"const": true},
+        "missing_diffuse_token_is_not_converted_to_absence": {"const": true},
+        "morphology_evolution_localizability_quality_unprovided": {"const": true},
+        "physician_report_text_unprovided_pending_deidentification": {"const": true},
+        "generated_text_can_supervise_localization": {"const": false},
+        "report_text_can_supervise_localization": {"const": false}
+      }
+    }
+  }
+}

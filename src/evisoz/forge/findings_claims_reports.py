@@ -50,8 +50,10 @@ from src.evisoz.forge.teacher_candidates import (
     validate_teacher_candidate_materialization,
 )
 from src.evisoz.forge.private_stage0_examples import (
+    LEGACY_PRIVATE_STAGE0_EXAMPLES_SCHEMA_VERSION,
     PRIVATE_STAGE0_EXAMPLES_SCHEMA_VERSION,
 )
+from src.evisoz.forge.training_example import TRAINING_EXAMPLE_SCHEMA_VERSION
 
 
 EVENT_FINDINGS_SCHEMA_VERSION = "evisoz_event_findings_projection_v1"
@@ -277,9 +279,7 @@ def build_event_findings_projection(
         "training_example": _artifact(
             training_example,
             kind="evisoz_training_example",
-            schema=PRIVATE_STAGE0_EXAMPLES_SCHEMA_VERSION.replace(
-                "private_real_stage0_examples_materialization_v1", "training_example_v1"
-            ),
+            schema=TRAINING_EXAMPLE_SCHEMA_VERSION,
         ),
         "montage_derivation": training_example["artifact_refs"]["montage_derivation"],
         "dual_montage_cache": candidate_cache["dual_montage_cache_ref"],
@@ -1015,7 +1015,11 @@ def build_findings_claim_report_materialization(
     candidates_root = Path(deterministic_candidates_root).resolve(strict=True)
     knowledge_path = Path(knowledge_root).resolve(strict=True)
     examples_manifest = _read_json(examples_root / "manifest.json")
-    if examples_manifest.get("schema_version") != PRIVATE_STAGE0_EXAMPLES_SCHEMA_VERSION:
+    examples_manifest_schema = examples_manifest.get("schema_version")
+    if examples_manifest_schema not in {
+        PRIVATE_STAGE0_EXAMPLES_SCHEMA_VERSION,
+        LEGACY_PRIVATE_STAGE0_EXAMPLES_SCHEMA_VERSION,
+    }:
         raise ValueError("private examples manifest schema drifted")
     candidates_manifest = _read_json(candidates_root / "manifest.json")
     validate_deterministic_signal_candidate_materialization(
@@ -1145,7 +1149,7 @@ def build_findings_claim_report_materialization(
             "materialization_id": _PENDING_ID,
             "status": "complete_signal_shadow_evaluator_reference_materialization",
             "source_refs": {
-                "private_examples_manifest": _artifact(examples_manifest, kind="evisoz_private_real_examples_manifest", schema=PRIVATE_STAGE0_EXAMPLES_SCHEMA_VERSION),
+                "private_examples_manifest": _artifact(examples_manifest, kind="evisoz_private_real_examples_manifest", schema=str(examples_manifest_schema)),
                 "deterministic_candidates_manifest": _artifact(candidates_manifest, kind="deterministic_signal_candidate_materialization", schema=CANDIDATE_MATERIALIZATION_SCHEMA_VERSION),
                 "knowledge_manifest": _artifact(knowledge_manifest, kind="eeg_knowledge_manifest", schema="eeg_external_knowledge_manifest_v2"),
             },

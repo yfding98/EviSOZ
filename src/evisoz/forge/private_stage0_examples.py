@@ -14,6 +14,7 @@ from src.evisoz.data.artifact_ref import (
     build_json_artifact_ref,
     build_raw_artifact_ref,
     canonical_json_sha256,
+    validate_artifact_ref,
 )
 from src.evisoz.data.dataset_policy import (
     CATEGORICAL_LABEL_VALUE_SCHEMA_VERSION,
@@ -26,6 +27,10 @@ from src.evisoz.data.dataset_policy import (
 from src.evisoz.data.event_identity import validate_event_identity
 from src.evisoz.data.private_stage0_split import (
     build_private_patient_linkage_group,
+)
+from src.evisoz.data.private_training_authorization import (
+    PRIVATE_TRAINING_AUTHORIZATION_SCHEMA_VERSION,
+    validate_private_training_authorization,
 )
 from src.evisoz.data.split_ledger import (
     SPLIT_ROSTER_SCHEMA_VERSION,
@@ -41,6 +46,9 @@ from src.soz.geometry import STANDARD_19
 
 
 PRIVATE_STAGE0_EXAMPLES_SCHEMA_VERSION = (
+    "evisoz_private_real_stage0_examples_materialization_v2"
+)
+LEGACY_PRIVATE_STAGE0_EXAMPLES_SCHEMA_VERSION = (
     "evisoz_private_real_stage0_examples_materialization_v1"
 )
 _FIELD_RELEASE_SCHEMA_VERSION = "evisoz_field_release_v1"
@@ -115,18 +123,26 @@ def _patient_authority(
     return result
 
 
-def _dataset_capability(split_roster: Mapping[str, object]) -> dict[str, object]:
-    loss_none = {
-        "typed_slot_loss": False,
-        "node_localization_loss": False,
-        "report_text_loss": False,
-    }
-    # Existing private doctor-label artifacts are evaluation_only.  A schema
-    # materializer cannot manufacture the missing clinical/data-governance
-    # authorization, so every private capability remains loss-closed here.
-    typed = dict(loss_none)
-    node = dict(loss_none)
-    text = dict(loss_none)
+def _dataset_capability(
+    split_roster: Mapping[str, object],
+    *,
+    private_training_authorization: Mapping[str, object] | None = None,
+) -> dict[str, object]:
+    authorized_ports_by_field: dict[str, set[str]] = {}
+    if private_training_authorization is not None:
+        scope = private_training_authorization["field_scope"]
+        authorized_ports_by_field = {
+            str(row["field_id"]): set(row["loss_ports"])
+            for row in scope["field_permissions"]
+        }
+
+    def losses(field_id: str) -> dict[str, bool]:
+        ports = authorized_ports_by_field.get(field_id, set())
+        return {
+            "typed_slot_loss": "typed_slot_loss" in ports,
+            "node_localization_loss": "node_localization_loss" in ports,
+            "report_text_loss": False,
+        }
 
     def row(
         field_id: str,
@@ -154,7 +170,7 @@ def _dataset_capability(split_roster: Mapping[str, object]) -> dict[str, object]
             "clinical_labels.diffuse_spread",
             "spread",
             CATEGORICAL_LABEL_VALUE_SCHEMA_VERSION,
-            typed,
+            losses("PRIVATE-DIFFUSE-SPREAD"),
             report_target=True,
         ),
         row(
@@ -162,7 +178,7 @@ def _dataset_capability(split_roster: Mapping[str, object]) -> dict[str, object]
             "clinical_labels.early_spread_channels",
             "spread",
             CHANNEL_SET_VALUE_SCHEMA_VERSION,
-            typed,
+            losses("PRIVATE-EARLY-SPREAD-NODES"),
             report_target=True,
         ),
         row(
@@ -170,7 +186,7 @@ def _dataset_capability(split_roster: Mapping[str, object]) -> dict[str, object]
             "clinical_labels.evolution",
             "evolution",
             CATEGORICAL_LABEL_VALUE_SCHEMA_VERSION,
-            typed,
+            losses("PRIVATE-EVOLUTION"),
             report_target=True,
         ),
         row(
@@ -178,7 +194,7 @@ def _dataset_capability(split_roster: Mapping[str, object]) -> dict[str, object]
             "clinical_labels.laterality",
             "laterality_label",
             CATEGORICAL_LABEL_VALUE_SCHEMA_VERSION,
-            typed,
+            losses("PRIVATE-LATERALITY"),
             report_target=True,
         ),
         row(
@@ -186,7 +202,7 @@ def _dataset_capability(split_roster: Mapping[str, object]) -> dict[str, object]
             "clinical_labels.localizability",
             "localizability",
             CATEGORICAL_LABEL_VALUE_SCHEMA_VERSION,
-            typed,
+            losses("PRIVATE-LOCALIZABILITY"),
             report_target=True,
         ),
         row(
@@ -194,7 +210,7 @@ def _dataset_capability(split_roster: Mapping[str, object]) -> dict[str, object]
             "clinical_labels.morphology",
             "morphology",
             CATEGORICAL_LABEL_VALUE_SCHEMA_VERSION,
-            typed,
+            losses("PRIVATE-MORPHOLOGY"),
             report_target=True,
         ),
         row(
@@ -202,7 +218,7 @@ def _dataset_capability(split_roster: Mapping[str, object]) -> dict[str, object]
             "clinical_labels.onset_candidate_channels",
             "node_label",
             NODE_LABEL_VALUE_SCHEMA_VERSION,
-            node,
+            losses("PRIVATE-ONSET-NODES"),
             report_target=True,
         ),
         row(
@@ -210,7 +226,7 @@ def _dataset_capability(split_roster: Mapping[str, object]) -> dict[str, object]
             "clinical_labels.onset_candidate_regions",
             "region_label",
             REGION_SET_VALUE_SCHEMA_VERSION,
-            typed,
+            losses("PRIVATE-ONSET-REGIONS"),
             report_target=True,
         ),
         row(
@@ -218,7 +234,7 @@ def _dataset_capability(split_roster: Mapping[str, object]) -> dict[str, object]
             "physician_report.text",
             "text",
             REPORT_TEXT_VALUE_SCHEMA_VERSION,
-            text,
+            losses("PRIVATE-PHYSICIAN-REPORT-TEXT"),
             report_target=True,
         ),
         row(
@@ -226,7 +242,7 @@ def _dataset_capability(split_roster: Mapping[str, object]) -> dict[str, object]
             "clinical_labels.signal_quality",
             "quality",
             CATEGORICAL_LABEL_VALUE_SCHEMA_VERSION,
-            typed,
+            losses("PRIVATE-QUALITY"),
             report_target=True,
         ),
     ]
@@ -314,14 +330,33 @@ def _direct_fields(
     source: Mapping[str, str],
     capability: Mapping[str, object],
     role: str,
+    private_training_authorization: Mapping[str, object] | None = None,
 ) -> tuple[list[dict[str, object]], dict[str, object]]:
     by_id = {row["field_id"]: row for row in capability["field_roster"]}
     trusted: dict[str, object] = {}
     confidence = float(source.get("label_confidence", "nan"))
     high_confidence = confidence == 1.0
-    can_train = False
     quality = "gold_lite" if high_confidence else "uncertain"
     claim = "direct" if high_confidence else "none"
+
+    authorized_ports_by_field: dict[str, set[str]] = {}
+    if private_training_authorization is not None:
+        authorized_ports_by_field = {
+            str(row["field_id"]): set(row["loss_ports"])
+            for row in private_training_authorization["field_scope"][
+                "field_permissions"
+            ]
+        }
+
+    def field_losses(field_id: str) -> tuple[bool, bool]:
+        # Only high-confidence development rows may emit loss. The external
+        # receipt is additionally field/port scoped; evaluator-only and
+        # locked-test rows remain completely loss-closed.
+        if role != "development_cv" or not high_confidence:
+            return False, False
+        ports = authorized_ports_by_field.get(field_id, set())
+        return "typed_slot_loss" in ports, "node_localization_loss" in ports
+
     fields: list[dict[str, object]] = []
 
     onset = _parse_channel_list(
@@ -330,6 +365,7 @@ def _direct_fields(
     )
     onset_cap = by_id["PRIVATE-ONSET-NODES"]
     if onset:
+        typed_loss, node_loss = field_losses("PRIVATE-ONSET-NODES")
         fields.append(
             _provided(
                 onset_cap,
@@ -338,8 +374,8 @@ def _direct_fields(
                 authority="physician",
                 quality_tier=quality,
                 claim_permission=claim,
-                typed_slot_loss=can_train,
-                node_localization_loss=can_train,
+                typed_slot_loss=typed_loss,
+                node_localization_loss=node_loss,
             )
         )
     else:
@@ -348,6 +384,7 @@ def _direct_fields(
     laterality_cap = by_id["PRIVATE-LATERALITY"]
     hemisphere = source.get("hemisphere")
     if hemisphere in {"L", "R"}:
+        typed_loss, _ = field_losses("PRIVATE-LATERALITY")
         fields.append(
             _provided(
                 laterality_cap,
@@ -359,7 +396,7 @@ def _direct_fields(
                 authority="physician",
                 quality_tier=quality,
                 claim_permission=claim,
-                typed_slot_loss=can_train,
+                typed_slot_loss=typed_loss,
             )
         )
     else:
@@ -372,6 +409,7 @@ def _direct_fields(
     if any(region not in _ALLOWED_REGIONS for region in regions):
         raise ValueError("private onset region vocabulary drifted")
     if regions:
+        typed_loss, _ = field_losses("PRIVATE-ONSET-REGIONS")
         fields.append(
             _provided(
                 regions_cap,
@@ -380,7 +418,7 @@ def _direct_fields(
                 authority="dataset_direct",
                 quality_tier="silver" if high_confidence else "uncertain",
                 claim_permission=claim,
-                typed_slot_loss=can_train,
+                typed_slot_loss=typed_loss,
             )
         )
     else:
@@ -392,6 +430,7 @@ def _direct_fields(
         "known_spread_electrodes",
     )
     if spread:
+        typed_loss, _ = field_losses("PRIVATE-EARLY-SPREAD-NODES")
         fields.append(
             _provided(
                 spread_cap,
@@ -400,7 +439,7 @@ def _direct_fields(
                 authority="physician",
                 quality_tier=quality,
                 claim_permission=claim,
-                typed_slot_loss=can_train,
+                typed_slot_loss=typed_loss,
             )
         )
     else:
@@ -409,6 +448,7 @@ def _direct_fields(
     diffuse_cap = by_id["PRIVATE-DIFFUSE-SPREAD"]
     diffuse = target.get("diffuse_spread_present")
     if diffuse == "1":
+        typed_loss, _ = field_losses("PRIVATE-DIFFUSE-SPREAD")
         fields.append(
             _provided(
                 diffuse_cap,
@@ -420,7 +460,7 @@ def _direct_fields(
                 authority="physician",
                 quality_tier=quality,
                 claim_permission=claim,
-                typed_slot_loss=can_train,
+                typed_slot_loss=typed_loss,
             )
         )
     elif diffuse == "0":
@@ -464,8 +504,16 @@ def materialize_private_stage0_examples(
     source_manifest_path: Path,
     output: Path,
     limit: int | None = None,
+    private_training_authorization_path: Path | None = None,
 ) -> dict[str, Any]:
-    """Materialize real private field releases and v1 training envelopes."""
+    """Materialize real private field releases and training envelopes.
+
+    Without ``private_training_authorization_path`` this intentionally emits
+    an evaluator-only v2 manifest.  With it, the external receipt is replayed
+    against every source binding before any field-level loss permission can be
+    enabled.  The report-text authorization is a separate contract and is not
+    accepted here.
+    """
 
     if output.exists() or output.is_symlink():
         raise FileExistsError(output)
@@ -492,7 +540,59 @@ def materialize_private_stage0_examples(
     assignment_by_group = {
         row["linkage_group_id"]: row for row in split["assignments"]
     }
-    capability = _dataset_capability(split)
+    source_binding_refs: dict[str, object] = {
+        "split_roster_ref": build_json_artifact_ref(
+            split,
+            artifact_kind="split_roster",
+            payload_schema_version=SPLIT_ROSTER_SCHEMA_VERSION,
+        ),
+        "signal_roster_ref": _raw_ref(
+            signal_roster_path,
+            kind="private_signal_roster",
+            media_type="text/csv",
+        ),
+        "target_ledger_ref": _raw_ref(
+            target_ledger_path,
+            kind="private_target_ledger",
+            media_type="text/csv",
+        ),
+        "source_manifest_ref": _raw_ref(
+            source_manifest_path,
+            kind="private_label_authority_manifest",
+            media_type="text/csv",
+        ),
+        "dataset_id": "private",
+        "patient_roster_sha256": split["receipt_sha256"],
+    }
+    private_training_authorization: dict[str, Any] | None = None
+    private_training_authorization_ref: dict[str, Any] | None = None
+    if private_training_authorization_path is not None:
+        authorization_path = private_training_authorization_path.resolve(strict=True)
+        if authorization_path.is_symlink() or not authorization_path.is_file():
+            raise ValueError("private training authorization must be a regular JSON file")
+        authorization_bytes = authorization_path.read_bytes()
+        try:
+            authorization_value = json.loads(authorization_bytes.decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+            raise ValueError("private training authorization is not strict UTF-8 JSON") from exc
+        private_training_authorization = validate_private_training_authorization(
+            authorization_value,
+            expected_bindings=source_binding_refs,
+            expected_field_ids={
+                str(row["field_id"])
+                for row in _dataset_capability(split)["field_roster"]
+            },
+        )
+        private_training_authorization_ref = build_raw_artifact_ref(
+            authorization_bytes,
+            artifact_kind="private_training_authorization",
+            media_type="application/json",
+            payload_schema_version=PRIVATE_TRAINING_AUTHORIZATION_SCHEMA_VERSION,
+        )
+    capability = _dataset_capability(
+        split,
+        private_training_authorization=private_training_authorization,
+    )
     signal_by_event = {row["event_id"]: row for row in signal_rows}
     target_by_event = {row["event_id"]: row for row in target_rows}
     if len(signal_by_event) != len(signal_rows) or len(target_by_event) != len(target_rows):
@@ -566,6 +666,7 @@ def materialize_private_stage0_examples(
             source=source,
             capability=capability,
             role=str(assignment["evisoz_role"]),
+            private_training_authorization=private_training_authorization,
         )
         release = build_field_release(
             dataset_id="private",
@@ -673,6 +774,7 @@ def materialize_private_stage0_examples(
                 kind="private_label_authority_manifest",
                 media_type="text/csv",
             ),
+            "private_training_authorization_ref": private_training_authorization_ref,
         },
         "events": manifest_rows,
         "counts": {
@@ -685,9 +787,33 @@ def materialize_private_stage0_examples(
             "physician_report_text_training_count": 0,
         },
         "release_policy": {
-            "private_training_authority_present": False,
-            "direct_fields_are_evaluator_only": True,
-            "development_high_confidence_direct_fields_can_train": False,
+            "private_training_authority_present": private_training_authorization is not None,
+            "private_training_authority_status": (
+                "validated_external"
+                if private_training_authorization is not None
+                else "not_provided"
+            ),
+            "authorized_field_ids": sorted(
+                row["field_id"]
+                for row in (
+                    private_training_authorization["field_scope"]["field_permissions"]
+                    if private_training_authorization is not None
+                    else []
+                )
+            ),
+            "authorized_loss_ports": sorted(
+                {
+                    port
+                    for row in (
+                        private_training_authorization["field_scope"]["field_permissions"]
+                        if private_training_authorization is not None
+                        else []
+                    )
+                    for port in row["loss_ports"]
+                }
+            ),
+            "direct_fields_are_evaluator_only": private_training_authorization is None,
+            "development_high_confidence_direct_fields_can_train": private_training_authorization is not None,
             "low_confidence_fields_are_visible_but_loss_disabled": True,
             "locked_test_fields_can_train": False,
             "empty_positive_set_is_not_converted_to_negative": True,
@@ -708,6 +834,18 @@ def materialize_private_stage0_examples(
         split_roster=split,
         trusted_groups=trusted_groups,
         cohort_root=cohort_root,
+        private_training_authorization=private_training_authorization,
+        private_training_authorization_bytes=(
+            authorization_bytes if private_training_authorization_path is not None else None
+        ),
+        expected_source_bindings={
+            **source_binding_refs,
+            "real_cohort_manifest_ref": build_json_artifact_ref(
+                cohort,
+                artifact_kind="private_real_stage0_cohort_manifest",
+                payload_schema_version=str(cohort["schema_version"]),
+            ),
+        },
     )
 
 
@@ -718,6 +856,9 @@ def validate_private_stage0_examples_materialization(
     split_roster: Mapping[str, object],
     trusted_groups: Mapping[str, Mapping[str, object]],
     cohort_root: Path,
+    private_training_authorization: Mapping[str, object] | None = None,
+    private_training_authorization_bytes: bytes | None = None,
+    expected_source_bindings: Mapping[str, object] | None = None,
 ) -> dict[str, Any]:
     """Reopen and validate every real private field/envelope pair."""
 
@@ -732,10 +873,91 @@ def validate_private_stage0_examples_materialization(
     }:
         raise ValueError("private Stage-0 example materialization fields drifted")
     data = deepcopy(value)
-    if data["schema_version"] != PRIVATE_STAGE0_EXAMPLES_SCHEMA_VERSION or data[
+    schema_version = data["schema_version"]
+    if schema_version not in {
+        PRIVATE_STAGE0_EXAMPLES_SCHEMA_VERSION,
+        LEGACY_PRIVATE_STAGE0_EXAMPLES_SCHEMA_VERSION,
+    } or data[
         "status"
     ] != "completed_private_real_stage0_field_and_envelope_materialization":
         raise ValueError("private Stage-0 example materialization status drifted")
+    is_v2 = schema_version == PRIVATE_STAGE0_EXAMPLES_SCHEMA_VERSION
+    source_bindings = data["source_bindings"]
+    expected_source_keys = {
+        "real_cohort_manifest_ref",
+        "split_roster_ref",
+        "signal_roster_ref",
+        "target_ledger_ref",
+        "source_manifest_ref",
+    }
+    if is_v2:
+        expected_source_keys.add("private_training_authorization_ref")
+    if type(source_bindings) is not dict or set(source_bindings) != expected_source_keys:
+        raise ValueError("private Stage-0 source bindings drifted")
+    if source_bindings["split_roster_ref"] != build_json_artifact_ref(
+        split_roster,
+        artifact_kind="split_roster",
+        payload_schema_version=SPLIT_ROSTER_SCHEMA_VERSION,
+    ):
+        raise ValueError("private Stage-0 split roster binding drifted")
+    for key in (
+        "real_cohort_manifest_ref",
+        "split_roster_ref",
+        "signal_roster_ref",
+        "target_ledger_ref",
+        "source_manifest_ref",
+    ):
+        validate_artifact_ref(source_bindings[key])
+    if is_v2 and source_bindings["private_training_authorization_ref"] is not None:
+        validate_artifact_ref(source_bindings["private_training_authorization_ref"])
+    if expected_source_bindings is not None:
+        for key, expected in expected_source_bindings.items():
+            if key in source_bindings and source_bindings[key] != expected:
+                raise ValueError(f"private Stage-0 {key} binding drifted")
+
+    if is_v2:
+        authorization_ref = source_bindings["private_training_authorization_ref"]
+        if private_training_authorization is None:
+            if authorization_ref is not None:
+                raise ValueError("private training authorization receipt is required to replay v2")
+            if private_training_authorization_bytes is not None:
+                raise ValueError("private training authorization bytes supplied without receipt")
+        else:
+            if authorization_ref is None or private_training_authorization_bytes is None:
+                raise ValueError("v2 authorized materialization must bind raw authorization bytes")
+            expected_auth_ref = build_raw_artifact_ref(
+                private_training_authorization_bytes,
+                artifact_kind="private_training_authorization",
+                media_type="application/json",
+                payload_schema_version=PRIVATE_TRAINING_AUTHORIZATION_SCHEMA_VERSION,
+            )
+            if authorization_ref != expected_auth_ref:
+                raise ValueError("private training authorization artifact reference drifted")
+            private_training_authorization = validate_private_training_authorization(
+                private_training_authorization,
+                expected_bindings={
+                    "dataset_id": "private",
+                    "patient_roster_sha256": split_roster["receipt_sha256"],
+                    "split_roster_ref": source_bindings["split_roster_ref"],
+                    "signal_roster_ref": source_bindings["signal_roster_ref"],
+                    "target_ledger_ref": source_bindings["target_ledger_ref"],
+                    "source_manifest_ref": source_bindings["source_manifest_ref"],
+                },
+                expected_field_ids={
+                    "PRIVATE-DIFFUSE-SPREAD",
+                    "PRIVATE-EARLY-SPREAD-NODES",
+                    "PRIVATE-EVOLUTION",
+                    "PRIVATE-LATERALITY",
+                    "PRIVATE-LOCALIZABILITY",
+                    "PRIVATE-MORPHOLOGY",
+                    "PRIVATE-ONSET-NODES",
+                    "PRIVATE-ONSET-REGIONS",
+                    "PRIVATE-PHYSICIAN-REPORT-TEXT",
+                    "PRIVATE-QUALITY",
+                },
+            )
+    elif private_training_authorization is not None or private_training_authorization_bytes is not None:
+        raise ValueError("legacy v1 materialization cannot carry a training authorization")
     roster = validate_split_roster(
         split_roster,
         trusted_linkage_groups=trusted_groups,
@@ -823,6 +1045,27 @@ def validate_private_stage0_examples_materialization(
             trusted_event_identity=identity,
             trusted_values_by_artifact_id=trusted_values,
         )
+        authorized_ports_by_field = {
+            str(item["field_id"]): set(item["loss_ports"])
+            for item in (
+                private_training_authorization["field_scope"]["field_permissions"]
+                if private_training_authorization is not None
+                else []
+            )
+        }
+        for capability_row in release["dataset_capability"]["field_roster"]:
+            expected_ports = authorized_ports_by_field.get(
+                str(capability_row["field_id"]), set()
+            )
+            expected_loss = {
+                "typed_slot_loss": "typed_slot_loss" in expected_ports,
+                "node_localization_loss": "node_localization_loss" in expected_ports,
+                "report_text_loss": False,
+            }
+            if capability_row["loss_allowed"] != expected_loss:
+                raise ValueError(
+                    "private field capability loss permission is not bound to authorization"
+                )
         example = validate_training_example(
             example,
             split_roster=roster,
@@ -871,10 +1114,27 @@ def validate_private_stage0_examples_materialization(
     }
     if data["counts"] != expected_counts:
         raise ValueError("private Stage-0 example materialization counts drifted")
-    if data["release_policy"] != {
-        "private_training_authority_present": False,
-        "direct_fields_are_evaluator_only": True,
-        "development_high_confidence_direct_fields_can_train": False,
+    expected_authorized_field_ids = sorted(
+        authorized_ports_by_field
+    ) if private_training_authorization is not None else []
+    expected_authorized_loss_ports = sorted(
+        {
+            port
+            for ports in authorized_ports_by_field.values()
+            for port in ports
+        }
+    ) if private_training_authorization is not None else []
+    expected_policy = {
+        "private_training_authority_present": private_training_authorization is not None,
+        "private_training_authority_status": (
+            "validated_external"
+            if private_training_authorization is not None
+            else "not_provided"
+        ),
+        "authorized_field_ids": expected_authorized_field_ids,
+        "authorized_loss_ports": expected_authorized_loss_ports,
+        "direct_fields_are_evaluator_only": private_training_authorization is None,
+        "development_high_confidence_direct_fields_can_train": private_training_authorization is not None,
         "low_confidence_fields_are_visible_but_loss_disabled": True,
         "locked_test_fields_can_train": False,
         "empty_positive_set_is_not_converted_to_negative": True,
@@ -883,7 +1143,8 @@ def validate_private_stage0_examples_materialization(
         "physician_report_text_unprovided_pending_deidentification": True,
         "generated_text_can_supervise_localization": False,
         "report_text_can_supervise_localization": False,
-    }:
+    }
+    if data["release_policy"] != expected_policy:
         raise ValueError("private Stage-0 example release policy drifted")
     if data["receipt_sha256"] != canonical_json_sha256(
         _manifest_hash_source(data)

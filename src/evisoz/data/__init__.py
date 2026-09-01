@@ -23,6 +23,11 @@ from .private_physician_report_release import (
     materialize_private_physician_report_release,
     validate_private_physician_report_release,
 )
+from .private_training_authorization import (
+    PRIVATE_TRAINING_AUTHORIZATION_SCHEMA_VERSION,
+    build_private_training_authorization,
+    validate_private_training_authorization,
+)
 from .split_ledger import (
     PATIENT_LINKAGE_EVIDENCE_SCHEMA_VERSION,
     build_patient_linkage_group,
@@ -53,6 +58,9 @@ __all__ = [
     "build_private_physician_report_release",
     "materialize_private_physician_report_release",
     "validate_private_physician_report_release",
+    "PRIVATE_TRAINING_AUTHORIZATION_SCHEMA_VERSION",
+    "build_private_training_authorization",
+    "validate_private_training_authorization",
     "PATIENT_LINKAGE_EVIDENCE_SCHEMA_VERSION",
     "validate_patient_linkage_evidence",
     "build_patient_linkage_group",

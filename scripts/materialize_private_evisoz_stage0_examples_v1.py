@@ -42,6 +42,14 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--signal-roster", type=Path, default=DEFAULT_SIGNAL)
     parser.add_argument("--target-ledger", type=Path, default=DEFAULT_TARGET)
     parser.add_argument("--source-manifest", type=Path, default=DEFAULT_SOURCE)
+    parser.add_argument(
+        "--private-training-authorization",
+        type=Path,
+        help=(
+            "optional external data-controller authorization receipt; when absent, "
+            "all private fields remain evaluator-only"
+        ),
+    )
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--limit", type=int)
     return parser
@@ -57,6 +65,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         source_manifest_path=args.source_manifest,
         output=args.output,
         limit=args.limit,
+        private_training_authorization_path=args.private_training_authorization,
     )
     (args.output / "manifest.json").write_text(
         json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False) + "\n",

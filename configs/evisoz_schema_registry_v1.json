@@ -1,6 +1,6 @@
 {
   "schema_version": "evisoz_schema_registry_v1",
-  "registry_id": "EVISOZ-SCHEMAS-2a7d3a87859319f017673172",
+  "registry_id": "EVISOZ-SCHEMAS-93f078e42db69e67c826d136",
   "entries": [
     {
       "bound_schema_version": "clinical_eeg_montage_reference_observability_v1",
@@ -103,16 +103,16 @@
         "implementation_path": "src/evisoz/forge/evidence_binding.py",
         "implementation_artifact_ref": {
           "schema_version": "evisoz_artifact_ref_v1",
-          "artifact_id": "EVISOZ-ART-d92a320604d73d1126af1f4c",
+          "artifact_id": "EVISOZ-ART-0d39fbb75c0a7c6000c09148",
           "artifact_kind": "validator_implementation",
           "media_type": "text/x-python",
           "content_hash": {
             "domain": "raw_bytes_v1",
-            "sha256": "6ea18d000fd4d87a10044cfca8952048c57f07bf37e0c4201919cbb69046f538",
-            "size_bytes": 38951
+            "sha256": "fc49cb39b334ea098ce2d1229df4246b611ccf1b1abb6d0a31f63114537503f3",
+            "size_bytes": 39006
           },
           "payload_schema_version": null,
-          "ref_sha256": "dde1266d5a655af38cbbb7dd15a1afd113576c0c0ab88388beaf74447d781bb7"
+          "ref_sha256": "8bdbc6eb8fabe54897a260c24353ba91ec2e8ab8cb9c49d2babcd7accdeb2af0"
         }
       }
     },
@@ -179,16 +179,16 @@
         "implementation_path": "src/evisoz/forge/evidence_binding.py",
         "implementation_artifact_ref": {
           "schema_version": "evisoz_artifact_ref_v1",
-          "artifact_id": "EVISOZ-ART-d92a320604d73d1126af1f4c",
+          "artifact_id": "EVISOZ-ART-0d39fbb75c0a7c6000c09148",
           "artifact_kind": "validator_implementation",
           "media_type": "text/x-python",
           "content_hash": {
             "domain": "raw_bytes_v1",
-            "sha256": "6ea18d000fd4d87a10044cfca8952048c57f07bf37e0c4201919cbb69046f538",
-            "size_bytes": 38951
+            "sha256": "fc49cb39b334ea098ce2d1229df4246b611ccf1b1abb6d0a31f63114537503f3",
+            "size_bytes": 39006
           },
           "payload_schema_version": null,
-          "ref_sha256": "dde1266d5a655af38cbbb7dd15a1afd113576c0c0ab88388beaf74447d781bb7"
+          "ref_sha256": "8bdbc6eb8fabe54897a260c24353ba91ec2e8ab8cb9c49d2babcd7accdeb2af0"
         }
       }
     },
@@ -293,16 +293,16 @@
         "implementation_path": "src/evisoz/forge/findings_claims_reports.py",
         "implementation_artifact_ref": {
           "schema_version": "evisoz_artifact_ref_v1",
-          "artifact_id": "EVISOZ-ART-e14d71b12f6a17997dfcd347",
+          "artifact_id": "EVISOZ-ART-857a988198e715c50046e46d",
           "artifact_kind": "validator_implementation",
           "media_type": "text/x-python",
           "content_hash": {
             "domain": "raw_bytes_v1",
-            "sha256": "6e36e80cc78d1f1293fff6be0cb311abd4902a111a99e99bc2f2375efb22ed2e",
-            "size_bytes": 66495
+            "sha256": "791282007c60b25fdaeb1f508dfb99ccb478c1a60d8fdcd19b31cf66ff948feb",
+            "size_bytes": 66628
           },
           "payload_schema_version": null,
-          "ref_sha256": "f710b8b137b419f71431b64fc4cdabc4e7c371e6bc65bed56d2f3308bd6eaf44"
+          "ref_sha256": "42f9dc69c93533ceb6b6e79dd6f5f9ea32d712fcea02ad4cb74c2d64e8843069"
         }
       }
     },
@@ -521,16 +521,16 @@
         "implementation_path": "src/evisoz/forge/findings_claims_reports.py",
         "implementation_artifact_ref": {
           "schema_version": "evisoz_artifact_ref_v1",
-          "artifact_id": "EVISOZ-ART-e14d71b12f6a17997dfcd347",
+          "artifact_id": "EVISOZ-ART-857a988198e715c50046e46d",
           "artifact_kind": "validator_implementation",
           "media_type": "text/x-python",
           "content_hash": {
             "domain": "raw_bytes_v1",
-            "sha256": "6e36e80cc78d1f1293fff6be0cb311abd4902a111a99e99bc2f2375efb22ed2e",
-            "size_bytes": 66495
+            "sha256": "791282007c60b25fdaeb1f508dfb99ccb478c1a60d8fdcd19b31cf66ff948feb",
+            "size_bytes": 66628
           },
           "payload_schema_version": null,
-          "ref_sha256": "f710b8b137b419f71431b64fc4cdabc4e7c371e6bc65bed56d2f3308bd6eaf44"
+          "ref_sha256": "42f9dc69c93533ceb6b6e79dd6f5f9ea32d712fcea02ad4cb74c2d64e8843069"
         }
       }
     },
@@ -673,16 +673,16 @@
         "implementation_path": "src/evisoz/forge/findings_claims_reports.py",
         "implementation_artifact_ref": {
           "schema_version": "evisoz_artifact_ref_v1",
-          "artifact_id": "EVISOZ-ART-e14d71b12f6a17997dfcd347",
+          "artifact_id": "EVISOZ-ART-857a988198e715c50046e46d",
           "artifact_kind": "validator_implementation",
           "media_type": "text/x-python",
           "content_hash": {
             "domain": "raw_bytes_v1",
-            "sha256": "6e36e80cc78d1f1293fff6be0cb311abd4902a111a99e99bc2f2375efb22ed2e",
-            "size_bytes": 66495
+            "sha256": "791282007c60b25fdaeb1f508dfb99ccb478c1a60d8fdcd19b31cf66ff948feb",
+            "size_bytes": 66628
           },
           "payload_schema_version": null,
-          "ref_sha256": "f710b8b137b419f71431b64fc4cdabc4e7c371e6bc65bed56d2f3308bd6eaf44"
+          "ref_sha256": "42f9dc69c93533ceb6b6e79dd6f5f9ea32d712fcea02ad4cb74c2d64e8843069"
         }
       }
     },
@@ -749,16 +749,16 @@
         "implementation_path": "src/evisoz/forge/findings_claims_reports.py",
         "implementation_artifact_ref": {
           "schema_version": "evisoz_artifact_ref_v1",
-          "artifact_id": "EVISOZ-ART-e14d71b12f6a17997dfcd347",
+          "artifact_id": "EVISOZ-ART-857a988198e715c50046e46d",
           "artifact_kind": "validator_implementation",
           "media_type": "text/x-python",
           "content_hash": {
             "domain": "raw_bytes_v1",
-            "sha256": "6e36e80cc78d1f1293fff6be0cb311abd4902a111a99e99bc2f2375efb22ed2e",
-            "size_bytes": 66495
+            "sha256": "791282007c60b25fdaeb1f508dfb99ccb478c1a60d8fdcd19b31cf66ff948feb",
+            "size_bytes": 66628
           },
           "payload_schema_version": null,
-          "ref_sha256": "f710b8b137b419f71431b64fc4cdabc4e7c371e6bc65bed56d2f3308bd6eaf44"
+          "ref_sha256": "42f9dc69c93533ceb6b6e79dd6f5f9ea32d712fcea02ad4cb74c2d64e8843069"
         }
       }
     },
@@ -1129,16 +1129,54 @@
         "implementation_path": "src/evisoz/forge/private_stage0_examples.py",
         "implementation_artifact_ref": {
           "schema_version": "evisoz_artifact_ref_v1",
-          "artifact_id": "EVISOZ-ART-f355f4e32c9d0253bea34ad0",
+          "artifact_id": "EVISOZ-ART-f95301280ff019fc5129ddc3",
           "artifact_kind": "validator_implementation",
           "media_type": "text/x-python",
           "content_hash": {
             "domain": "raw_bytes_v1",
-            "sha256": "ff909e35544211f38782ead0ca91946c99b12a773d1f0fdc983f667bec346599",
-            "size_bytes": 33890
+            "sha256": "196b37e64c6ae52a9b53f00e20f790953b0b5853c6e5b43941ac9c37ffeec983",
+            "size_bytes": 46449
           },
           "payload_schema_version": null,
-          "ref_sha256": "5e0f47d289cba5329303ea92e605fa2409a1ff8362e46ba2b858d8020f7ba80d"
+          "ref_sha256": "2b91528e490fb85c3ead08b31bfae4fd2b95bba6d5d1b266d0736290a7b39c36"
+        }
+      }
+    },
+    {
+      "bound_schema_version": "evisoz_private_real_stage0_examples_materialization_v2",
+      "schema_id": "evisoz_private_real_stage0_examples_materialization_v2.schema.json",
+      "schema_path": "schemas/evisoz_private_real_stage0_examples_materialization_v2.schema.json",
+      "schema_artifact_ref": {
+        "schema_version": "evisoz_artifact_ref_v1",
+        "artifact_id": "EVISOZ-ART-b293d0100bac839c246d87f9",
+        "artifact_kind": "json_schema",
+        "media_type": "application/schema+json",
+        "content_hash": {
+          "domain": "raw_bytes_v1",
+          "sha256": "9f4ab4e4dde6147a4675b37c359c62fba80bf283ff265158e2d7a74849f2dac5",
+          "size_bytes": 6146
+        },
+        "payload_schema_version": "evisoz_private_real_stage0_examples_materialization_v2",
+        "ref_sha256": "904f37253d6656ad05fcd2739cbd16c96e703afa4dd7e6be8a81ee6612ed636c"
+      },
+      "validator": {
+        "validator_id": "evisoz_private_real_stage0_examples_materialization_v2_validator",
+        "implementation_version": "1",
+        "module": "src.evisoz.forge.private_stage0_examples",
+        "callable": "validate_private_stage0_examples_materialization",
+        "implementation_path": "src/evisoz/forge/private_stage0_examples.py",
+        "implementation_artifact_ref": {
+          "schema_version": "evisoz_artifact_ref_v1",
+          "artifact_id": "EVISOZ-ART-f95301280ff019fc5129ddc3",
+          "artifact_kind": "validator_implementation",
+          "media_type": "text/x-python",
+          "content_hash": {
+            "domain": "raw_bytes_v1",
+            "sha256": "196b37e64c6ae52a9b53f00e20f790953b0b5853c6e5b43941ac9c37ffeec983",
+            "size_bytes": 46449
+          },
+          "payload_schema_version": null,
+          "ref_sha256": "2b91528e490fb85c3ead08b31bfae4fd2b95bba6d5d1b266d0736290a7b39c36"
         }
       }
     },
@@ -1215,6 +1253,44 @@
           },
           "payload_schema_version": null,
           "ref_sha256": "ebd6c3e00d6678da02ad792b38c066618552817a1d7cf53f7c2a61455bd3c199"
+        }
+      }
+    },
+    {
+      "bound_schema_version": "evisoz_private_training_authorization_v1",
+      "schema_id": "evisoz_private_training_authorization_v1.schema.json",
+      "schema_path": "schemas/evisoz_private_training_authorization_v1.schema.json",
+      "schema_artifact_ref": {
+        "schema_version": "evisoz_artifact_ref_v1",
+        "artifact_id": "EVISOZ-ART-f3f9455e68a15c24ef259b86",
+        "artifact_kind": "json_schema",
+        "media_type": "application/schema+json",
+        "content_hash": {
+          "domain": "raw_bytes_v1",
+          "sha256": "d23034b3ccadceb763dc6926ba6a694e6132e2cad87d3ddd715fde770775007f",
+          "size_bytes": 4842
+        },
+        "payload_schema_version": "evisoz_private_training_authorization_v1",
+        "ref_sha256": "f7811cd55cccc7592ce90d292621b7627b80f9a42b3fc305f5e61e686ae8a1ff"
+      },
+      "validator": {
+        "validator_id": "evisoz_private_training_authorization_v1_validator",
+        "implementation_version": "1",
+        "module": "src.evisoz.data.private_training_authorization",
+        "callable": "validate_private_training_authorization",
+        "implementation_path": "src/evisoz/data/private_training_authorization.py",
+        "implementation_artifact_ref": {
+          "schema_version": "evisoz_artifact_ref_v1",
+          "artifact_id": "EVISOZ-ART-bb6e0213b8e45c6161b8d283",
+          "artifact_kind": "validator_implementation",
+          "media_type": "text/x-python",
+          "content_hash": {
+            "domain": "raw_bytes_v1",
+            "sha256": "77ae066b117314e2401b098cf9c078031b3770fbea7c9e0e80eaba5d84d097c1",
+            "size_bytes": 14776
+          },
+          "payload_schema_version": null,
+          "ref_sha256": "15a647aa2058f8cee5ac80b0a6a2e7ebaa4aaa53f9e9a78a616cc23cec8d39b8"
         }
       }
     },
@@ -1547,16 +1623,16 @@
         "implementation_path": "src/evisoz/forge/findings_claims_reports.py",
         "implementation_artifact_ref": {
           "schema_version": "evisoz_artifact_ref_v1",
-          "artifact_id": "EVISOZ-ART-e14d71b12f6a17997dfcd347",
+          "artifact_id": "EVISOZ-ART-857a988198e715c50046e46d",
           "artifact_kind": "validator_implementation",
           "media_type": "text/x-python",
           "content_hash": {
             "domain": "raw_bytes_v1",
-            "sha256": "6e36e80cc78d1f1293fff6be0cb311abd4902a111a99e99bc2f2375efb22ed2e",
-            "size_bytes": 66495
+            "sha256": "791282007c60b25fdaeb1f508dfb99ccb478c1a60d8fdcd19b31cf66ff948feb",
+            "size_bytes": 66628
           },
           "payload_schema_version": null,
-          "ref_sha256": "f710b8b137b419f71431b64fc4cdabc4e7c371e6bc65bed56d2f3308bd6eaf44"
+          "ref_sha256": "42f9dc69c93533ceb6b6e79dd6f5f9ea32d712fcea02ad4cb74c2d64e8843069"
         }
       }
     },
@@ -1661,16 +1737,16 @@
         "implementation_path": "src/evisoz/forge/findings_claims_reports.py",
         "implementation_artifact_ref": {
           "schema_version": "evisoz_artifact_ref_v1",
-          "artifact_id": "EVISOZ-ART-e14d71b12f6a17997dfcd347",
+          "artifact_id": "EVISOZ-ART-857a988198e715c50046e46d",
           "artifact_kind": "validator_implementation",
           "media_type": "text/x-python",
           "content_hash": {
             "domain": "raw_bytes_v1",
-            "sha256": "6e36e80cc78d1f1293fff6be0cb311abd4902a111a99e99bc2f2375efb22ed2e",
-            "size_bytes": 66495
+            "sha256": "791282007c60b25fdaeb1f508dfb99ccb478c1a60d8fdcd19b31cf66ff948feb",
+            "size_bytes": 66628
           },
           "payload_schema_version": null,
-          "ref_sha256": "f710b8b137b419f71431b64fc4cdabc4e7c371e6bc65bed56d2f3308bd6eaf44"
+          "ref_sha256": "42f9dc69c93533ceb6b6e79dd6f5f9ea32d712fcea02ad4cb74c2d64e8843069"
         }
       }
     },
@@ -1737,16 +1813,16 @@
         "implementation_path": "src/evisoz/data/stage0_gate.py",
         "implementation_artifact_ref": {
           "schema_version": "evisoz_artifact_ref_v1",
-          "artifact_id": "EVISOZ-ART-a8b52acefbef8280eb864bbc",
+          "artifact_id": "EVISOZ-ART-f4f6b6bdebe63cd6fc282f8c",
           "artifact_kind": "validator_implementation",
           "media_type": "text/x-python",
           "content_hash": {
             "domain": "raw_bytes_v1",
-            "sha256": "898ec3a77c78ff41e8adb9ec13da89e707d4b3e4aac6ab61e6270d0fccacb32b",
-            "size_bytes": 40319
+            "sha256": "43185700964c7d4aeb8575571b0533dcb8f32f6422ef6442c8628b3a9b0519a1",
+            "size_bytes": 44466
           },
           "payload_schema_version": null,
-          "ref_sha256": "166a7b834434230d8e325e514e6b78ab80ea623ad360ee6eb31745d26451aa6a"
+          "ref_sha256": "8a831358063802081e9924cdcb9359c37fd870684e448273c0755c4bfa02f751"
         }
       }
     },
@@ -2131,5 +2207,5 @@
       }
     }
   ],
-  "registry_sha256": "8228548e41da355eca968aa3f5ac4b87926d4a1299e3f0675b8c9879575cfc1a"
+  "registry_sha256": "32cfae34c27fe8314a9b2bae32cf6ea4e4cb8d3cf17efeb3f32d7ac7f4348e9c"
 }

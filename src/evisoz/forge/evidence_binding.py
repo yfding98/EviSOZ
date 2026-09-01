@@ -34,6 +34,7 @@ from src.evisoz.forge.findings_claims_reports import (
     validate_signal_candidate_claim_graph,
 )
 from src.evisoz.forge.private_stage0_examples import (
+    LEGACY_PRIVATE_STAGE0_EXAMPLES_SCHEMA_VERSION,
     PRIVATE_STAGE0_EXAMPLES_SCHEMA_VERSION,
 )
 from src.evisoz.forge.training_example import (
@@ -173,9 +174,7 @@ def build_bound_evidence_example(
         training_example_ref = _ref(
             base,
             kind="training_example",
-            schema=PRIVATE_STAGE0_EXAMPLES_SCHEMA_VERSION.replace(
-                "private_real_stage0_examples_materialization_v1", "training_example_v1"
-            ),
+            schema=TRAINING_EXAMPLE_SCHEMA_VERSION,
         )
     base_ref = validate_artifact_ref(training_example_ref)
     if base_ref["artifact_kind"] != "training_example":
@@ -454,7 +453,11 @@ def materialize_bound_evidence_examples(
         raise FileExistsError(output_root)
     examples_manifest = json.loads((examples_root / "manifest.json").read_text(encoding="utf-8"))
     findings_manifest = json.loads((findings_root / "manifest.json").read_text(encoding="utf-8"))
-    if examples_manifest.get("schema_version") != PRIVATE_STAGE0_EXAMPLES_SCHEMA_VERSION:
+    examples_manifest_schema = examples_manifest.get("schema_version")
+    if examples_manifest_schema not in {
+        PRIVATE_STAGE0_EXAMPLES_SCHEMA_VERSION,
+        LEGACY_PRIVATE_STAGE0_EXAMPLES_SCHEMA_VERSION,
+    }:
         raise ValueError("private examples manifest schema drifted")
     if findings_manifest.get("schema_version") != "evisoz_findings_claim_report_materialization_v1":
         raise ValueError("Findings/claim/report manifest schema drifted")
@@ -595,7 +598,7 @@ def materialize_bound_evidence_examples(
             "materialization_id": _HASH_PLACEHOLDER,
             "status": "stage0_shadow_bound_examples_materialized",
             "source_refs": {
-                "private_examples_manifest": build_json_artifact_ref(examples_manifest, artifact_kind="private_real_examples_manifest", payload_schema_version=PRIVATE_STAGE0_EXAMPLES_SCHEMA_VERSION),
+                "private_examples_manifest": build_json_artifact_ref(examples_manifest, artifact_kind="private_real_examples_manifest", payload_schema_version=str(examples_manifest_schema)),
                 "findings_claim_report_manifest": build_json_artifact_ref(findings_manifest, artifact_kind="findings_claim_report_materialization", payload_schema_version="evisoz_findings_claim_report_materialization_v1"),
                 "physician_report_release": (
                     _ref(

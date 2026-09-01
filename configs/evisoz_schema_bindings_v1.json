@@ -119,6 +119,24 @@
       "implementation_path": "src/evisoz/forge/private_stage0_examples.py"
     },
     {
+      "bound_schema_version": "evisoz_private_real_stage0_examples_materialization_v2",
+      "schema_path": "schemas/evisoz_private_real_stage0_examples_materialization_v2.schema.json",
+      "validator_id": "evisoz_private_real_stage0_examples_materialization_v2_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.forge.private_stage0_examples",
+      "callable": "validate_private_stage0_examples_materialization",
+      "implementation_path": "src/evisoz/forge/private_stage0_examples.py"
+    },
+    {
+      "bound_schema_version": "evisoz_private_training_authorization_v1",
+      "schema_path": "schemas/evisoz_private_training_authorization_v1.schema.json",
+      "validator_id": "evisoz_private_training_authorization_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.data.private_training_authorization",
+      "callable": "validate_private_training_authorization",
+      "implementation_path": "src/evisoz/data/private_training_authorization.py"
+    },
+    {
       "bound_schema_version": "evisoz_public_auxiliary_exposure_projection_v1",
       "schema_path": "schemas/evisoz_public_auxiliary_exposure_projection_v1.schema.json",
       "validator_id": "evisoz_public_auxiliary_exposure_projection_v1_validator",

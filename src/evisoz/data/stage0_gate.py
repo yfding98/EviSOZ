@@ -14,6 +14,7 @@ from src.evisoz.baseline.v29_public_cache_materializer import (
 )
 from src.evisoz.data.artifact_ref import (
     build_json_artifact_ref,
+    build_raw_artifact_ref,
     canonical_json_sha256,
 )
 from src.evisoz.data.clean_freeze import (
@@ -67,6 +68,9 @@ from src.evisoz.forge.private_report_deidentification import (
 from src.evisoz.forge.private_stage0_examples import (
     PRIVATE_STAGE0_EXAMPLES_SCHEMA_VERSION,
     validate_private_stage0_examples_materialization,
+)
+from src.evisoz.data.private_training_authorization import (
+    validate_private_training_authorization,
 )
 from src.evisoz.forge.deterministic_signal_candidates import (
     CANDIDATE_MATERIALIZATION_SCHEMA_VERSION,
@@ -160,6 +164,8 @@ def build_stage0_gate(
     private_real_cohort_root: Path,
     private_split_roster_path: Path,
     private_signal_roster_path: Path,
+    private_target_ledger_path: Path | None = None,
+    private_source_manifest_path: Path | None = None,
     private_examples_root: Path,
     private_report_inventory_path: Path,
     private_report_deid_root: Path,
@@ -174,6 +180,7 @@ def build_stage0_gate(
     private_report_mapping_intake_root: Path | None = None,
     private_report_exclusion_path: Path | None = None,
     private_report_release_path: Path | None = None,
+    private_training_authorization_path: Path | None = None,
     bound_evidence_root: Path | None = None,
     teacher_cerebragloss_root: Path | None = None,
     teacher_elm_root: Path | None = None,
@@ -202,12 +209,89 @@ def build_stage0_gate(
         _json(private_split_roster_path),
         trusted_linkage_groups=trusted_groups,
     )
+    target_ledger_candidate = (
+        private_target_ledger_path
+        if private_target_ledger_path is not None
+        else private_signal_roster_path.parent / "target_ledger.csv"
+    ).resolve()
+    source_manifest_candidate = (
+        private_source_manifest_path
+        if private_source_manifest_path is not None
+        else repository / "outputs/soz_pre/private_edf_soz_manifest.csv"
+    ).resolve()
+    expected_private_bindings: dict[str, object] | None = None
+    if (
+        target_ledger_candidate.is_file()
+        and not target_ledger_candidate.is_symlink()
+        and source_manifest_candidate.is_file()
+        and not source_manifest_candidate.is_symlink()
+    ):
+        expected_private_bindings = {
+            "dataset_id": "private",
+            "patient_roster_sha256": split["receipt_sha256"],
+            "split_roster_ref": _ref(
+                split,
+                kind="split_roster",
+                schema_version="evisoz_split_roster_v1",
+            ),
+            "signal_roster_ref": build_raw_artifact_ref(
+                private_signal_roster_path.resolve(strict=True).read_bytes(),
+                artifact_kind="private_signal_roster",
+                media_type="text/csv",
+            ),
+            "target_ledger_ref": build_raw_artifact_ref(
+                target_ledger_candidate.read_bytes(),
+                artifact_kind="private_target_ledger",
+                media_type="text/csv",
+            ),
+            "source_manifest_ref": build_raw_artifact_ref(
+                source_manifest_candidate.read_bytes(),
+                artifact_kind="private_label_authority_manifest",
+                media_type="text/csv",
+            ),
+        }
+    private_training_authorization: dict[str, Any] | None = None
+    private_training_authorization_bytes: bytes | None = None
+    if private_training_authorization_path is not None:
+        authorization_path = private_training_authorization_path.resolve(strict=True)
+        if authorization_path.is_symlink() or not authorization_path.is_file():
+            raise ValueError("private training authorization must be a regular JSON file")
+        private_training_authorization_bytes = authorization_path.read_bytes()
+        private_training_authorization = _json(authorization_path)
+        if expected_private_bindings is None:
+            raise FileNotFoundError(
+                "private training authorization requires signal/target/source ledger bindings"
+            )
+        private_training_authorization = validate_private_training_authorization(
+            private_training_authorization,
+            expected_bindings=expected_private_bindings,
+        )
     examples = validate_private_stage0_examples_materialization(
         _json(private_examples_root / "manifest.json"),
         output_root=private_examples_root,
         split_roster=split,
         trusted_groups=trusted_groups,
         cohort_root=private_real_cohort_root,
+        private_training_authorization=private_training_authorization,
+        private_training_authorization_bytes=private_training_authorization_bytes,
+        expected_source_bindings=(
+            {
+                "real_cohort_manifest_ref": _ref(
+                    private_cohort_manifest,
+                    kind="private_real_stage0_cohort_manifest",
+                    schema_version=str(private_cohort_manifest["schema_version"]),
+                ),
+                **expected_private_bindings,
+            }
+            if expected_private_bindings is not None
+            else {
+                "real_cohort_manifest_ref": _ref(
+                    private_cohort_manifest,
+                    kind="private_real_stage0_cohort_manifest",
+                    schema_version=str(private_cohort_manifest["schema_version"]),
+                ),
+            }
+        ),
     )
     report_inventory = validate_private_physician_report_inventory(
         _json(private_report_inventory_path)
@@ -473,11 +557,15 @@ def build_stage0_gate(
         },
         {
             "check_id": "private_field_envelopes",
-            "status": "EVALUATOR_ONLY_GO",
+            "status": (
+                "QUALIFIED_GO"
+                if examples["release_policy"]["private_training_authority_present"]
+                else "EVALUATOR_ONLY_GO"
+            ),
             "evidence_ref": _ref(
                 examples,
                 kind="private_stage0_examples_materialization",
-                schema_version=PRIVATE_STAGE0_EXAMPLES_SCHEMA_VERSION,
+                schema_version=str(examples["schema_version"]),
             ),
             "facts": {
                 "event_count": examples["counts"]["event_count"],
@@ -488,7 +576,11 @@ def build_stage0_gate(
                     "private_training_authority_present"
                 ],
             },
-            "blocker_codes": ["private_data_governance_training_authority_missing"],
+            "blocker_codes": (
+                []
+                if examples["release_policy"]["private_training_authority_present"]
+                else ["private_data_governance_training_authority_missing"]
+            ),
         },
         {
             "check_id": "private_report_linkage",
