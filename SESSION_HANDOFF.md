@@ -105,6 +105,26 @@ fresh gate replay against r24 is required before any stage transition.
   `remediation.json` binds source gate r88 and its teacher inventory keeps ELM
   candidate materialization and fold-local calibration explicitly missing.
 
+## Latest authoritative continuation (r89)
+
+- After recording the smoke receipts, commit `52074b4` remains clean. The
+  corresponding freeze audit is
+  `outputs/clean_freeze_audit_target_v1_20260901_r27.json` with
+  `status=GO`, `git_clean=true`, `training_authorized=false`, receipt SHA-256
+  `0bee4f94f56f66bb5a2a9343e46ab37d65c8abf053ce099d95d9467890edc933`.
+- The current aggregate gate is
+  `outputs/evisoz_stage0_gate_v1_20260901_r89/gate.json`, `status=NO_GO`, gate
+  ID `EVISOZ-STAGE0-2248d978419ca868d71b0676`, receipt SHA-256
+  `fd8d45e576f36ea164c4d2c1051f4aee5c8832f0ab8cfccbe33cc8e05b7f75e7`.
+  Its blocking checks remain `offline_teacher_and_derived_candidates`,
+  `private_field_envelopes`, and `public_auxiliary_patient_exposure_ledger`.
+- The matching fail-closed execution plan is
+  `outputs/evisoz_execution_plan_v1_20260901_r46/plan.json` (`STAGE0_NO_GO`,
+  receipt SHA-256
+  `93a52df01a87efd184f11b4fb90bfa3516483c2f253097fd68f21c34499b2548`).
+  The matching remediation packet is
+  `outputs/evisoz_stage0_remediation_packet_v1_20260901_r15/`.
+
 ## Current-turn update
 
 - Updated `scripts/materialize_evisoz_qwen_patient_shadow_v1.py` so its
