@@ -26,7 +26,7 @@ from src.soz.v11_reasoner import V11_CANDIDATE_MASK  # noqa: E402
 
 
 SCHEMA = "soz_labram_portable_equal_ensemble_public_oof_v29"
-PROTOCOL = ROOT / "research/02_method/labram_portable_equal_ensemble_protocol_v29_20260815_zh.md"
+PROTOCOL = ROOT / "docs/method/reference/labram_portable_equal_ensemble_protocol_v29_20260815_zh.md"
 DEFAULT_V28 = ROOT / "outputs/labram_rank1_direct_token_oof_v28_20260815"
 DEFAULT_V16 = ROOT / "outputs/labram_identity_recovery_closed_replay_v16_replay_20260815"
 DEFAULT_OUTPUT = ROOT / "outputs/labram_portable_equal_ensemble_public_oof_v29_20260815"

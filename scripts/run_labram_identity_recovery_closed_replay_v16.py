@@ -84,10 +84,8 @@ from src.soz.v11_reasoner import (  # noqa: E402
 
 
 SCHEMA = "soz_labram_identity_recovery_closed_replay_v16"
-PROTOCOL_PATH = (
-    ROOT
-    / "research/02_method/"
-    "labram_identity_recovery_closed_replay_protocol_20260812_zh.md"
+PROTOCOL_PATH = ROOT / (
+    "docs/method/reference/labram_identity_recovery_closed_replay_protocol_20260812_zh.md"
 )
 EXPECTED_PROTOCOL_SHA256 = (
     "435662e616244979530fdf44774236517b32d1360565eb75ea203efb22b73a2a"

@@ -3,6 +3,11 @@ outputs/
 inputs/
 raw/
 data/
+# These are Python source packages, not external input-data directories.
+!src/evisoz/data/
+!src/evisoz/data/*.py
+!src/soz/data/
+!src/soz/data/*.py
 *.edf
 *.edf+
 *.docx
@@ -15,3 +20,7 @@ __pycache__/
 reviews.json
 *.partial
 
+# Large canonical-model bytes are local controlled artifacts, not Git blobs.
+models/**/*.pth
+models/**/*.pt
+models/**/*.safetensors

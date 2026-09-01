@@ -35,7 +35,7 @@ from src.soz.v11_reasoner import (  # noqa: E402
 
 
 SCHEMA = "trustworthy_soz_raw200_shallow_baseline_v60"
-PROTOCOL = ROOT / "research/02_method/post_open_fixed_audit_extensions_v60_20260816_zh.md"
+PROTOCOL = ROOT / "docs/method/reference/post_open_fixed_audit_extensions_v60_20260816_zh.md"
 DEFAULT_WAVEFORM = ROOT / "outputs/trustworthy_soz_raw200_events_v60_20260816"
 DEFAULT_UNION = ROOT / "outputs/public_development_union_identity_v12_20260812"
 DEFAULT_OUTPUT = ROOT / "outputs/trustworthy_soz_raw200_shallow_baseline_v60_20260816"

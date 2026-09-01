@@ -60,8 +60,8 @@ DEFAULT_PRIVATE_EXAMPLES = ROOT / "outputs/evisoz_stage0_private_real_examples_v
 DEFAULT_FINDINGS = ROOT / "outputs/evisoz_stage0_findings_claim_reports_v1_20260901_r3"
 DEFAULT_PRIVATE_COHORT = ROOT / "outputs/evisoz_stage0_private_real_dual_montage_v1_20260831"
 DEFAULT_SPLIT = ROOT / "outputs/evisoz_stage0_private_split_v1_20260831/split_roster.json"
-DEFAULT_LABRAM_MODELING = Path("/mnt/hd1/dyf/workspace/LaBraM/modeling_finetune.py")
-DEFAULT_LABRAM_CHECKPOINT = Path("/mnt/hd1/dyf/workspace/LaBraM/checkpoints/labram-base.pth")
+DEFAULT_LABRAM_MODELING = ROOT / "third_party/labram/modeling_finetune.py"
+DEFAULT_LABRAM_CHECKPOINT = ROOT / "models/canonical_v29_h_d/labram-base.pth"
 DEFAULT_V29_DIR = ROOT / "outputs/labram_portable_equal_private_target_blind_v29_20260815"
 DEFAULT_OUTPUT = ROOT / "outputs/evisoz_real_labram_shadow_v1_20260901"
 

@@ -180,7 +180,7 @@ def materialize(
             if formal
             else "completed_reference_isolated_raw200_event_waveforms_smoke"
         ),
-        "protocol": "research/02_method/post_open_fixed_audit_extensions_v60_20260816_zh.md",
+        "protocol": "docs/method/reference/post_open_fixed_audit_extensions_v60_20260816_zh.md",
         "preprocessing": {
             "shape": [19, 12_000],
             "sampling_frequency_hz": 200.0,

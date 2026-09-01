@@ -45,7 +45,7 @@ from src.soz.v11_reasoner import (  # noqa: E402
 
 
 SCHEMA = "soz_labram_rank1_direct_token_oof_v28"
-PROTOCOL = ROOT / "research/02_method/labram_rank1_direct_token_protocol_v28_20260815_zh.md"
+PROTOCOL = ROOT / "docs/method/reference/labram_rank1_direct_token_protocol_v28_20260815_zh.md"
 DEFAULT_ANCHOR = ROOT / "outputs/labram_masked_variable_auxiliary_oof_v17_replay_20260815"
 DEFAULT_OUTPUT = ROOT / "outputs/labram_rank1_direct_token_oof_v28_20260815"
 EXPECTED_AUX_PREFIX_MANIFEST_SHA256 = (

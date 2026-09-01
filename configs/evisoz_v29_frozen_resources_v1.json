@@ -1,0 +1,98 @@
+{
+  "schema_version": "evisoz_v29_frozen_resources_v1",
+  "status": "frozen",
+  "method_id": "canonical_v29_equal_H_D_probability_ensemble",
+  "fold_count": 5,
+  "resources": [
+    {
+      "resource_id": "public_v29_manifest",
+      "path": "outputs/labram_portable_equal_ensemble_public_oof_v29_20260815/manifest.json",
+      "sha256": "2db07cbc1319eac8a90c3f5cdf45ebfaf784ee383eb65ae33e6de7e110ea7906",
+      "size_bytes": 14053,
+      "format": "json",
+      "tensor_key_profile": null,
+      "tensor_sha256": {}
+    },
+    {
+      "resource_id": "public_v29_oof",
+      "path": "outputs/labram_portable_equal_ensemble_public_oof_v29_20260815/oof_predictions.safetensors",
+      "sha256": "9ded9de54090d8f7b4ffc5e71cf7f4f86405f9db2265c8a60f0614634f8d62cf",
+      "size_bytes": 50053,
+      "format": "safetensors",
+      "tensor_key_profile": "public_oof_reference_v1",
+      "tensor_sha256": {
+        "candidate_mask": "9d8dabf36b05be5fd1817c984c25cb798d69322e92fb0fb4652f50e2573969e5",
+        "oof.h_only_probability": "1f966a32bdb0276d5f822a0d143b9c297c95ca7aa0bc21b49702596cf444218d",
+        "oof.portable_equal_ensemble_probability": "ad9dedfdd8bb65a5ea2ffb1219c348ed4e73ba04d6dcf040afe9ded1ac7813d9",
+        "oof.rank1_direct_probability": "8dbec0901efd39a0e668723bad5acaa26fd435a1ecec42a278ff7932113c02da",
+        "patient_folds": "92336dd8bc9782078ffc84c223f80008f8a3ff9cb6f0a09042c368cfc3b972d3"
+      }
+    },
+    {
+      "resource_id": "direct_fold_states",
+      "path": "outputs/labram_rank1_direct_token_oof_v28_20260815/model_and_oof.safetensors",
+      "sha256": "0b5ffaf0ed504c36e01a0be28676f7797a703a6ef57079dc743362984a4351a9",
+      "size_bytes": 33448,
+      "format": "safetensors",
+      "tensor_key_profile": "direct_fold_states_v1",
+      "tensor_sha256": {}
+    },
+    {
+      "resource_id": "h_fold_states",
+      "path": "outputs/labram_identity_recovery_closed_replay_v16_replay_20260815/outer_fold_states.safetensors",
+      "sha256": "18b69f5e2fc718d2668b3a727f9a3f7bf0da33a613896d939559260ad3009b98",
+      "size_bytes": 239497,
+      "format": "safetensors",
+      "tensor_key_profile": "h_fold_states_v1",
+      "tensor_sha256": {}
+    },
+    {
+      "resource_id": "h_fold_manifest",
+      "path": "outputs/labram_identity_recovery_closed_replay_v16_replay_20260815/manifest.json",
+      "sha256": "b12c84f071ae83849bff4263ad7fdc8285444719c31263ffc5d3c5336b21faed",
+      "size_bytes": 210886,
+      "format": "json",
+      "tensor_key_profile": null,
+      "tensor_sha256": {}
+    },
+    {
+      "resource_id": "public_union_manifest",
+      "path": "outputs/public_development_union_identity_v12_20260812/manifest.json",
+      "sha256": "645c55541c37dfc204fdd48c21e0a3c81fe7201f76b862556d1c4dc3bfa4d429",
+      "size_bytes": 1003084,
+      "format": "json",
+      "tensor_key_profile": null,
+      "tensor_sha256": {}
+    }
+  ],
+  "public_roster_policy": {
+    "expected_patient_count": 102,
+    "h_manifest_resource_id": "h_fold_manifest",
+    "union_manifest_resource_id": "public_union_manifest",
+    "fold_tensor_resource_id": "public_v29_oof",
+    "source_role_field": "legacy_model_split",
+    "source_role_counts": {
+      "source_train": 66,
+      "source_dev": 15,
+      "source_eval": 21
+    },
+    "source_eval_access_role": "evaluator_only"
+  },
+  "route_policy": {
+    "known_public_route": "historical_public_oof_held_fold",
+    "new_patient_route": "frozen_five_fold_event_mean",
+    "known_public_unit_kind": "patient",
+    "new_patient_unit_kind": "event",
+    "known_public_fold_policy": "frozen_held_out_fold_only",
+    "new_patient_fold_policy": "equal_probability_mean_over_five_folds"
+  },
+  "access_policy": {
+    "reader": "safetensors.safe_open_explicit_key_allowlist",
+    "forbidden_tensor_keys": [
+      "target_mask",
+      "targets"
+    ],
+    "target_values_loaded": false,
+    "official_source_eval_is_evaluator_only": true
+  }
+}

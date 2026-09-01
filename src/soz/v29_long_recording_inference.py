@@ -95,10 +95,12 @@ TENSOR_FILE = "v29_candidate_rankings.safetensors"
 N_FOLDS = 5
 
 ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_MODELING = Path("/mnt/hd1/dyf/workspace/LaBraM/modeling_finetune.py")
-DEFAULT_CHECKPOINT = Path(
-    "/mnt/hd1/dyf/workspace/LaBraM/checkpoints/labram-base.pth"
-)
+# The migrated worktree carries the exact upstream source and checkpoint as
+# controlled local artifacts.  Callers may still override both paths for an
+# independently audited installation, but the default no longer depends on
+# the parent workspace layout.
+DEFAULT_MODELING = ROOT / "third_party/labram/modeling_finetune.py"
+DEFAULT_CHECKPOINT = ROOT / "models/canonical_v29_h_d/labram-base.pth"
 DEFAULT_DIRECT_STATES = (
     ROOT
     / "outputs/labram_rank1_direct_token_oof_v28_20260815/"

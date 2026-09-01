@@ -53,9 +53,12 @@ de-identified clinical interval; it never writes raw text or source paths.
 
 Copied into this project: `src/evisoz`, its runtime dependencies (`src/soz`,
 `src/clinical_eeg_report`, `src/clinical_eeg_long_recording`), the report viewer,
-schemas/configuration/knowledge, the Stage-0 scripts, and the dashboard
-template. Not copied: raw EDF/DOCX, internal path maps, private reports,
-de-identified EDF bundles and model/output artifacts. The parent workspace
+schemas/configuration/knowledge, the Stage-0 scripts, the dashboard template,
+the controlled method references under `docs/method/reference`, and the
+canonical v29 H/D source/checkpoint bundle (`third_party/labram`,
+`models/canonical_v29_h_d`, plus local ignored v29 state artifacts). Not copied:
+raw EDF/DOCX, internal path maps, private reports, de-identified EDF bundles,
+Qwen/CerebraGloss/ELM models and private prediction caches. The parent workspace
 remains the source of those controlled inputs. This clean worktree is
 `/mnt/hd1/dyf/workspace/laptop/EviSOZ`; its own `.git` history is independent
 of the parent repository. Generated outputs are intentionally not migrated.
@@ -65,12 +68,13 @@ receipts into this repository and do not treat them as authorization.
 ## Method documents
 
 The current implementation contract and its Evidence JSON runtime map are
-maintained in [`docs/method/`](docs/method/). The primary design document is
-[`evisoz_lm_repository_aligned_design_v1_20260830_zh.md`](docs/method/evisoz_lm_repository_aligned_design_v1_20260830_zh.md);
+maintained in [`docs/method/reference/`](docs/method/reference/). The primary
+design document is
+[`evisoz_lm_repository_aligned_design_v1_20260830_zh.md`](docs/method/reference/evisoz_lm_repository_aligned_design_v1_20260830_zh.md);
 the companion runtime map is
-[`evisoz_evidence_json_runtime_usage_v1_20260901_zh.md`](docs/method/evisoz_evidence_json_runtime_usage_v1_20260901_zh.md).
-Historical research notes remain in the parent workspace and are not required
-for a clean-worktree replay.
+[`evisoz_evidence_json_runtime_usage_v1_20260901_zh.md`](docs/method/reference/evisoz_evidence_json_runtime_usage_v1_20260901_zh.md).
+The reference directory also contains the v29 protocol, SOZ target and
+reporting contracts needed for a clean-worktree replay.
 
 ## Fresh-session checks
 

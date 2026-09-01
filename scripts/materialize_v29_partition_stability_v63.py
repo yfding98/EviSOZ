@@ -53,7 +53,7 @@ from src.soz.v11_reasoner import (  # noqa: E402
 
 
 SCHEMA = "trustworthy_soz_v29_H_D_patient_partition_stability_v63"
-PROTOCOL = ROOT / "research/02_method/post_open_fixed_audit_extensions_v60_20260816_zh.md"
+PROTOCOL = ROOT / "docs/method/reference/post_open_fixed_audit_extensions_v60_20260816_zh.md"
 DEFAULT_PUBLIC_V29 = ROOT / "outputs/labram_portable_equal_ensemble_public_oof_v29_20260815"
 DEFAULT_PRIVATE_V29 = ROOT / "outputs/labram_portable_equal_private_target_blind_v29_20260815"
 DEFAULT_PRIVATE_PHASE = ROOT / "outputs/private_target_blind_rank1_phase_v29_20260815"

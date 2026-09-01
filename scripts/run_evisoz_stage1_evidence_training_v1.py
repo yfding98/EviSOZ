@@ -35,8 +35,8 @@ DEFAULT_EXAMPLES = ROOT / "outputs/evisoz_stage0_private_real_examples_v1_202608
 DEFAULT_FINDINGS = ROOT / "outputs/evisoz_stage0_findings_claim_reports_v1_20260901_r3"
 DEFAULT_COHORT = ROOT / "outputs/evisoz_stage0_private_real_dual_montage_v1_20260831"
 DEFAULT_SPLIT = ROOT / "outputs/evisoz_stage0_private_split_v1_20260831/split_roster.json"
-DEFAULT_MODELING = Path("/mnt/hd1/dyf/workspace/LaBraM/modeling_finetune.py")
-DEFAULT_CHECKPOINT = Path("/mnt/hd1/dyf/workspace/LaBraM/checkpoints/labram-base.pth")
+DEFAULT_MODELING = ROOT / "third_party/labram/modeling_finetune.py"
+DEFAULT_CHECKPOINT = ROOT / "models/canonical_v29_h_d/labram-base.pth"
 
 
 def _hash_source(value: dict[str, Any]) -> dict[str, Any]:

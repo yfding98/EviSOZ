@@ -1,0 +1,123 @@
+{
+  "schema_version": "evisoz_canonical_v29_h_d_artifact_manifest_v1",
+  "status": "migrated_byte_verified_local_artifacts",
+  "method_id": "canonical_v29_equal_H_D_probability_ensemble",
+  "scope": "frozen_reference_only",
+  "source_workspace": "/mnt/hd1/dyf/workspace/laptop/EEG_Seizure",
+  "target_workspace": "/mnt/hd1/dyf/workspace/laptop/EviSOZ",
+  "artifacts": [
+    {
+      "artifact_id": "labram_foundation_checkpoint",
+      "role": "official_labram_base_encoder_checkpoint",
+      "path": "models/canonical_v29_h_d/labram-base.pth",
+      "source_path": "/mnt/hd1/dyf/workspace/LaBraM/checkpoints/labram-base.pth",
+      "media_type": "application/octet-stream",
+      "size_bytes": 96612769,
+      "sha256": "7c50583826afac76c4ab18f43d958df40496c8229accc09ed6a227c9bb57c37c",
+      "git_tracked": false,
+      "license": "MIT"
+    },
+    {
+      "artifact_id": "labram_upstream_modeling_source",
+      "role": "official_labram_model_definition",
+      "path": "third_party/labram/modeling_finetune.py",
+      "source_path": "/mnt/hd1/dyf/workspace/LaBraM/modeling_finetune.py",
+      "media_type": "text/x-python",
+      "size_bytes": 21273,
+      "sha256": "7b3514c9a661ebd417a2dd9834a9f2fab0a2e518c8212c73ebebaaa165c29d88",
+      "git_tracked": true,
+      "license": "MIT"
+    },
+    {
+      "artifact_id": "v29_direct_reasoner_states",
+      "role": "D_rank1_direct_token_five_fold_states",
+      "path": "outputs/labram_rank1_direct_token_oof_v28_20260815/model_and_oof.safetensors",
+      "source_path": "/mnt/hd1/dyf/workspace/laptop/EEG_Seizure/outputs/labram_rank1_direct_token_oof_v28_20260815/model_and_oof.safetensors",
+      "media_type": "application/vnd.safetensors",
+      "size_bytes": 33448,
+      "sha256": "0b5ffaf0ed504c36e01a0be28676f7797a703a6ef57079dc743362984a4351a9",
+      "git_tracked": false,
+      "tensor_key_policy": "direct_fold_states_v1"
+    },
+    {
+      "artifact_id": "v29_direct_reasoner_manifest",
+      "role": "D_rank1_direct_token_lineage_and_training_receipt",
+      "path": "outputs/labram_rank1_direct_token_oof_v28_20260815/manifest.json",
+      "source_path": "/mnt/hd1/dyf/workspace/laptop/EEG_Seizure/outputs/labram_rank1_direct_token_oof_v28_20260815/manifest.json",
+      "media_type": "application/json",
+      "size_bytes": 17660,
+      "sha256": "7e57dee4ba162d883a90be5603c1200eff8e8518cc9d5d2c67fa61045926b7ad",
+      "git_tracked": false
+    },
+    {
+      "artifact_id": "v29_h_reasoner_states",
+      "role": "H_only_five_fold_states",
+      "path": "outputs/labram_identity_recovery_closed_replay_v16_replay_20260815/outer_fold_states.safetensors",
+      "source_path": "/mnt/hd1/dyf/workspace/laptop/EEG_Seizure/outputs/labram_identity_recovery_closed_replay_v16_replay_20260815/outer_fold_states.safetensors",
+      "media_type": "application/vnd.safetensors",
+      "size_bytes": 239497,
+      "sha256": "18b69f5e2fc718d2668b3a727f9a3f7bf0da33a613896d939559260ad3009b98",
+      "git_tracked": false,
+      "tensor_key_policy": "h_fold_states_v1"
+    },
+    {
+      "artifact_id": "v29_public_freeze_manifest",
+      "role": "public_adaptive_exploratory_gate_and_metrics_receipt",
+      "path": "outputs/labram_portable_equal_ensemble_public_oof_v29_20260815/manifest.json",
+      "source_path": "/mnt/hd1/dyf/workspace/laptop/EEG_Seizure/outputs/labram_portable_equal_ensemble_public_oof_v29_20260815/manifest.json",
+      "media_type": "application/json",
+      "size_bytes": 14053,
+      "sha256": "2db07cbc1319eac8a90c3f5cdf45ebfaf784ee383eb65ae33e6de7e110ea7906",
+      "git_tracked": false
+    },
+    {
+      "artifact_id": "v29_public_oof_tensor",
+      "role": "historical_public_held_fold_reference",
+      "path": "outputs/labram_portable_equal_ensemble_public_oof_v29_20260815/oof_predictions.safetensors",
+      "source_path": "/mnt/hd1/dyf/workspace/laptop/EEG_Seizure/outputs/labram_portable_equal_ensemble_public_oof_v29_20260815/oof_predictions.safetensors",
+      "media_type": "application/vnd.safetensors",
+      "size_bytes": 50053,
+      "sha256": "9ded9de54090d8f7b4ffc5e71cf7f4f86405f9db2265c8a60f0614634f8d62cf",
+      "git_tracked": false,
+      "tensor_key_policy": "public_oof_reference_v1"
+    },
+    {
+      "artifact_id": "v29_h_reasoner_manifest",
+      "role": "H_reasoner_lineage_and_training_receipt",
+      "path": "outputs/labram_identity_recovery_closed_replay_v16_replay_20260815/manifest.json",
+      "source_path": "/mnt/hd1/dyf/workspace/laptop/EEG_Seizure/outputs/labram_identity_recovery_closed_replay_v16_replay_20260815/manifest.json",
+      "media_type": "application/json",
+      "size_bytes": 210886,
+      "sha256": "b12c84f071ae83849bff4263ad7fdc8285444719c31263ffc5d3c5336b21faed",
+      "git_tracked": false
+    },
+    {
+      "artifact_id": "v29_public_union_manifest",
+      "role": "public_roster_identity_projection",
+      "path": "outputs/public_development_union_identity_v12_20260812/manifest.json",
+      "source_path": "/mnt/hd1/dyf/workspace/laptop/EEG_Seizure/outputs/public_development_union_identity_v12_20260812/manifest.json",
+      "media_type": "application/json",
+      "size_bytes": 1003084,
+      "sha256": "645c55541c37dfc204fdd48c21e0a3c81fe7201f76b862556d1c4dc3bfa4d429",
+      "git_tracked": false
+    }
+  ],
+  "runtime_contract": {
+    "input_montage": "standard19_car",
+    "sample_rate_hz": 200,
+    "window_seconds": [-12.0, 48.0],
+    "native_probability_coordinate": "C18_standard19_without_PZ",
+    "candidate_channels": "standard19_except_PZ",
+    "fusion": "p_equal=0.5*p_H+0.5*p_D_then_mean_over_five_folds",
+    "tcp22_role": "separate_signed_bipolar_edge_evidence_view_only",
+    "spherical_interpolation": "not_part_of_frozen_v29_reference"
+  },
+  "safety_boundary": {
+    "private_data_migrated": false,
+    "private_predictions_migrated": false,
+    "training_authorized": false,
+    "stage0_status": "NO_GO",
+    "clinical_deployment_authorized": false,
+    "output_interpretation": "scalp_electrode_ranking_or_noninvasive_SOZ_hypothesis_only"
+  }
+}
