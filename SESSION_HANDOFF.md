@@ -10,9 +10,11 @@ Updated: 2026-09-01 16:27 CST (Asia/Shanghai)
   release, and public auxiliary exposure ledger).
 - `private_report_linkage`: `GO` after an explicit operational quarantine receipt.
 - Independent EviSOZ clean-freeze audit: `GO` at the target worktree's ignored
-  `outputs/clean_freeze_audit_migration_v4.json`. The receipt is regenerated
-  after each committed change; inspect its audit ID and SHA-256 in the local
-  file rather than treating this handoff line as an authorization.
+  `outputs/clean_freeze_audit_target_v1_20260901_r3.json` (receipt SHA-256
+  `ec4e26785a55383a57bc2e80fdc14b454c38cb0082094a6caab58dc2a92653b0`). The
+  receipt is regenerated after each committed change; inspect its audit ID
+  and SHA-256 in the local file rather than treating this handoff line as an
+  authorization.
 - Remaining independent blockers are unchanged: private governance training
   authority, report manual review/release, public overlap/TUEV identity,
   CerebraGloss/ELM candidates and fold-local calibration, plus the parent
