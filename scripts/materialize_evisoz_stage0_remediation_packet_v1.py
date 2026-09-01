@@ -74,6 +74,7 @@ def _build_teacher_inventory(
     *,
     cerebragloss_audit_path: Path | None = None,
     cerebragloss_manifest_path: Path | None = None,
+    elm_discovery_path: Path | None = None,
 ) -> dict[str, Any]:
     checkpoint = Path("/mnt/hd1/dyf/dataset/CerebraGloss_ICLR2026/DataEngine/checkpoints/model.pkl")
     audit_path = cerebragloss_audit_path or root / "configs/cerebragloss_positive_box_external_audit_v22.json"
@@ -106,12 +107,20 @@ def _build_teacher_inventory(
     # path-hint policy avoids classifying generic ``eeg-language`` reports as
     # an ELM checkpoint.  Discovery remains inventory-only and cannot grant
     # admission or calibration authority.
-    discovery_candidates = sorted(
-        (root / "outputs" / "evisoz_teacher_artifact_discovery_v1_20260901").glob(
-            "elm*.json"
+    if elm_discovery_path is not None:
+        # The clean worktree must not guess a teacher root.  An explicit
+        # external discovery receipt is allowed here, but it remains an
+        # inventory-only, unvalidated input and cannot grant admission.
+        discovery = _load(elm_discovery_path)
+        if discovery.get("teacher_id") != "elm":
+            raise ValueError("--elm-discovery must reference an ELM discovery receipt")
+    else:
+        discovery_candidates = sorted(
+            (root / "outputs" / "evisoz_teacher_artifact_discovery_v1_20260901").glob(
+                "elm*.json"
+            )
         )
-    )
-    discovery = _load(discovery_candidates[-1]) if discovery_candidates else None
+        discovery = _load(discovery_candidates[-1]) if discovery_candidates else None
     elm_candidates = []
     if discovery is None:
         elm_candidates = sorted(
@@ -381,6 +390,7 @@ def build_packet(
     crosswalk_path: Path | None = None,
     cerebragloss_audit_path: Path | None = None,
     cerebragloss_manifest_path: Path | None = None,
+    elm_discovery_path: Path | None = None,
 ) -> None:
     """Build a privacy-safe packet from explicit controlled inputs.
 
@@ -422,6 +432,7 @@ def build_packet(
             gate,
             cerebragloss_audit_path=cerebragloss_audit_path,
             cerebragloss_manifest_path=cerebragloss_manifest_path,
+            elm_discovery_path=elm_discovery_path,
         ),
     )
     _write_json(output / "private_report_mapping_resolution_packet.json", _build_mapping_packet(root, inventory))
@@ -460,6 +471,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--crosswalk", type=Path, help="controlled public v29-to-TUSZ crosswalk JSON")
     parser.add_argument("--cerebragloss-audit", type=Path, help="controlled CerebraGloss preflight audit JSON")
     parser.add_argument("--cerebragloss-manifest", type=Path, help="controlled CerebraGloss candidate manifest JSON")
+    parser.add_argument(
+        "--elm-discovery",
+        type=Path,
+        help="explicit external ELM discovery receipt; inventory-only and never authorizes training",
+    )
     args = parser.parse_args(argv)
     build_packet(
         ROOT,
@@ -472,6 +488,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         crosswalk_path=args.crosswalk.resolve() if args.crosswalk else None,
         cerebragloss_audit_path=args.cerebragloss_audit.resolve() if args.cerebragloss_audit else None,
         cerebragloss_manifest_path=args.cerebragloss_manifest.resolve() if args.cerebragloss_manifest else None,
+        elm_discovery_path=args.elm_discovery.resolve() if args.elm_discovery else None,
     )
     return 0
 

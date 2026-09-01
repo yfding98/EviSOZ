@@ -1,17 +1,17 @@
 # EviSOZ session handoff
 
-Updated: 2026-09-01 16:27 CST (Asia/Shanghai)
+Updated: 2026-09-01 17:20 CST (Asia/Shanghai)
 
 ## Current state
 
 - Stage-0 replay: `NO_GO` at the current clean-worktree gate
-  `outputs/evisoz_stage0_gate_v1_20260901_r72/gate.json` (blocking checks:
+  `outputs/evisoz_stage0_gate_v1_20260901_r77/gate.json` (blocking checks:
   offline teacher/calibration, private governance authority, report text
   release, and public auxiliary exposure ledger).
 - `private_report_linkage`: `GO` after an explicit operational quarantine receipt.
 - Independent EviSOZ clean-freeze audit: `GO` at the target worktree's ignored
-  `outputs/clean_freeze_audit_target_v1_20260901_r3.json` (receipt SHA-256
-  `ec4e26785a55383a57bc2e80fdc14b454c38cb0082094a6caab58dc2a92653b0`). The
+  `outputs/clean_freeze_audit_target_v1_20260901_r10.json` (receipt SHA-256
+  `e35cf314bf19cf7541ed75b7bc497b51e206a637ed031d8b3f1eb3999fb2222b`). The
   receipt is regenerated after each committed change; inspect its audit ID
   and SHA-256 in the local file rather than treating this handoff line as an
   authorization.
@@ -19,6 +19,24 @@ Updated: 2026-09-01 16:27 CST (Asia/Shanghai)
   authority, report manual review/release, public overlap/TUEV identity,
   CerebraGloss/ELM candidates and fold-local calibration, plus the parent
   worktree clean-freeze audit.
+
+- The clean-worktree ELM discovery replay is
+  `outputs/evisoz_teacher_artifact_discovery_v1_20260901_evisoz_artifacts_r1.json`.
+  It scans only the external
+  `/mnt/hd1/dyf/workspace/laptop/EviSOZ_artifacts/elm_public_artifacts_v1_20260901_r1`
+  root, records four full SHA-256 hashes, and remains
+  `found_unvalidated` with training/inference disabled. A new remediation
+  packet `outputs/evisoz_stage0_remediation_packet_v1_20260901_r6/` binds this
+  discovery receipt explicitly via `--elm-discovery`; it does not promote ELM
+  candidates or copy model bytes into the repository.
+
+- Post-change clean-freeze audit
+  `outputs/clean_freeze_audit_target_v1_20260901_r11.json` is `NO_GO` solely
+  because the two tracked files in this change are not committed yet
+  (`tracked_modified=2`, no untracked files). The sandbox refused Git index
+  writes when attempting the commit; the code/schema checks and remediation
+  receipts themselves pass. A writable Git session must commit or review this
+  patch before a new clean-freeze `GO` can be claimed.
 
 - Remediation packet r4 was materialized in this clean worktree using explicit
   controlled external JSON inputs (no private/raw bytes copied):
