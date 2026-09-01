@@ -7,9 +7,10 @@ Updated: 2026-09-01 (Asia/Shanghai)
 - Stage-0 replay: `NO_GO` at
   `/mnt/hd1/dyf/workspace/laptop/EEG_Seizure/outputs/evisoz_stage0_gate_v1_20260901_r68/gate.json`.
 - `private_report_linkage`: `GO` after an explicit operational quarantine receipt.
-- Independent EviSOZ clean-freeze audit: `GO` at local ignored
-  `outputs/clean_freeze_audit_v7.json` (audit ID
-  `EVISOZ-FREEZE-bcd37f977aad23c7d812fe13`).
+- Independent EviSOZ clean-freeze audit: `GO` at the target worktree's ignored
+  `outputs/clean_freeze_audit_target_v1.json` (audit ID
+  `EVISOZ-FREEZE-2bd14e7db53b8f85bc4a0705`, receipt SHA-256
+  `c870c8b15e27e0984ecad5903e120b56a5be74c2cb2fd937f9fefc725b7b0407`).
 - Remaining independent blockers are unchanged: private governance training
   authority, report manual review/release, public overlap/TUEV identity,
   CerebraGloss/ELM candidates and fold-local calibration, plus the parent
