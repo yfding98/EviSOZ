@@ -5,13 +5,13 @@ Updated: 2026-09-01 17:20 CST (Asia/Shanghai)
 ## Current state
 
 - Stage-0 replay: `NO_GO` at the current clean-worktree gate
-  `outputs/evisoz_stage0_gate_v1_20260901_r77/gate.json` (blocking checks:
+  `outputs/evisoz_stage0_gate_v1_20260901_r78/gate.json` (blocking checks:
   offline teacher/calibration, private governance authority, report text
   release, and public auxiliary exposure ledger).
 - `private_report_linkage`: `GO` after an explicit operational quarantine receipt.
-- Independent EviSOZ clean-freeze audit: `GO` at the target worktree's ignored
-  `outputs/clean_freeze_audit_target_v1_20260901_r10.json` (receipt SHA-256
-  `e35cf314bf19cf7541ed75b7bc497b51e206a637ed031d8b3f1eb3999fb2222b`). The
+- The latest clean-freeze audit before this handoff update was `GO` at
+  `outputs/clean_freeze_audit_target_v1_20260901_r13.json` (receipt SHA-256
+  `97708ed0d4e3dba35ec8a235085aae0456b1d1ef1a427cc5c05da9383b185286`). The
   receipt is regenerated after each committed change; inspect its audit ID
   and SHA-256 in the local file rather than treating this handoff line as an
   authorization.
@@ -29,6 +29,13 @@ Updated: 2026-09-01 17:20 CST (Asia/Shanghai)
   packet `outputs/evisoz_stage0_remediation_packet_v1_20260901_r6/` binds this
   discovery receipt explicitly via `--elm-discovery`; it does not promote ELM
   candidates or copy model bytes into the repository.
+
+- Aggregate Stage-0 replay r78 was executed with explicit external private
+  inputs, the r13 clean-freeze receipt, and the ELM discovery receipt above.
+  It remains `NO_GO` with blockers limited to offline teacher/calibration,
+  private governance authority, report text release, and public overlap/TUEV
+  identity. No model, optimizer, loader, teacher runtime, Qwen generation or
+  residual was opened.
 
 - The post-change clean-freeze audit
   `outputs/clean_freeze_audit_target_v1_20260901_r12.json` was `GO` at commit
