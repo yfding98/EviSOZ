@@ -88,6 +88,23 @@ fresh gate replay against r24 is required before any stage transition.
   externally authorized SUAT release. These statuses do not open localization
   supervision, Qwen generation, or any formal training lane.
 
+## Current continuation receipts (synthetic/shadow only)
+
+- The current clean snapshot remains `161e47f`; `git status` is clean. The
+  structured Evidence pipeline synthetic smoke was replayed at
+  `outputs/evisoz_structured_evidence_pipeline_smoke_v1_20260901_r1/` with
+  `status=synthetic_smoke_pass`, explicit missing-cell masks, six typed queries,
+  and `residual_bypassed=true`.
+- A three-event real bound-evidence structural shadow smoke was replayed at
+  `outputs/evisoz_stage0_shadow_inference_smoke_v1_20260901_r18/`. It covered
+  3 event packets and 2 patient packets; mask consistency, report-plan linkage
+  and claim-support validity were all `1.0`. It performed no Qwen generation,
+  teacher inference or training.
+- The r88 remediation packet is
+  `outputs/evisoz_stage0_remediation_packet_v1_20260901_r14/`; its
+  `remediation.json` binds source gate r88 and its teacher inventory keeps ELM
+  candidate materialization and fold-local calibration explicitly missing.
+
 ## Current-turn update
 
 - Updated `scripts/materialize_evisoz_qwen_patient_shadow_v1.py` so its
