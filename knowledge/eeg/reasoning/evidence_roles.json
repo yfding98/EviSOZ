@@ -1,0 +1,41 @@
+{
+  "schema_version": "eeg_evidence_roles_v2",
+  "axes": {
+    "source_authority": [
+      "formal_standard_or_consensus",
+      "dataset_official_protocol",
+      "peer_reviewed_research",
+      "clinical_textbook",
+      "educational_summary",
+      "local_operational_policy",
+      "unreviewed_generated_content"
+    ],
+    "patient_evidence_role": [
+      "direct_observation",
+      "supports",
+      "contradicts",
+      "limits_assessability",
+      "missing_not_negative",
+      "context_only"
+    ],
+    "claim_semantic_layer": ["OBS", "PAT", "LOC", "CLIN"],
+    "model_quantity_kind": [
+      "raw_score",
+      "calibrated_probability",
+      "prediction_set",
+      "annotator_confidence",
+      "not_applicable"
+    ]
+  },
+  "independence_rules": [
+    "raw_waveform_STFT_CWT_Welch_and_band_power_from_the_same_EEG_interval_are_correlated_views_not_independent_clinical_evidence",
+    "repeated_events_with_the_same_montage_missing_channels_or_breach_effect_share_systematic_bias",
+    "report_text_and_the_signal_model_that_created_its_locked_facts_are_not_independent_evidence",
+    "external_knowledge_is_interpretive_context_not_patient_evidence"
+  ],
+  "deprecated": {
+    "single_A_B_C_D_grade": "mixes_source_authority_patient_evidence_model_probability_and_assessability",
+    "probability_to_certainty_phrase_without_calibration_receipt": "forbidden"
+  },
+  "clinical_evidence_tier_rule": "use_an_explicit_versioned_clinical_gold_schema_outside_the_general_knowledge_base"
+}

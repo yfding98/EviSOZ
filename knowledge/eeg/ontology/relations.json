@@ -1,0 +1,32 @@
+{
+  "schema_version": "eeg_ontology_relations_v2",
+  "relations": [
+    "recorded_with",
+    "occurs_during",
+    "provoked_by",
+    "has_frequency",
+    "has_morphology",
+    "has_polarity",
+    "maximal_at",
+    "phase_reverses_at",
+    "has_field_to",
+    "precedes",
+    "follows",
+    "evolves_to",
+    "recruits",
+    "is_later_visible_in",
+    "co_occurs_with",
+    "mimics",
+    "differentiated_by",
+    "supports",
+    "contradicts",
+    "limited_by",
+    "derived_from",
+    "verified_by"
+  ],
+  "restricted_relations": {
+    "propagates_to": "requires_temporal_and_spatial_evidence_beyond_later_visibility",
+    "causes": "not_authorized_from_temporal_order_alone",
+    "is_source_of": "not_authorized_from_scalp_voltage_maximum_or_phase_reversal_alone"
+  }
+}

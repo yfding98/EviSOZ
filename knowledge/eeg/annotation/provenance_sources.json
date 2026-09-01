@@ -1,0 +1,17 @@
+{
+  "schema_version": "eeg_fact_provenance_sources_v2",
+  "patient_fact_schema_defined_here": false,
+  "host_patient_fact_contract_is_authoritative": true,
+  "unmapped_source_type_action": "do_not_emit_patient_fact",
+  "source_types": [
+    {"id": "acquisition_system", "may_create_observation": true, "may_create_clinical_conclusion": false},
+    {"id": "signal_algorithm", "may_create_observation": "candidate_only", "may_create_clinical_conclusion": false},
+    {"id": "technologist_observation", "may_create_observation": true, "may_create_clinical_conclusion": false},
+    {"id": "physician_observation", "may_create_observation": true, "may_create_clinical_conclusion": true},
+    {"id": "dataset_annotation", "may_create_observation": "candidate_only_after_explicit_host_adapter_and_review", "may_create_clinical_conclusion": false},
+    {"id": "clinical_report_extraction", "may_create_observation": "candidate_only_after_explicit_host_adapter_and_review", "may_create_clinical_conclusion": false},
+    {"id": "llm", "may_create_observation": false, "may_create_clinical_conclusion": false},
+    {"id": "external_knowledge", "may_create_observation": false, "may_create_clinical_conclusion": false}
+  ],
+  "rule": "source_of_patient_fact_and_source_of_interpretive_rule_must_be_serialized_separately"
+}

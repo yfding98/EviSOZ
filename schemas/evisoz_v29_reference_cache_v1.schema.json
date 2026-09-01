@@ -1,0 +1,381 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evisoz_v29_reference_cache_v1.schema.json",
+  "title": "EviSOZ frozen canonical v29 reference cache v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "cache_id",
+    "route",
+    "unit_kind",
+    "unit_count",
+    "patient_count",
+    "fold_count",
+    "channel_contract",
+    "bindings",
+    "tensor_receipts",
+    "numerical_contract",
+    "receipt_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "evisoz_v29_reference_cache_v1"},
+    "cache_id": {
+      "type": "string",
+      "pattern": "^EVISOZ-V29-[0-9a-f]{24}$"
+    },
+    "route": {
+      "enum": [
+        "historical_public_oof_held_fold",
+        "frozen_five_fold_event_mean"
+      ]
+    },
+    "unit_kind": {"enum": ["patient", "event"]},
+    "unit_count": {"type": "integer", "minimum": 1},
+    "patient_count": {"type": "integer", "minimum": 1},
+    "fold_count": {"const": 5},
+    "channel_contract": {
+      "const": {
+        "native_coordinate": "standard19_without_pz_c18",
+        "c18_order": [
+          "FP1", "FP2", "F7", "F3", "FZ", "F4", "F8", "T7", "C3",
+          "CZ", "C4", "T8", "P7", "P3", "P4", "P8", "O1", "O2"
+        ],
+        "standard19_order": [
+          "FP1", "FP2", "F7", "F3", "FZ", "F4", "F8", "T7", "C3",
+          "CZ", "C4", "T8", "P7", "P3", "PZ", "P4", "P8", "O1", "O2"
+        ],
+        "c18_to_standard19_indices": [
+          0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 16, 17, 18
+        ],
+        "inserted_node": "PZ",
+        "inserted_node_index": 14,
+        "inserted_probability": 0.0,
+        "inserted_candidate_mask": false,
+        "projection_operation": "insert_pz_zero_only_no_reorder_or_smoothing"
+      }
+    },
+    "bindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity_ref",
+        "event_identity_ref",
+        "montage_derivation_receipt_ref",
+        "route_receipt_roster_ref",
+        "resource_manifest_ref",
+        "prediction_resource_ids"
+      ],
+      "properties": {
+        "identity_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+        "event_identity_ref": {
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "evisoz_artifact_ref_v1.schema.json"}
+          ]
+        },
+        "montage_derivation_receipt_ref": {
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "evisoz_artifact_ref_v1.schema.json"}
+          ]
+        },
+        "route_receipt_roster_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+        "resource_manifest_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+        "prediction_resource_ids": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 2,
+          "items": {"type": "string"}
+        }
+      }
+    },
+    "tensor_receipts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "p_h_c18",
+        "p_d_c18",
+        "p0_c18",
+        "p0_node",
+        "z0_c18",
+        "candidate_mask",
+        "route_fold_mask",
+        "unit_to_patient_index"
+      ],
+      "properties": {
+        "p_h_c18": {"$ref": "#/$defs/floatC18"},
+        "p_d_c18": {"$ref": "#/$defs/floatC18"},
+        "p0_c18": {"$ref": "#/$defs/floatC18"},
+        "p0_node": {"$ref": "#/$defs/floatNode19"},
+        "z0_c18": {"$ref": "#/$defs/floatC18"},
+        "p_h_fold_c18": {"$ref": "#/$defs/floatFoldC18"},
+        "p_d_fold_c18": {"$ref": "#/$defs/floatFoldC18"},
+        "p_equal_fold_c18": {"$ref": "#/$defs/floatFoldC18"},
+        "candidate_mask": {"$ref": "#/$defs/candidateMask"},
+        "route_fold_mask": {"$ref": "#/$defs/routeFoldMask"},
+        "unit_to_patient_index": {"$ref": "#/$defs/unitToPatient"}
+      }
+    },
+    "numerical_contract": {
+      "oneOf": [
+        {"$ref": "#/$defs/publicNumericalContract"},
+        {"$ref": "#/$defs/eventNumericalContract"}
+      ]
+    },
+    "receipt_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "route": {"const": "historical_public_oof_held_fold"}
+        },
+        "required": ["route"]
+      },
+      "then": {
+        "properties": {
+          "unit_kind": {"const": "patient"},
+          "bindings": {
+            "properties": {
+              "event_identity_ref": {"type": "null"},
+              "montage_derivation_receipt_ref": {"type": "null"},
+              "prediction_resource_ids": {
+                "const": ["public_v29_oof"]
+              }
+            }
+          },
+          "tensor_receipts": {
+            "not": {
+              "anyOf": [
+                {"required": ["p_h_fold_c18"]},
+                {"required": ["p_d_fold_c18"]},
+                {"required": ["p_equal_fold_c18"]}
+              ]
+            }
+          },
+          "numerical_contract": {"$ref": "#/$defs/publicNumericalContract"}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "route": {"const": "frozen_five_fold_event_mean"}
+        },
+        "required": ["route"]
+      },
+      "then": {
+        "properties": {
+          "unit_kind": {"const": "event"},
+          "bindings": {
+            "properties": {
+              "event_identity_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+              "montage_derivation_receipt_ref": {
+                "$ref": "evisoz_artifact_ref_v1.schema.json"
+              },
+              "prediction_resource_ids": {
+                "const": ["direct_fold_states", "h_fold_states"]
+              }
+            }
+          },
+          "tensor_receipts": {
+            "required": [
+              "p_h_fold_c18",
+              "p_d_fold_c18",
+              "p_equal_fold_c18"
+            ]
+          },
+          "numerical_contract": {"$ref": "#/$defs/eventNumericalContract"}
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "publicNumericalContract": {
+      "const": {
+        "fusion": {
+          "operation_order": "held_fold_h_d_probability_fusion",
+          "h_weight": 0.5,
+          "d_weight": 0.5,
+          "equation": "p0_c18=0.5*p_h_c18+0.5*p_d_c18",
+          "validation": "torch_equal_elementwise"
+        },
+        "logit": {
+          "equation": "z0_c18=log(p0_c18)",
+          "epsilon_added": false,
+          "zero_probability_logit": "negative_infinity"
+        },
+        "hard_bypass": {
+          "alpha": 0.0,
+          "return_value": "p0_c18_artifact_directly",
+          "log_softmax_roundtrip": false,
+          "residual_path_evaluated": false
+        },
+        "tensor_content_replay_required_before_use": true
+      }
+    },
+    "eventNumericalContract": {
+      "const": {
+        "fusion": {
+          "operation_order": "per_fold_h_d_fusion_then_five_fold_mean",
+          "h_weight": 0.5,
+          "d_weight": 0.5,
+          "fold_equation": "p_equal_fold_c18=0.5*p_h_fold_c18+0.5*p_d_fold_c18",
+          "route_equations": [
+            "p_h_c18=mean_fold(p_h_fold_c18)",
+            "p_d_c18=mean_fold(p_d_fold_c18)",
+            "p0_c18=mean_fold(p_equal_fold_c18)"
+          ],
+          "validation": "torch_equal_elementwise_in_canonical_operation_order",
+          "aggregate_then_fuse_is_authoritative": false
+        },
+        "logit": {
+          "equation": "z0_c18=log(p0_c18)",
+          "epsilon_added": false,
+          "zero_probability_logit": "negative_infinity"
+        },
+        "hard_bypass": {
+          "alpha": 0.0,
+          "return_value": "p0_c18_artifact_directly",
+          "log_softmax_roundtrip": false,
+          "residual_path_evaluated": false
+        },
+        "tensor_content_replay_required_before_use": true
+      }
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "tensorReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_ref",
+        "encoding",
+        "dtype",
+        "shape",
+        "byte_length",
+        "tensor_sha256"
+      ],
+      "properties": {
+        "artifact_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+        "encoding": {"const": "evisoz_tensor_bytes_v1"},
+        "dtype": {"enum": ["float32", "bool", "int64"]},
+        "shape": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
+          "items": {"type": "integer", "minimum": 1}
+        },
+        "byte_length": {"type": "integer", "minimum": 1},
+        "tensor_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "floatC18": {
+      "allOf": [
+        {"$ref": "#/$defs/tensorReceipt"},
+        {
+          "properties": {
+            "dtype": {"const": "float32"},
+            "shape": {
+              "type": "array",
+              "prefixItems": [
+                {"type": "integer", "minimum": 1},
+                {"const": 18}
+              ],
+              "minItems": 2,
+              "maxItems": 2
+            }
+          }
+        }
+      ]
+    },
+    "floatNode19": {
+      "allOf": [
+        {"$ref": "#/$defs/tensorReceipt"},
+        {
+          "properties": {
+            "dtype": {"const": "float32"},
+            "shape": {
+              "type": "array",
+              "prefixItems": [
+                {"type": "integer", "minimum": 1},
+                {"const": 19}
+              ],
+              "minItems": 2,
+              "maxItems": 2
+            }
+          }
+        }
+      ]
+    },
+    "floatFoldC18": {
+      "allOf": [
+        {"$ref": "#/$defs/tensorReceipt"},
+        {
+          "properties": {
+            "dtype": {"const": "float32"},
+            "shape": {
+              "type": "array",
+              "prefixItems": [
+                {"type": "integer", "minimum": 1},
+                {"const": 5},
+                {"const": 18}
+              ],
+              "minItems": 3,
+              "maxItems": 3
+            }
+          }
+        }
+      ]
+    },
+    "candidateMask": {
+      "allOf": [
+        {"$ref": "#/$defs/tensorReceipt"},
+        {
+          "properties": {
+            "dtype": {"const": "bool"},
+            "shape": {"const": [19]}
+          }
+        }
+      ]
+    },
+    "routeFoldMask": {
+      "allOf": [
+        {"$ref": "#/$defs/tensorReceipt"},
+        {
+          "properties": {
+            "dtype": {"const": "bool"},
+            "shape": {
+              "type": "array",
+              "prefixItems": [
+                {"type": "integer", "minimum": 1},
+                {"const": 5}
+              ],
+              "minItems": 2,
+              "maxItems": 2
+            }
+          }
+        }
+      ]
+    },
+    "unitToPatient": {
+      "allOf": [
+        {"$ref": "#/$defs/tensorReceipt"},
+        {
+          "properties": {
+            "dtype": {"const": "int64"},
+            "shape": {
+              "type": "array",
+              "prefixItems": [{"type": "integer", "minimum": 1}],
+              "minItems": 1,
+              "maxItems": 1
+            }
+          }
+        }
+      ]
+    }
+  }
+}

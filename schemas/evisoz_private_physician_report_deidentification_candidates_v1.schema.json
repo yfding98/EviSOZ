@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evisoz_private_physician_report_deidentification_candidates_v1.schema.json",
+  "title": "Private physician-report de-identification review candidates v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "bundle_id",
+    "source_bindings",
+    "candidates",
+    "counts",
+    "deidentification_policy",
+    "receipt_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "evisoz_private_physician_report_deidentification_candidates_v1"},
+    "bundle_id": {"type": "string", "pattern": "^EVISOZ-DEIDSET-[0-9a-f]{24}$"},
+    "source_bindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["physician_report_inventory_ref", "patient_name_authority_ref"],
+      "properties": {
+        "physician_report_inventory_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+        "patient_name_authority_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"}
+      }
+    },
+    "candidates": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/candidate"}
+    },
+    "counts": {"type": "object"},
+    "deidentification_policy": {"type": "object"},
+    "receipt_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_id",
+        "report_id",
+        "association",
+        "text_ref",
+        "relative_text_path",
+        "extraction",
+        "automated_phi_scan",
+        "review_release"
+      ],
+      "properties": {
+        "candidate_id": {"type": "string", "pattern": "^EVISOZ-DEID-[0-9a-f]{24}$"},
+        "report_id": {"type": "string", "pattern": "^EVISOZ-PRPT-[0-9a-f]{24}$"},
+        "association": {"type": "object"},
+        "text_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+        "relative_text_path": {"type": "string", "minLength": 1},
+        "extraction": {"type": "object"},
+        "automated_phi_scan": {"type": "object"},
+        "review_release": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "manual_review_status",
+            "development_qwen_training_released",
+            "locked_language_evaluation_released",
+            "report_text_can_supervise_localization"
+          ],
+          "properties": {
+            "manual_review_status": {"const": "pending"},
+            "development_qwen_training_released": {"const": false},
+            "locked_language_evaluation_released": {"const": false},
+            "report_text_can_supervise_localization": {"const": false}
+          }
+        }
+      }
+    }
+  }
+}

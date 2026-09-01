@@ -1,0 +1,21 @@
+{
+  "$id": "evisoz_public_overlap_audit_receipt_v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EviSOZ public overlap audit receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "audit_id", "status", "source_projection_ref", "authority_receipt_ref", "near_partial_overlap", "tuev_eval_identity", "tuev_label_fold", "permissions", "missing_closure_codes", "receipt_sha256"],
+  "properties": {
+    "schema_version": {"const": "evisoz_public_overlap_audit_receipt_v1"},
+    "audit_id": {"type": "string", "pattern": "^EVISOZ-PUBOVER-[0-9a-f]{24}$"},
+    "status": {"enum": ["complete", "pending"]},
+    "source_projection_ref": {"type": "object"},
+    "authority_receipt_ref": {"type": "object"},
+    "near_partial_overlap": {"type": "object", "required": ["status", "evidence_ref"], "properties": {"status": {"enum": ["complete", "pending"]}, "evidence_ref": {"type": "object"}}, "additionalProperties": false},
+    "tuev_eval_identity": {"type": "object", "required": ["status", "evidence_ref"], "properties": {"status": {"enum": ["complete", "pending"]}, "evidence_ref": {"type": "object"}}, "additionalProperties": false},
+    "tuev_label_fold": {"type": "object", "required": ["status", "evidence_ref"], "properties": {"status": {"enum": ["complete", "pending"]}, "evidence_ref": {"type": "object"}}, "additionalProperties": false},
+    "permissions": {"type": "object", "additionalProperties": false, "properties": {"training_authorized": {"const": false}, "patient_identity_creation_by_inference": {"const": false}, "label_promotion_authorized": {"const": false}}, "required": ["training_authorized", "patient_identity_creation_by_inference", "label_promotion_authorized"]},
+    "missing_closure_codes": {"type": "array", "items": {"type": "string"}},
+    "receipt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

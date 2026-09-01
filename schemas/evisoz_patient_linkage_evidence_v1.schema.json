@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evisoz_patient_linkage_evidence_v1.schema.json",
+  "title": "EviSOZ privacy-preserving cross-dataset patient linkage evidence v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "assertion",
+    "verification_method",
+    "issuer_id",
+    "members",
+    "raw_patient_identifiers_stored"
+  ],
+  "properties": {
+    "schema_version": {"const": "evisoz_patient_linkage_evidence_v1"},
+    "assertion": {"const": "same_patient_across_datasets"},
+    "verification_method": {
+      "enum": [
+        "privacy_preserving_record_linkage",
+        "authorized_manual_crosswalk"
+      ]
+    },
+    "issuer_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "members": {
+      "type": "array",
+      "minItems": 2,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/member"}
+    },
+    "raw_patient_identifiers_stored": {"const": false}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "member": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dataset_id", "patient_key", "source_patient_sha256"],
+      "properties": {
+        "dataset_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+        },
+        "patient_key": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+        },
+        "source_patient_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}

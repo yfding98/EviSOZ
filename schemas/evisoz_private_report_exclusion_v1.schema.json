@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evisoz_private_report_exclusion_v1.schema.json",
+  "title": "EviSOZ private report operational exclusion receipt v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "exclusion_id", "inventory_ref", "entries", "counts", "decision", "policy", "receipt_sha256"],
+  "properties": {
+    "schema_version": {"const": "evisoz_private_report_exclusion_v1"},
+    "exclusion_id": {"type": "string", "pattern": "^EVISOZ-REPORT-EXCL-[0-9a-f]{24}$"},
+    "inventory_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+    "entries": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/entry"}},
+    "counts": {
+      "type": "object", "additionalProperties": false,
+      "required": ["excluded_count", "unresolved_inventory_count"],
+      "properties": {"excluded_count": {"type": "integer", "minimum": 1}, "unresolved_inventory_count": {"type": "integer", "minimum": 1}}
+    },
+    "decision": {
+      "type": "object", "additionalProperties": false,
+      "required": ["decision_type", "operator", "recorded_at_utc", "institutional_training_authorization"],
+      "properties": {
+        "decision_type": {"const": "operational_quarantine"},
+        "operator": {"type": "string", "pattern": "^[A-Za-z0-9_.:-]{1,80}$"},
+        "recorded_at_utc": {"type": "string", "minLength": 1},
+        "institutional_training_authorization": {"const": false}
+      }
+    },
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["report_is_not_linked", "report_is_not_split", "report_is_not_preprocessed", "report_is_not_released", "raw_identifiers_stored"],
+      "properties": {
+        "report_is_not_linked": {"const": true}, "report_is_not_split": {"const": true},
+        "report_is_not_preprocessed": {"const": true}, "report_is_not_released": {"const": true}, "raw_identifiers_stored": {"const": false}
+      }
+    },
+    "receipt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "$defs": {
+    "entry": {
+      "type": "object", "additionalProperties": false,
+      "required": ["report_id", "document_ref", "exclusion_status", "exclusion_code", "downstream_policy"],
+      "properties": {
+        "report_id": {"type": "string", "pattern": "^EVISOZ-PRPT-[0-9a-f]{24}$"},
+        "document_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+        "exclusion_status": {"const": "excluded_unresolved"},
+        "exclusion_code": {"type": "string", "pattern": "^[a-z][a-z0-9_.-]{2,120}$"},
+        "downstream_policy": {
+          "type": "object", "additionalProperties": false,
+          "required": ["create_linkage", "create_split_assignment", "admit_to_signal_preprocessing", "admit_to_event_training", "admit_to_qwen_training", "admit_to_language_evaluation"],
+          "properties": {
+            "create_linkage": {"const": false}, "create_split_assignment": {"const": false},
+            "admit_to_signal_preprocessing": {"const": false}, "admit_to_event_training": {"const": false},
+            "admit_to_qwen_training": {"const": false}, "admit_to_language_evaluation": {"const": false}
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "schema_version": "eeg_source_registry_v2",
+  "canonical_passage_file": "../knowledge_base.jsonl",
+  "canonical_passage_schema": "../schemas/source_passage.schema.json",
+  "content_sha256": "f788ef331af20954f9468ba63094bcaea6b582964f10ae08fa5910e9e618184d",
+  "entry_count": 25,
+  "registry_status": "compatibility_source_layer_claim_locators_pending",
+  "collection_profiles": [
+    {"id": "acns_terminology", "role": "formal_standard_or_consensus", "general_retrieval_allowed": true},
+    {"id": "ilae_classification", "role": "formal_standard_or_consensus", "general_retrieval_allowed": true},
+    {"id": "epilepsy_eeg_papers", "role": "peer_reviewed_research", "general_retrieval_allowed": true},
+    {"id": "soz_localization", "role": "peer_reviewed_research", "general_retrieval_allowed": true},
+    {"id": "clinical_textbooks", "role": "clinical_textbook", "general_retrieval_allowed": true},
+    {"id": "niedermeyer_atlas", "role": "clinical_textbook", "general_retrieval_allowed": true},
+    {"id": "tusz_documentation", "role": "dataset_context", "general_retrieval_allowed": false, "dataset_scope": ["TUSZ", "TUH"]},
+    {"id": "chbmit_clinical_notes", "role": "dataset_context", "general_retrieval_allowed": false, "dataset_scope": ["CHB-MIT"]}
+  ],
+  "source_priority": [
+    "formal_standard_or_consensus",
+    "dataset_official_protocol_for_dataset_semantics_only",
+    "peer_reviewed_research",
+    "clinical_textbook",
+    "educational_summary",
+    "local_operational_policy",
+    "unreviewed_generated_content"
+  ],
+  "known_overlapping_registry": {
+    "path": "../../../configs/clinical_eeg_report_literature_v1.json",
+    "authoritative_for_this_knowledge_bundle": false,
+    "required_action": "consolidate_source_ids_and_claim_locators_before_release"
+  },
+  "release_blockers": [
+    "all_cards_require_clinical_review",
+    "all_executable_claims_require_precise_source_locators",
+    "source_document_versions_and_access_dates_are_incomplete",
+    "compatibility_passages_are_not_atomic_claims"
+  ]
+}

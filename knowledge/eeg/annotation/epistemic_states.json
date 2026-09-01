@@ -1,0 +1,51 @@
+{
+  "schema_version": "eeg_epistemic_state_v2",
+  "canonical_states": [
+    {
+      "id": "present",
+      "definition": "在可评价范围内观察到并有证据绑定。",
+      "requires": ["assessment_opportunity", "positive_evidence_id"]
+    },
+    {
+      "id": "absent",
+      "definition": "在完整且可评价的机会中主动检查后未观察到。",
+      "requires": ["complete_opportunity", "completed_assessment", "appropriate_sensitivity", "negative_evidence_id"]
+    },
+    {
+      "id": "not_recorded",
+      "definition": "相应模态、字段或信息未采集/未提供，不能据此作阴性判断。"
+    },
+    {
+      "id": "not_assessable",
+      "definition": "已存在相关数据范围，但受缺失通道、伪迹、截断、参考或技术限制而无法可靠评价。"
+    },
+    {
+      "id": "uncertain",
+      "definition": "已有可评价信息但证据冲突、临界或不足以作 present/absent 判定。",
+      "requires": ["uncertainty_reason"]
+    }
+  ],
+  "ingestion_aliases": {
+    "unknown": {
+      "canonical_target": null,
+      "resolution_required": true,
+      "allowed_targets": ["not_recorded", "not_assessable", "uncertain", "no_assertion"],
+      "unresolved_action": "emit_no_canonical_assertion_and_queue_for_review",
+      "rule": "resolve_from_why_the_value_is_unknown_never_default_to_absent"
+    },
+    "not_present": {
+      "canonical_target": "absent",
+      "resolution_required": true,
+      "requires": ["complete_opportunity", "completed_assessment", "appropriate_sensitivity", "negative_evidence_id"],
+      "rule": "legacy_host_alias_only_map_when_assessed_negative_requirements_are_met_otherwise_reclassify"
+    }
+  },
+  "workflow_note": "pending_review is a workflow state, not an epistemic state; unresolved input emits no assertion until reviewed",
+  "forbidden_conversions": [
+    "not_recorded_to_absent",
+    "not_assessable_to_absent",
+    "uncertain_to_absent",
+    "missing_candidate_to_absent",
+    "technical_failure_to_absent"
+  ]
+}

@@ -1,0 +1,473 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/schemas/clinical_eeg_ba_ieg_inner_ragged_router_v1.schema.json",
+  "title": "Clinical EEG BA-IEG inner ragged router v1 receipt",
+  "description": "Strict receipt for EEG-only temporal-resolution routing inside frozen outer support. Each candidate is a channel-neutral physical-interval by permission-lane group; routing cannot select a channel/reference subset or authorize a Finding, onset/SOZ claim, or report text.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "method_id",
+    "router_id",
+    "route_boundary",
+    "source_binding",
+    "policy",
+    "outer_support_union",
+    "candidate_cells",
+    "selected_cells",
+    "budget",
+    "coverage",
+    "permission_partition",
+    "replay",
+    "router_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "clinical_eeg_ba_ieg_inner_ragged_router_v1"},
+    "method_id": {"const": "ba_ieg_channel_neutral_hierarchical_ragged_resolution_router_v1"},
+    "router_id": {"type": "string", "pattern": "^BAIEG-INNER-[0-9a-f]{20}$"},
+    "route_boundary": {"$ref": "#/$defs/route_boundary"},
+    "source_binding": {"$ref": "#/$defs/source_binding"},
+    "policy": {"$ref": "#/$defs/policy"},
+    "outer_support_union": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/interval"}
+    },
+    "candidate_cells": {"type": "array", "items": {"$ref": "#/$defs/cell"}},
+    "selected_cells": {"type": "array", "items": {"$ref": "#/$defs/cell"}},
+    "budget": {"$ref": "#/$defs/budget"},
+    "coverage": {"$ref": "#/$defs/coverage"},
+    "permission_partition": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {"$ref": "#/$defs/permission_partition"}
+    },
+    "replay": {"$ref": "#/$defs/replay"},
+    "router_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "pattern": "^\\S(?:.*\\S)?$"
+    },
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "number_nonnegative": {"type": "number", "minimum": 0},
+    "fraction": {"type": "number", "minimum": 0, "maximum": 1},
+    "interval": {
+      "type": "array",
+      "prefixItems": [{"type": "number"}, {"type": "number"}],
+      "items": false,
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "interval_union": {"type": "array", "items": {"$ref": "#/$defs/interval"}},
+    "identifier_roster": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/identifier"}
+    },
+    "possibly_empty_identifier_roster": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/identifier"}
+    },
+    "sha256_roster": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/sha256"}
+    },
+    "permission": {"enum": ["onset_causal", "morphology_native", "context_offline"]},
+    "scale": {"enum": ["fine", "coarse", "context"]},
+    "score_source": {"enum": ["deterministic_signal_policy", "source_trained_model"]},
+    "route_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scope",
+        "new_physical_eeg_acquisition_authorized",
+        "channel_or_reference_subset_selection_authorized",
+        "clinical_finding_or_soz_claim_authorized"
+      ],
+      "properties": {
+        "scope": {"const": "inside_already_acquired_outer_support_only"},
+        "new_physical_eeg_acquisition_authorized": {"const": false},
+        "channel_or_reference_subset_selection_authorized": {"const": false},
+        "clinical_finding_or_soz_claim_authorized": {"const": false}
+      }
+    },
+    "source_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_id",
+        "canonical_signal_sha256",
+        "outer_support_receipt_sha256",
+        "candidate_roster_sha256",
+        "score_source",
+        "score_receipt_sha256"
+      ],
+      "properties": {
+        "event_id": {"$ref": "#/$defs/identifier"},
+        "canonical_signal_sha256": {"$ref": "#/$defs/sha256"},
+        "outer_support_receipt_sha256": {"$ref": "#/$defs/sha256"},
+        "candidate_roster_sha256": {"$ref": "#/$defs/sha256"},
+        "score_source": {"$ref": "#/$defs/score_source"},
+        "score_receipt_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "scale_resolution_weights": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fine", "coarse", "context"],
+      "properties": {
+        "fine": {"const": 1.0},
+        "coarse": {"const": 0.25},
+        "context": {"const": 0.0625}
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "maximum_token_cost",
+        "maximum_resolution_weighted_eeg_seconds",
+        "minimum_quality_fraction",
+        "minimum_opportunity_fraction",
+        "positive_upgrade_gain_epsilon",
+        "scale_resolution_weights",
+        "permission_budget_fractions",
+        "permission_token_budgets",
+        "permission_resolution_weighted_eeg_seconds_budgets",
+        "router_score_semantics",
+        "selection_algorithm",
+        "channel_or_reference_subset_selection_allowed",
+        "new_physical_eeg_acquisition_allowed",
+        "clinical_claim_authorized"
+      ],
+      "properties": {
+        "schema_version": {"const": "ba_ieg_inner_ragged_router_policy_v1"},
+        "maximum_token_cost": {"type": "integer", "minimum": 1},
+        "maximum_resolution_weighted_eeg_seconds": {"$ref": "#/$defs/number_nonnegative"},
+        "minimum_quality_fraction": {"$ref": "#/$defs/fraction"},
+        "minimum_opportunity_fraction": {"$ref": "#/$defs/fraction"},
+        "positive_upgrade_gain_epsilon": {"$ref": "#/$defs/number_nonnegative"},
+        "scale_resolution_weights": {"$ref": "#/$defs/scale_resolution_weights"},
+        "permission_budget_fractions": {"$ref": "#/$defs/permission_fraction_map"},
+        "permission_token_budgets": {"$ref": "#/$defs/permission_integer_budget_map"},
+        "permission_resolution_weighted_eeg_seconds_budgets": {"$ref": "#/$defs/permission_number_budget_map"},
+        "router_score_semantics": {"const": "per_physical_second_utility_density"},
+        "selection_algorithm": {"const": "coarsest_complete_partition_then_positive_gain_child_cover_v1"},
+        "channel_or_reference_subset_selection_allowed": {"const": false},
+        "new_physical_eeg_acquisition_allowed": {"const": false},
+        "clinical_claim_authorized": {"const": false}
+      }
+    },
+    "permission_fraction_map": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["onset_causal", "morphology_native", "context_offline"],
+      "properties": {
+        "onset_causal": {"$ref": "#/$defs/fraction"},
+        "morphology_native": {"$ref": "#/$defs/fraction"},
+        "context_offline": {"$ref": "#/$defs/fraction"}
+      }
+    },
+    "permission_integer_budget_map": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["onset_causal", "morphology_native", "context_offline"],
+      "properties": {
+        "onset_causal": {"type": "integer", "minimum": 0},
+        "morphology_native": {"type": "integer", "minimum": 0},
+        "context_offline": {"type": "integer", "minimum": 0}
+      }
+    },
+    "permission_number_budget_map": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["onset_causal", "morphology_native", "context_offline"],
+      "properties": {
+        "onset_causal": {"$ref": "#/$defs/number_nonnegative"},
+        "morphology_native": {"$ref": "#/$defs/number_nonnegative"},
+        "context_offline": {"$ref": "#/$defs/number_nonnegative"}
+      }
+    },
+    "cell": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cell_id",
+        "parent_cell_id",
+        "scale",
+        "permission",
+        "nominal_interval_seconds",
+        "actual_interval_seconds",
+        "future_sample_access",
+        "onset_evidence_authorized",
+        "view_ids",
+        "unit_ids",
+        "reference_families",
+        "source_token_indices",
+        "raw_dependency_sha256s",
+        "view_receipt_sha256s",
+        "transform_sha256s",
+        "boundary_uncertainty",
+        "change_density",
+        "cross_channel_disagreement",
+        "reference_instability",
+        "quality_fraction",
+        "opportunity_fraction",
+        "router_score",
+        "score_source",
+        "score_receipt_sha256",
+        "token_cost",
+        "resolution_weighted_eeg_seconds_cost"
+      ],
+      "properties": {
+        "cell_id": {"$ref": "#/$defs/identifier"},
+        "parent_cell_id": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/identifier"}]},
+        "scale": {"$ref": "#/$defs/scale"},
+        "permission": {"$ref": "#/$defs/permission"},
+        "nominal_interval_seconds": {"$ref": "#/$defs/interval"},
+        "actual_interval_seconds": {"$ref": "#/$defs/interval"},
+        "future_sample_access": {"type": "boolean"},
+        "onset_evidence_authorized": {"type": "boolean"},
+        "view_ids": {"$ref": "#/$defs/identifier_roster"},
+        "unit_ids": {"$ref": "#/$defs/identifier_roster"},
+        "reference_families": {"$ref": "#/$defs/identifier_roster"},
+        "source_token_indices": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "integer", "minimum": 0}
+        },
+        "raw_dependency_sha256s": {"$ref": "#/$defs/sha256_roster"},
+        "view_receipt_sha256s": {"$ref": "#/$defs/sha256_roster"},
+        "transform_sha256s": {"$ref": "#/$defs/sha256_roster"},
+        "boundary_uncertainty": {"$ref": "#/$defs/fraction"},
+        "change_density": {"$ref": "#/$defs/number_nonnegative"},
+        "cross_channel_disagreement": {"$ref": "#/$defs/fraction"},
+        "reference_instability": {"$ref": "#/$defs/fraction"},
+        "quality_fraction": {"$ref": "#/$defs/fraction"},
+        "opportunity_fraction": {"$ref": "#/$defs/fraction"},
+        "router_score": {"type": "number"},
+        "score_source": {"$ref": "#/$defs/score_source"},
+        "score_receipt_sha256": {"$ref": "#/$defs/sha256"},
+        "token_cost": {"type": "integer", "minimum": 1},
+        "resolution_weighted_eeg_seconds_cost": {"$ref": "#/$defs/number_nonnegative"}
+      }
+    },
+    "budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "maximum_token_cost",
+        "minimum_complete_partition_token_cost",
+        "used_token_cost",
+        "maximum_resolution_weighted_eeg_seconds",
+        "minimum_complete_partition_resolution_weighted_eeg_seconds",
+        "used_resolution_weighted_eeg_seconds",
+        "token_budget_violated",
+        "resolution_budget_violated"
+        ,"permission_lanes"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "feasible_for_all_eligible_permission_lanes",
+            "partial_permission_lane_infeasible",
+            "infeasible"
+          ]
+        },
+        "maximum_token_cost": {"type": "integer", "minimum": 1},
+        "minimum_complete_partition_token_cost": {"type": "integer", "minimum": 0},
+        "used_token_cost": {"type": "integer", "minimum": 0},
+        "maximum_resolution_weighted_eeg_seconds": {"$ref": "#/$defs/number_nonnegative"},
+        "minimum_complete_partition_resolution_weighted_eeg_seconds": {"$ref": "#/$defs/number_nonnegative"},
+        "used_resolution_weighted_eeg_seconds": {"$ref": "#/$defs/number_nonnegative"},
+        "token_budget_violated": {"type": "boolean"},
+        "resolution_budget_violated": {"type": "boolean"},
+        "permission_lanes": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {"$ref": "#/$defs/permission_lane_budget"}
+        }
+      }
+    },
+    "permission_lane_budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "permission",
+        "status",
+        "eligible_root_cell_ids",
+        "selected_cell_ids",
+        "maximum_token_cost",
+        "minimum_complete_partition_token_cost",
+        "used_token_cost",
+        "maximum_resolution_weighted_eeg_seconds",
+        "minimum_complete_partition_resolution_weighted_eeg_seconds",
+        "used_resolution_weighted_eeg_seconds"
+      ],
+      "properties": {
+        "permission": {"$ref": "#/$defs/permission"},
+        "status": {
+          "enum": [
+            "materialized",
+            "not_evaluable_no_eligible_root_support",
+            "not_evaluable_lane_budget_below_minimum_partition"
+          ]
+        },
+        "eligible_root_cell_ids": {"$ref": "#/$defs/possibly_empty_identifier_roster"},
+        "selected_cell_ids": {"$ref": "#/$defs/possibly_empty_identifier_roster"},
+        "maximum_token_cost": {"type": "integer", "minimum": 0},
+        "minimum_complete_partition_token_cost": {"type": "integer", "minimum": 0},
+        "used_token_cost": {"type": "integer", "minimum": 0},
+        "maximum_resolution_weighted_eeg_seconds": {"$ref": "#/$defs/number_nonnegative"},
+        "minimum_complete_partition_resolution_weighted_eeg_seconds": {"$ref": "#/$defs/number_nonnegative"},
+        "used_resolution_weighted_eeg_seconds": {"$ref": "#/$defs/number_nonnegative"}
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "outer_support_seconds",
+        "selected_cell_count",
+        "complete_partition_within_each_available_permission",
+        "candidate_rows_are_channel_neutral_groups"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "not_evaluable_no_candidate_cells",
+            "not_evaluable_no_eligible_root_support",
+            "not_evaluable_budget_below_minimum_complete_partition",
+            "materialized_partial_permission_lane_budget",
+            "materialized_partial_outer_support_opportunity",
+            "materialized_complete_available_support"
+          ]
+        },
+        "outer_support_seconds": {"$ref": "#/$defs/number_nonnegative"},
+        "selected_cell_count": {"type": "integer", "minimum": 0},
+        "complete_partition_within_each_available_permission": {"type": "boolean"},
+        "candidate_rows_are_channel_neutral_groups": {"const": true}
+      }
+    },
+    "permission_partition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "permission",
+        "selection_status",
+        "maximum_token_cost",
+        "used_token_cost",
+        "maximum_resolution_weighted_eeg_seconds",
+        "used_resolution_weighted_eeg_seconds",
+        "candidate_cell_count",
+        "eligible_root_cell_ids",
+        "selected_cell_ids",
+        "eligible_root_support_union",
+        "selected_nominal_support_union",
+        "selected_actual_support_union",
+        "complete_partition_within_eligible_root_support",
+        "outer_support_coverage_fraction",
+        "selected_future_sample_access_present",
+        "onset_authorized_selected_cell_ids",
+        "onset_authorized_support_union",
+        "onset_positive_support_eligible"
+      ],
+      "properties": {
+        "permission": {"$ref": "#/$defs/permission"},
+        "selection_status": {
+          "enum": [
+            "materialized",
+            "not_evaluable_no_eligible_root_support",
+            "not_evaluable_lane_budget_below_minimum_partition"
+          ]
+        },
+        "maximum_token_cost": {"type": "integer", "minimum": 0},
+        "used_token_cost": {"type": "integer", "minimum": 0},
+        "maximum_resolution_weighted_eeg_seconds": {"$ref": "#/$defs/number_nonnegative"},
+        "used_resolution_weighted_eeg_seconds": {"$ref": "#/$defs/number_nonnegative"},
+        "candidate_cell_count": {"type": "integer", "minimum": 0},
+        "eligible_root_cell_ids": {"$ref": "#/$defs/possibly_empty_identifier_roster"},
+        "selected_cell_ids": {"$ref": "#/$defs/possibly_empty_identifier_roster"},
+        "eligible_root_support_union": {"$ref": "#/$defs/interval_union"},
+        "selected_nominal_support_union": {"$ref": "#/$defs/interval_union"},
+        "selected_actual_support_union": {"$ref": "#/$defs/interval_union"},
+        "complete_partition_within_eligible_root_support": {"type": "boolean"},
+        "outer_support_coverage_fraction": {"$ref": "#/$defs/fraction"},
+        "selected_future_sample_access_present": {"type": "boolean"},
+        "onset_authorized_selected_cell_ids": {"$ref": "#/$defs/possibly_empty_identifier_roster"},
+        "onset_authorized_support_union": {"$ref": "#/$defs/interval_union"},
+        "onset_positive_support_eligible": {"type": "boolean"}
+      }
+    },
+    "upgrade_trace_item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "permission",
+        "selection_step_within_permission",
+        "parent_cell_id",
+        "child_cell_ids",
+        "integrated_utility_gain",
+        "token_cost_delta",
+        "resolution_weighted_eeg_seconds_delta",
+        "gain_per_normalized_incremental_cost"
+      ],
+      "properties": {
+        "permission": {"$ref": "#/$defs/permission"},
+        "selection_step_within_permission": {"type": "integer", "minimum": 0},
+        "parent_cell_id": {"$ref": "#/$defs/identifier"},
+        "child_cell_ids": {"$ref": "#/$defs/identifier_roster"},
+        "integrated_utility_gain": {"type": "number", "exclusiveMinimum": 0},
+        "token_cost_delta": {"type": "integer", "minimum": 0},
+        "resolution_weighted_eeg_seconds_delta": {"$ref": "#/$defs/number_nonnegative"},
+        "gain_per_normalized_incremental_cost": {"$ref": "#/$defs/number_nonnegative"}
+      }
+    },
+    "replay": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "selection_algorithm",
+        "router_score_semantics",
+        "candidate_row_order_invariant",
+        "complete_child_cover_required",
+        "utility_integrated_over_physical_seconds",
+        "permission_lane_budget_isolation",
+        "unused_lane_budget_reallocation_allowed",
+        "source_token_copy_confidence_gain_authorized",
+        "offline_to_onset_permission_upgrade_authorized",
+        "clinical_terms_emitted",
+        "labels_annotations_spreadsheets_or_clinical_text_used",
+        "upgrade_trace"
+      ],
+      "properties": {
+        "selection_algorithm": {"const": "coarsest_complete_partition_then_positive_gain_child_cover_v1"},
+        "router_score_semantics": {"const": "per_physical_second_utility_density"},
+        "candidate_row_order_invariant": {"const": true},
+        "complete_child_cover_required": {"const": true},
+        "utility_integrated_over_physical_seconds": {"const": true},
+        "permission_lane_budget_isolation": {"const": true},
+        "unused_lane_budget_reallocation_allowed": {"const": false},
+        "source_token_copy_confidence_gain_authorized": {"const": false},
+        "offline_to_onset_permission_upgrade_authorized": {"const": false},
+        "clinical_terms_emitted": {"const": false},
+        "labels_annotations_spreadsheets_or_clinical_text_used": {"const": false},
+        "upgrade_trace": {"type": "array", "items": {"$ref": "#/$defs/upgrade_trace_item"}}
+      }
+    }
+  }
+}

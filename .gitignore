@@ -1,0 +1,17 @@
+# Controlled inputs and generated artifacts stay outside this project.
+outputs/
+inputs/
+raw/
+data/
+*.edf
+*.edf+
+*.docx
+*.xlsx
+*.xls
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+reviews.json
+*.partial
+

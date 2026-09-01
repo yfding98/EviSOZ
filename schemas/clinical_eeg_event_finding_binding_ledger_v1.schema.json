@@ -1,0 +1,454 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/clinical_eeg_event_finding_binding_ledger_v1.schema.json",
+  "title": "Clinical EEG event Finding primary/secondary binding ledger v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "ledger_id",
+    "method_id",
+    "event_id",
+    "record_id",
+    "canonical_signal_sha256",
+    "policy_id",
+    "policy_sha256",
+    "findings_schema_version",
+    "findings_payload_sha256",
+    "atom_roster_receipt_id",
+    "atom_roster_receipt_sha256",
+    "item_denominator_receipt_id",
+    "item_denominator_receipt_sha256",
+    "item_denominator_join_sha256",
+    "term_query_denominator_receipt_id",
+    "term_query_denominator_receipt_sha256",
+    "typed_unit_inventory_sha256",
+    "physical_instance_inventory_id",
+    "physical_instance_inventory_sha256",
+    "producer_binding_inventory_id",
+    "producer_binding_inventory_sha256",
+    "source_firewall",
+    "primary_dispositions",
+    "query_cell_bindings",
+    "summary",
+    "ledger_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "clinical_eeg_event_finding_binding_ledger_v1"
+    },
+    "ledger_id": {"$ref": "#/$defs/id"},
+    "method_id": {
+      "const": "EEG-ONLY-EVENT-FINDING-PRIMARY-SECONDARY-BINDING-V1"
+    },
+    "event_id": {"$ref": "#/$defs/id"},
+    "record_id": {"$ref": "#/$defs/id"},
+    "canonical_signal_sha256": {"$ref": "#/$defs/sha256"},
+    "policy_id": {
+      "const": "CLINICAL-EEG-EVENT-FINDING-BINDING-POLICY-V1"
+    },
+    "policy_sha256": {"$ref": "#/$defs/sha256"},
+    "findings_schema_version": {"const": "event_eeg_findings_v3"},
+    "findings_payload_sha256": {"$ref": "#/$defs/sha256"},
+    "atom_roster_receipt_id": {"$ref": "#/$defs/id"},
+    "atom_roster_receipt_sha256": {"$ref": "#/$defs/sha256"},
+    "item_denominator_receipt_id": {"$ref": "#/$defs/id"},
+    "item_denominator_receipt_sha256": {"$ref": "#/$defs/sha256"},
+    "item_denominator_join_sha256": {"$ref": "#/$defs/sha256"},
+    "term_query_denominator_receipt_id": {"$ref": "#/$defs/id"},
+    "term_query_denominator_receipt_sha256": {"$ref": "#/$defs/sha256"},
+    "typed_unit_inventory_sha256": {"$ref": "#/$defs/sha256"},
+    "physical_instance_inventory_id": {"$ref": "#/$defs/id"},
+    "physical_instance_inventory_sha256": {"$ref": "#/$defs/sha256"},
+    "producer_binding_inventory_id": {"$ref": "#/$defs/id"},
+    "producer_binding_inventory_sha256": {"$ref": "#/$defs/sha256"},
+    "source_firewall": {"$ref": "#/$defs/sourceFirewall"},
+    "primary_dispositions": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/primaryDisposition"}
+    },
+    "query_cell_bindings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/queryCellBinding"}
+    },
+    "summary": {"$ref": "#/$defs/summary"},
+    "ledger_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,255}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "nullableId": {
+      "anyOf": [
+        {"$ref": "#/$defs/id"},
+        {"type": "null"}
+      ]
+    },
+    "nullableSha256": {
+      "anyOf": [
+        {"$ref": "#/$defs/sha256"},
+        {"type": "null"}
+      ]
+    },
+    "findingStatus": {
+      "enum": [
+        "present",
+        "absent_with_opportunity",
+        "uncertain",
+        "not_evaluable"
+      ]
+    },
+    "nullableFindingStatus": {
+      "anyOf": [
+        {"$ref": "#/$defs/findingStatus"},
+        {"type": "null"}
+      ]
+    },
+    "assertionLevel": {
+      "enum": [
+        "measured",
+        "model_candidate",
+        "report_eligible_automated"
+      ]
+    },
+    "nullableAssertionLevel": {
+      "anyOf": [
+        {"$ref": "#/$defs/assertionLevel"},
+        {"type": "null"}
+      ]
+    },
+    "interval": {
+      "type": "object",
+      "required": ["start", "stop"],
+      "properties": {
+        "start": {"type": "number", "minimum": 0},
+        "stop": {"type": "number", "exclusiveMinimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "intervalUnion": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/interval"}
+    },
+    "typedUnit": {
+      "type": "object",
+      "required": ["unit_type", "unit_id", "unit_key"],
+      "properties": {
+        "unit_type": {"enum": ["event", "lead", "electrode"]},
+        "unit_id": {"$ref": "#/$defs/id"},
+        "unit_key": {"$ref": "#/$defs/id"}
+      },
+      "additionalProperties": false
+    },
+    "termRef": {
+      "type": "object",
+      "required": [
+        "term_id",
+        "ontology_id",
+        "operational_rule_id"
+      ],
+      "properties": {
+        "term_id": {"$ref": "#/$defs/id"},
+        "ontology_id": {"$ref": "#/$defs/id"},
+        "operational_rule_id": {"$ref": "#/$defs/id"}
+      },
+      "additionalProperties": false
+    },
+    "secondaryLink": {
+      "type": "object",
+      "required": [
+        "query_cell_key",
+        "relation_type",
+        "vote_count",
+        "may_upgrade_status",
+        "may_upgrade_assertion"
+      ],
+      "properties": {
+        "query_cell_key": {"$ref": "#/$defs/id"},
+        "relation_type": {
+          "enum": [
+            "alternate_reference_corroboration",
+            "same_instance_component",
+            "derived_projection",
+            "later_context",
+            "competing_interpretation",
+            "counterevidence"
+          ]
+        },
+        "vote_count": {"const": 0},
+        "may_upgrade_status": {"const": false},
+        "may_upgrade_assertion": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "primaryDisposition": {
+      "type": "object",
+      "required": [
+        "finding_id",
+        "finding_sha256",
+        "semantic_fingerprint_sha256",
+        "finding_status",
+        "assertion_level",
+        "producer_binding_id",
+        "producer_receipt_id",
+        "processing_disposition",
+        "physical_instance_key",
+        "primary_query_cell_key",
+        "disposition",
+        "primary_vote_count",
+        "secondary_links",
+        "reason_codes",
+        "binding_sha256"
+      ],
+      "properties": {
+        "finding_id": {"$ref": "#/$defs/id"},
+        "finding_sha256": {"$ref": "#/$defs/sha256"},
+        "semantic_fingerprint_sha256": {"$ref": "#/$defs/sha256"},
+        "finding_status": {"$ref": "#/$defs/findingStatus"},
+        "assertion_level": {"$ref": "#/$defs/assertionLevel"},
+        "producer_binding_id": {"$ref": "#/$defs/id"},
+        "producer_receipt_id": {"$ref": "#/$defs/nullableId"},
+        "processing_disposition": {
+          "enum": ["completed", "technical_failure"]
+        },
+        "physical_instance_key": {"$ref": "#/$defs/nullableId"},
+        "primary_query_cell_key": {"$ref": "#/$defs/nullableId"},
+        "disposition": {
+          "enum": [
+            "bound_primary",
+            "withheld_no_matching_query",
+            "withheld_duplicate",
+            "withheld_multiple_primary",
+            "withheld_opportunity_mismatch",
+            "withheld_domain_mismatch",
+            "withheld_physical_instance_mismatch",
+            "withheld_producer_failure",
+            "not_evaluable"
+          ]
+        },
+        "primary_vote_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "secondary_links": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/secondaryLink"}
+        },
+        "reason_codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/id"}
+        },
+        "binding_sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "additionalProperties": false
+    },
+    "checks": {
+      "type": "object",
+      "required": [
+        "term_exact",
+        "typed_unit_exact",
+        "present_interval_subset",
+        "self_opportunity_subset",
+        "absence_complete_scope",
+        "single_primary",
+        "duplicate_free",
+        "physical_instance_exact",
+        "producer_completed",
+        "capability_same_domain",
+        "sensitivity_same_domain",
+        "explicit_term_decision",
+        "onset_future_free_causal",
+        "item_denominator_join_valid",
+        "term_denominator_valid"
+      ],
+      "properties": {
+        "term_exact": {"type": "boolean"},
+        "typed_unit_exact": {"type": "boolean"},
+        "present_interval_subset": {"type": "boolean"},
+        "self_opportunity_subset": {"type": "boolean"},
+        "absence_complete_scope": {"type": "boolean"},
+        "single_primary": {"type": "boolean"},
+        "duplicate_free": {"type": "boolean"},
+        "physical_instance_exact": {"type": "boolean"},
+        "producer_completed": {"type": "boolean"},
+        "capability_same_domain": {"type": "boolean"},
+        "sensitivity_same_domain": {"type": "boolean"},
+        "explicit_term_decision": {"type": "boolean"},
+        "onset_future_free_causal": {"type": "boolean"},
+        "item_denominator_join_valid": {"type": "boolean"},
+        "term_denominator_valid": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "queryCellBinding": {
+      "type": "object",
+      "required": [
+        "query_cell_key",
+        "query_cell_sha256",
+        "term_query_id",
+        "term",
+        "family",
+        "unit",
+        "required_interval_union",
+        "evaluable_interval_union",
+        "opportunity_status",
+        "negative_opportunity_eligible",
+        "technical_failure",
+        "primary_finding_id",
+        "primary_finding_sha256",
+        "primary_status",
+        "primary_assertion_level",
+        "physical_instance_key",
+        "secondary_finding_ids",
+        "checks",
+        "promotion_disposition",
+        "promotion_vote_count",
+        "reason_codes",
+        "binding_sha256"
+      ],
+      "properties": {
+        "query_cell_key": {"$ref": "#/$defs/id"},
+        "query_cell_sha256": {"$ref": "#/$defs/sha256"},
+        "term_query_id": {"$ref": "#/$defs/id"},
+        "term": {"$ref": "#/$defs/termRef"},
+        "family": {"$ref": "#/$defs/id"},
+        "unit": {"$ref": "#/$defs/typedUnit"},
+        "required_interval_union": {"$ref": "#/$defs/intervalUnion"},
+        "evaluable_interval_union": {"$ref": "#/$defs/intervalUnion"},
+        "opportunity_status": {
+          "enum": ["sufficient", "limited", "not_evaluable"]
+        },
+        "negative_opportunity_eligible": {"type": "boolean"},
+        "technical_failure": {"type": "boolean"},
+        "primary_finding_id": {"$ref": "#/$defs/nullableId"},
+        "primary_finding_sha256": {"$ref": "#/$defs/nullableSha256"},
+        "primary_status": {"$ref": "#/$defs/nullableFindingStatus"},
+        "primary_assertion_level": {"$ref": "#/$defs/nullableAssertionLevel"},
+        "physical_instance_key": {"$ref": "#/$defs/nullableId"},
+        "secondary_finding_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/id"}
+        },
+        "checks": {"$ref": "#/$defs/checks"},
+        "promotion_disposition": {
+          "enum": [
+            "promoted_present",
+            "promoted_absent",
+            "candidate_present",
+            "candidate_uncertain",
+            "not_evaluable",
+            "withheld_conflict",
+            "withheld_duplicate",
+            "withheld_missing_primary",
+            "withheld_opportunity_mismatch",
+            "withheld_domain_mismatch",
+            "withheld_physical_instance_mismatch",
+            "withheld_term_denominator_unavailable",
+            "technical_failure"
+          ]
+        },
+        "promotion_vote_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "reason_codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/id"}
+        },
+        "binding_sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "additionalProperties": false
+    },
+    "sourceFirewall": {
+      "type": "object",
+      "required": [
+        "eeg_signal_only",
+        "edf_annotations_used",
+        "spreadsheet_used",
+        "doctor_labels_used",
+        "clinical_text_used",
+        "patient_metadata_used",
+        "video_used",
+        "sleep_staging_used",
+        "provocation_used",
+        "ecg_emg_eog_used"
+      ],
+      "properties": {
+        "eeg_signal_only": {"const": true},
+        "edf_annotations_used": {"const": false},
+        "spreadsheet_used": {"const": false},
+        "doctor_labels_used": {"const": false},
+        "clinical_text_used": {"const": false},
+        "patient_metadata_used": {"const": false},
+        "video_used": {"const": false},
+        "sleep_staging_used": {"const": false},
+        "provocation_used": {"const": false},
+        "ecg_emg_eog_used": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "expected_finding_count",
+        "primary_disposition_count",
+        "expected_query_cell_count",
+        "query_cell_binding_count",
+        "unique_physical_instance_count",
+        "bound_primary_count",
+        "secondary_link_count",
+        "duplicate_finding_count",
+        "multiple_primary_query_count",
+        "technical_failure_count",
+        "promoted_present_count",
+        "promoted_absent_count",
+        "withheld_count",
+        "all_findings_exactly_once_as_primary_disposition",
+        "all_query_cells_exactly_once",
+        "secondary_vote_count",
+        "status_assertion_same_primary_only",
+        "item_denominator_join_validated",
+        "term_denominator_validated",
+        "public_synthetic_shadow_only",
+        "production_route_connected",
+        "clinical_correctness_claimed"
+      ],
+      "properties": {
+        "expected_finding_count": {"type": "integer", "minimum": 0},
+        "primary_disposition_count": {"type": "integer", "minimum": 0},
+        "expected_query_cell_count": {"type": "integer", "minimum": 1},
+        "query_cell_binding_count": {"type": "integer", "minimum": 1},
+        "unique_physical_instance_count": {"type": "integer", "minimum": 0},
+        "bound_primary_count": {"type": "integer", "minimum": 0},
+        "secondary_link_count": {"type": "integer", "minimum": 0},
+        "duplicate_finding_count": {"type": "integer", "minimum": 0},
+        "multiple_primary_query_count": {"type": "integer", "minimum": 0},
+        "technical_failure_count": {"type": "integer", "minimum": 0},
+        "promoted_present_count": {"type": "integer", "minimum": 0},
+        "promoted_absent_count": {"type": "integer", "minimum": 0},
+        "withheld_count": {"type": "integer", "minimum": 0},
+        "all_findings_exactly_once_as_primary_disposition": {"const": true},
+        "all_query_cells_exactly_once": {"const": true},
+        "secondary_vote_count": {"const": 0},
+        "status_assertion_same_primary_only": {"const": true},
+        "item_denominator_join_validated": {"const": true},
+        "term_denominator_validated": {"const": true},
+        "public_synthetic_shadow_only": {"const": true},
+        "production_route_connected": {"const": false},
+        "clinical_correctness_claimed": {"const": false}
+      },
+      "additionalProperties": false
+    }
+  }
+}

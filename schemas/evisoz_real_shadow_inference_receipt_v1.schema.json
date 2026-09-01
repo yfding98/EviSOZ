@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evisoz_real_shadow_inference_receipt_v1.schema.json",
+  "title": "EviSOZ real-data shadow inference receipt v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "status", "stage0_status", "event_count", "patient_count",
+    "source", "baseline", "adapter", "safety", "receipt_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "evisoz_real_shadow_inference_receipt_v1"},
+    "status": {"const": "real_data_shadow_evidence_and_report_plan_only"},
+    "stage0_status": {"const": "NO_GO"},
+    "event_count": {"type": "integer", "minimum": 1},
+    "patient_count": {"type": "integer", "minimum": 1},
+    "source": {
+      "type": "object", "additionalProperties": false,
+      "required": ["bound_evidence_root", "loader_receipt_sha256", "evaluation_receipt_sha256"],
+      "properties": {
+        "bound_evidence_root": {"type": "string", "minLength": 1},
+        "loader_receipt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "evaluation_receipt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "baseline": {
+      "type": "object", "additionalProperties": false,
+      "required": ["method_id", "manifest_sha256", "predictions_sha256", "candidate_mask_sha256", "target_values_loaded", "baseline_role"],
+      "properties": {
+        "method_id": {"const": "canonical_v29_equal_H_D_probability_ensemble"},
+        "manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "predictions_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "candidate_mask_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "target_values_loaded": {"type": "boolean"},
+        "baseline_role": {"const": "frozen_v29_identity_reference_only"}
+      }
+    },
+    "adapter": {
+      "type": "object", "additionalProperties": false,
+      "required": ["node", "node_units", "edge", "edge_units", "token_dim", "projection_mode", "endpoint_expansion"],
+      "properties": {
+        "node": {"const": "official_labram_base_patch200_200"},
+        "node_units": {"type": "array", "minItems": 19, "maxItems": 19, "items": {"type": "string"}},
+        "edge": {"const": "signed_tcp22_independent_temporal_patch_encoder"},
+        "edge_units": {"type": "array", "minItems": 22, "maxItems": 22, "items": {"type": "string"}},
+        "token_dim": {"const": 128},
+        "projection_mode": {"const": "fixed_shadow"},
+        "endpoint_expansion": {"const": false}
+      }
+    },
+    "safety": {
+      "type": "object", "additionalProperties": false,
+      "required": ["formal_training", "residual_enabled", "residual_identity_all_events", "teacher_runtime_opened", "physician_report_text_opened", "canonical_shadow_report_opened", "knowledge_card_text_opened", "qwen_generation", "tcp22_edge_to_node_label_expansion", "predicted_packets_are_patient_facts"],
+      "properties": {
+        "formal_training": {"const": false},
+        "residual_enabled": {"const": false},
+        "residual_identity_all_events": {"const": true},
+        "teacher_runtime_opened": {"const": false},
+        "physician_report_text_opened": {"const": false},
+        "canonical_shadow_report_opened": {"const": true},
+        "knowledge_card_text_opened": {"const": false},
+        "qwen_generation": {"const": false},
+        "tcp22_edge_to_node_label_expansion": {"const": false},
+        "predicted_packets_are_patient_facts": {"const": false}
+      }
+    },
+    "receipt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

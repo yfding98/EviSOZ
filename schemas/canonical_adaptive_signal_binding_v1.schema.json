@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/schemas/canonical_adaptive_signal_binding_v1.schema.json",
+  "title": "Canonical EEG to adaptive-search signal binding",
+  "description": "EEG-only content binding that distinguishes detector EDF-container identity from canonical physical-signal identity and freezes the observed/unobserved Standard-19 partition.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "canonical_signal_id",
+    "canonical_recording_id",
+    "canonical_source_signal_sha256",
+    "canonical_receipt_sha256",
+    "canonical_source_header_receipt_sha256",
+    "recording_duration_seconds",
+    "semantic_channel_order",
+    "observed_channel_ids",
+    "unobserved_channel_ids",
+    "missing_channel_policy",
+    "scope_receipt",
+    "binding_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "canonical_adaptive_signal_binding_v1"},
+    "canonical_signal_id": {"$ref": "#/$defs/id"},
+    "canonical_recording_id": {"$ref": "#/$defs/id"},
+    "canonical_source_signal_sha256": {"$ref": "#/$defs/sha256"},
+    "canonical_receipt_sha256": {"$ref": "#/$defs/sha256"},
+    "canonical_source_header_receipt_sha256": {"$ref": "#/$defs/sha256"},
+    "recording_duration_seconds": {"type": "number", "exclusiveMinimum": 0},
+    "semantic_channel_order": {
+      "const": [
+        "FP1", "FP2", "F7", "F3", "FZ", "F4", "F8", "T7", "C3",
+        "CZ", "C4", "T8", "P7", "P3", "PZ", "P4", "P8", "O1", "O2"
+      ]
+    },
+    "observed_channel_ids": {"$ref": "#/$defs/channelSubset"},
+    "unobserved_channel_ids": {"$ref": "#/$defs/channelSubset"},
+    "missing_channel_policy": {
+      "const": "zero_carrier_strict_mask_no_interpolation_no_evidence_v1"
+    },
+    "scope_receipt": {
+      "type": "object",
+      "required": [
+        "eeg_samples_used",
+        "edf_annotations_used",
+        "spreadsheet_used",
+        "doctor_labels_used",
+        "clinical_text_used"
+      ],
+      "properties": {
+        "eeg_samples_used": {"const": true},
+        "edf_annotations_used": {"const": false},
+        "spreadsheet_used": {"const": false},
+        "doctor_labels_used": {"const": false},
+        "clinical_text_used": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "binding_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "channelSubset": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "FP1", "FP2", "F7", "F3", "FZ", "F4", "F8", "T7", "C3",
+          "CZ", "C4", "T8", "P7", "P3", "PZ", "P4", "P8", "O1", "O2"
+        ]
+      }
+    }
+  }
+}

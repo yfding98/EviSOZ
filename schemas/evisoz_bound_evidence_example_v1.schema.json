@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evisoz_bound_evidence_example_v1.schema.json",
+  "title": "EviSOZ Stage-0 bound evidence example v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "bound_example_id", "event_id", "linkage_group_id",
+    "evisoz_role", "outer_holdout_fold", "status", "source_refs", "lanes",
+    "permissions", "receipt_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "evisoz_bound_evidence_example_v1"},
+    "bound_example_id": {"type": "string", "pattern": "^EVISOZ-BOUND-[0-9a-f]{24}$"},
+    "event_id": {"type": "string", "minLength": 1},
+    "linkage_group_id": {"type": "string", "minLength": 1},
+    "evisoz_role": {"enum": ["development_cv", "locked_test"]},
+    "outer_holdout_fold": {"type": ["integer", "null"], "minimum": 0},
+    "status": {"const": "stage0_shadow_bound"},
+    "source_refs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "training_example", "event_findings", "reference_claim_graph",
+        "field_release", "montage_derivation", "dual_montage_cache",
+        "patient_signal_graph", "knowledge_selection", "canonical_report"
+      ],
+      "properties": {
+        "training_example": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+        "event_findings": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+        "reference_claim_graph": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+        "field_release": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+        "montage_derivation": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+        "dual_montage_cache": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+        "patient_signal_graph": {"anyOf": [{"$ref": "evisoz_artifact_ref_v1.schema.json"}, {"type": "null"}]},
+        "knowledge_selection": {"anyOf": [{"$ref": "evisoz_artifact_ref_v1.schema.json"}, {"type": "null"}]},
+        "canonical_report": {"anyOf": [{"$ref": "evisoz_artifact_ref_v1.schema.json"}, {"type": "null"}]},
+        "physician_report_release": {"anyOf": [{"$ref": "evisoz_artifact_ref_v1.schema.json"}, {"type": "null"}]}
+      }
+    },
+    "lanes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["clinical_labels", "direct_measurements", "teacher_candidates", "derived_candidates", "physician_authored_text", "generated_text"],
+      "properties": {
+        "clinical_labels": {"$ref": "#/$defs/lane"},
+        "direct_measurements": {"$ref": "#/$defs/lane"},
+        "teacher_candidates": {"$ref": "#/$defs/lane"},
+        "derived_candidates": {"$ref": "#/$defs/lane"},
+        "physician_authored_text": {"$ref": "#/$defs/lane"},
+        "generated_text": {"$ref": "#/$defs/lane"}
+      }
+    },
+    "permissions": {
+      "const": {
+        "training_allowed": false,
+        "node_localization_supervision_allowed": false,
+        "report_text_loss_allowed": false,
+        "prompt_or_rag_allowed": false,
+        "knowledge_can_create_patient_fact": false,
+        "generated_text_can_create_patient_fact": false
+      }
+    },
+    "receipt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "$defs": {
+    "lane": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "state"],
+      "properties": {
+        "source": {"type": "string", "minLength": 1},
+        "state": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

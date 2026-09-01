@@ -1,0 +1,810 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/schemas/clinical_eeg_event_findings_atom_roster_receipt_v1.schema.json",
+  "title": "Closed per-event EEG Findings atom-roster receipt",
+  "description": "A source-bound structural-completeness receipt for one event_eeg_findings_v3 graph. It proves that every registered core atom and conditional child roster is accounted for. It does not prove that the EEG interpretation is clinically correct.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "receipt_id",
+    "event_id",
+    "record_id",
+    "canonical_signal_sha256",
+    "expected_unit_inventory_source",
+    "expected_unit_ids",
+    "expected_unit_inventory_sha256",
+    "findings_schema_version",
+    "findings_payload_sha256",
+    "roster_id",
+    "roster_policy_sha256",
+    "core_entries",
+    "child_rosters",
+    "summary",
+    "receipt_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "clinical_eeg_event_findings_atom_roster_receipt_v1"
+    },
+    "receipt_id": {
+      "$ref": "#/$defs/id"
+    },
+    "event_id": {
+      "$ref": "#/$defs/id"
+    },
+    "record_id": {
+      "$ref": "#/$defs/id"
+    },
+    "canonical_signal_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "expected_unit_inventory_source": {
+      "enum": [
+        "trusted_canonical_montage_receipt",
+        "source_v3_shadow"
+      ]
+    },
+    "expected_unit_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/id"
+      }
+    },
+    "expected_unit_inventory_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "findings_schema_version": {
+      "const": "event_eeg_findings_v3"
+    },
+    "findings_payload_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "roster_id": {
+      "$ref": "#/$defs/id"
+    },
+    "roster_policy_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "core_entries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/coreEntry"
+      }
+    },
+    "child_rosters": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/childRoster"
+      }
+    },
+    "summary": {
+      "$ref": "#/$defs/summary"
+    },
+    "receipt_sha256": {
+      "$ref": "#/$defs/sha256"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "nullableId": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "group": {
+      "enum": [
+        "C1_phenomenology",
+        "C2_spatiotemporal_onset",
+        "C3_course",
+        "Q_evaluability"
+      ]
+    },
+    "status": {
+      "enum": [
+        "present",
+        "absent_with_opportunity",
+        "uncertain",
+        "not_evaluable"
+      ]
+    },
+    "activationStatus": {
+      "enum": [
+        "always_expected",
+        "triggered",
+        "not_triggered",
+        "not_evaluable"
+      ]
+    },
+    "assertionLevelOrNull": {
+      "enum": [
+        "measured",
+        "model_candidate",
+        "report_eligible_automated",
+        null
+      ]
+    },
+    "closedInterval": {
+      "type": "object",
+      "required": [
+        "start",
+        "stop"
+      ],
+      "properties": {
+        "start": {
+          "type": "number"
+        },
+        "stop": {
+          "type": "number"
+        },
+        "resolution_seconds": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "sourcePath": {
+      "type": "string",
+      "pattern": "^/([A-Za-z0-9_.:-]+)(/[A-Za-z0-9_.:-]+)*$"
+    },
+    "claimDisposition": {
+      "enum": [
+        "descriptive_measurement_candidate",
+        "research_hypothesis_candidate",
+        "report_eligible_qualified_claim",
+        "limitation_only",
+        "withheld"
+      ]
+    },
+    "coreEntry": {
+      "type": "object",
+      "required": [
+        "atom_id",
+        "group",
+        "status",
+        "processing_disposition",
+        "assertion_level",
+        "finding_ids",
+        "evaluation_opportunity_ids",
+        "capability_receipt_ids",
+        "sensitivity_receipt_ids",
+        "term_decision_receipt_ids",
+        "source_paths",
+        "expected_unit_ids",
+        "accounted_unit_ids",
+        "unit_dispositions",
+        "surface_frame_ids",
+        "claim_plan_disposition",
+        "reason_codes",
+        "accounted_for",
+        "expert_correctness_claimed",
+        "entry_binding_sha256"
+      ],
+      "properties": {
+        "atom_id": {
+          "$ref": "#/$defs/id"
+        },
+        "group": {
+          "$ref": "#/$defs/group"
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "processing_disposition": {
+          "enum": [
+            "completed",
+            "technical_failure"
+          ]
+        },
+        "assertion_level": {
+          "$ref": "#/$defs/assertionLevelOrNull"
+        },
+        "finding_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "evaluation_opportunity_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "capability_receipt_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "sensitivity_receipt_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "term_decision_receipt_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "source_paths": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/sourcePath"
+          }
+        },
+        "expected_unit_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "accounted_unit_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "unit_dispositions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/unitDisposition"
+          }
+        },
+        "surface_frame_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "claim_plan_disposition": {
+          "$ref": "#/$defs/claimDisposition"
+        },
+        "reason_codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "accounted_for": {
+          "const": true
+        },
+        "expert_correctness_claimed": {
+          "const": false
+        },
+        "entry_binding_sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "additionalProperties": false
+    },
+    "unitDisposition": {
+      "type": "object",
+      "required": [
+        "unit_id",
+        "status",
+        "processing_disposition",
+        "finding_ids",
+        "evaluation_opportunity_ids",
+        "reason_codes",
+        "accounted_for"
+      ],
+      "properties": {
+        "unit_id": {
+          "$ref": "#/$defs/id"
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "processing_disposition": {
+          "enum": [
+            "completed",
+            "technical_failure"
+          ]
+        },
+        "finding_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "evaluation_opportunity_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "reason_codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "accounted_for": {
+          "const": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "patternCandidateDisposition": {
+      "type": "object",
+      "required": [
+        "physical_pattern_instance_id",
+        "pattern_candidate_id",
+        "term_id",
+        "source_domain_scope",
+        "assertion_level",
+        "status",
+        "counterevidence_ids",
+        "qualification_rule_receipt_id"
+      ],
+      "properties": {
+        "physical_pattern_instance_id": {
+          "$ref": "#/$defs/id"
+        },
+        "pattern_candidate_id": {
+          "$ref": "#/$defs/id"
+        },
+        "term_id": {
+          "$ref": "#/$defs/id"
+        },
+        "source_domain_scope": {
+          "enum": [
+            "onset_causal_only",
+            "event_course_only",
+            "mixed_onset_causal_and_event_course",
+            "non_event_context_only",
+            "not_evaluable",
+            "legacy_unknown"
+          ]
+        },
+        "assertion_level": {
+          "enum": [
+            "model_candidate",
+            "report_eligible_automated"
+          ]
+        },
+        "status": {
+          "enum": [
+            "present",
+            "uncertain"
+          ]
+        },
+        "counterevidence_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "qualification_rule_receipt_id": {
+          "$ref": "#/$defs/nullableId"
+        }
+      },
+      "additionalProperties": false
+    },
+    "childInstance": {
+      "type": "object",
+      "required": [
+        "instance_id",
+        "status",
+        "finding_ids",
+        "time_interval",
+        "unit_ids",
+        "source_paths",
+        "waveform_evidence_ids",
+        "reason_codes",
+        "pattern_candidate_disposition",
+        "instance_binding_sha256"
+      ],
+      "properties": {
+        "instance_id": {
+          "$ref": "#/$defs/id"
+        },
+        "status": {
+          "enum": [
+            "present",
+            "uncertain"
+          ]
+        },
+        "finding_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "time_interval": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/closedInterval"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unit_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "source_paths": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/sourcePath"
+          }
+        },
+        "waveform_evidence_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "reason_codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "pattern_candidate_disposition": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/patternCandidateDisposition"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "instance_binding_sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "additionalProperties": false
+    },
+    "childRoster": {
+      "type": "object",
+      "required": [
+        "child_roster_id",
+        "group",
+        "activation_status",
+        "finding_status",
+        "processing_disposition",
+        "assertion_level",
+        "finding_ids",
+        "evaluation_opportunity_ids",
+        "capability_receipt_ids",
+        "sensitivity_receipt_ids",
+        "term_decision_receipt_ids",
+        "source_paths",
+        "expected_unit_ids",
+        "accounted_unit_ids",
+        "unit_dispositions",
+        "enumeration_scope_interval",
+        "instances",
+        "deduplication_policy_id",
+        "deduplication_sha256",
+        "completeness_disposition",
+        "reason_codes",
+        "accounted_for",
+        "expert_correctness_claimed",
+        "roster_binding_sha256"
+      ],
+      "properties": {
+        "child_roster_id": {
+          "$ref": "#/$defs/id"
+        },
+        "group": {
+          "$ref": "#/$defs/group"
+        },
+        "activation_status": {
+          "$ref": "#/$defs/activationStatus"
+        },
+        "finding_status": {
+          "$ref": "#/$defs/status"
+        },
+        "processing_disposition": {
+          "enum": [
+            "completed",
+            "technical_failure"
+          ]
+        },
+        "assertion_level": {
+          "$ref": "#/$defs/assertionLevelOrNull"
+        },
+        "finding_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "evaluation_opportunity_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "capability_receipt_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "sensitivity_receipt_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "term_decision_receipt_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "source_paths": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/sourcePath"
+          }
+        },
+        "expected_unit_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "accounted_unit_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "unit_dispositions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/unitDisposition"
+          }
+        },
+        "enumeration_scope_interval": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/closedInterval"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "instances": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/childInstance"
+          }
+        },
+        "deduplication_policy_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "deduplication_sha256": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "completeness_disposition": {
+          "enum": [
+            "closed_present_roster",
+            "closed_absent_with_opportunity",
+            "candidate_roster_uncertain",
+            "not_evaluable"
+          ]
+        },
+        "reason_codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "accounted_for": {
+          "const": true
+        },
+        "expert_correctness_claimed": {
+          "const": false
+        },
+        "roster_binding_sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "additionalProperties": false
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "expected_core_atom_count",
+        "accounted_core_atom_count",
+        "expected_child_roster_count",
+        "accounted_child_roster_count",
+        "critical_expected_count",
+        "critical_accounted_count",
+        "major_expected_count",
+        "major_accounted_count",
+        "expected_unit_count",
+        "accounted_unit_count",
+        "unit_disposition_count",
+        "present_count",
+        "absent_with_opportunity_count",
+        "uncertain_count",
+        "not_evaluable_count",
+        "technical_failure_count",
+        "evidence_bound_core_count",
+        "expected_core_keys_sha256",
+        "materialized_core_keys_sha256",
+        "expected_child_keys_sha256",
+        "materialized_child_keys_sha256",
+        "all_core_atoms_accounted_for",
+        "all_child_rosters_accounted_for",
+        "structural_completeness_only",
+        "clinical_correctness_claimed",
+        "full_report_factuality_claimed"
+      ],
+      "properties": {
+        "expected_core_atom_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "accounted_core_atom_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "expected_child_roster_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "accounted_child_roster_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "critical_expected_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "critical_accounted_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "major_expected_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "major_accounted_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "expected_unit_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "accounted_unit_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "unit_disposition_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "present_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "absent_with_opportunity_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "uncertain_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "not_evaluable_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "technical_failure_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "evidence_bound_core_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "expected_core_keys_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "materialized_core_keys_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "expected_child_keys_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "materialized_child_keys_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "all_core_atoms_accounted_for": {
+          "const": true
+        },
+        "all_child_rosters_accounted_for": {
+          "const": true
+        },
+        "structural_completeness_only": {
+          "const": true
+        },
+        "clinical_correctness_claimed": {
+          "const": false
+        },
+        "full_report_factuality_claimed": {
+          "const": false
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

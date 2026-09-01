@@ -1,0 +1,1120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/schemas/clinical_eeg_event_findings_v2.schema.json",
+  "title": "EEG-only atomic variable-window event Findings v2",
+  "description": "Strict event-level evidence contract. Clinical terminology, negative Findings and scalp-onset hypotheses require runtime validation against host-trusted receipts; legacy migration is explicitly lossy and fail-closed.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "event_id",
+    "provenance",
+    "coordinates",
+    "registry_bindings",
+    "montage",
+    "window",
+    "context",
+    "quality",
+    "event_qualification",
+    "producer_receipts",
+    "calibration_receipts",
+    "capability_qualification_receipts",
+    "sensitivity_receipts",
+    "term_decision_receipts",
+    "evaluation_opportunities",
+    "findings",
+    "pattern_candidates",
+    "scalp_onset_hypothesis",
+    "hypothesis_evidence_relations",
+    "waveform_evidence",
+    "limitations",
+    "migration"
+  ],
+  "properties": {
+    "schema_version": {"const": "event_eeg_findings_v2"},
+    "event_id": {"$ref": "#/$defs/id"},
+    "provenance": {"$ref": "#/$defs/provenance"},
+    "coordinates": {"$ref": "#/$defs/coordinates"},
+    "registry_bindings": {"$ref": "#/$defs/registryBindings"},
+    "montage": {"$ref": "#/$defs/montage"},
+    "window": {"$ref": "#/$defs/window"},
+    "context": {"$ref": "#/$defs/context"},
+    "quality": {"$ref": "#/$defs/quality"},
+    "event_qualification": {"$ref": "#/$defs/eventQualification"},
+    "producer_receipts": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/producerReceipt"}
+    },
+    "calibration_receipts": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/calibrationReceipt"}
+    },
+    "capability_qualification_receipts": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/capabilityReceipt"}
+    },
+    "sensitivity_receipts": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/sensitivityReceipt"}
+    },
+    "term_decision_receipts": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/termDecisionReceipt"}
+    },
+    "evaluation_opportunities": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/evaluationOpportunity"}
+    },
+    "findings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/finding"}
+    },
+    "pattern_candidates": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/patternCandidate"}
+    },
+    "scalp_onset_hypothesis": {"$ref": "#/$defs/scalpOnsetHypothesis"},
+    "hypothesis_evidence_relations": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/hypothesisEvidenceRelation"}
+    },
+    "waveform_evidence": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/waveformEvidence"}
+    },
+    "limitations": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/limitation"}
+    },
+    "migration": {
+      "anyOf": [
+        {"$ref": "#/$defs/migrationReceipt"},
+        {"type": "null"}
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "finiteNumber": {"type": "number"},
+    "unitInterval": {"type": "number", "minimum": 0, "maximum": 1},
+    "nullableId": {
+      "anyOf": [{"$ref": "#/$defs/id"}, {"type": "null"}]
+    },
+    "nullableSha256": {
+      "anyOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]
+    },
+    "closedInterval": {
+      "type": "array",
+      "prefixItems": [
+        {"$ref": "#/$defs/finiteNumber"},
+        {"$ref": "#/$defs/finiteNumber"}
+      ],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "integerInterval": {
+      "type": "array",
+      "prefixItems": [
+        {"type": "integer", "minimum": 0},
+        {"type": "integer", "minimum": 0}
+      ],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "observedSpan": {
+      "type": "object",
+      "required": ["start", "stop", "resolution_seconds"],
+      "properties": {
+        "start": {"$ref": "#/$defs/finiteNumber"},
+        "stop": {"$ref": "#/$defs/finiteNumber"},
+        "resolution_seconds": {"type": "number", "exclusiveMinimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "timeInterval": {
+      "type": "object",
+      "required": ["lower", "upper", "resolution_seconds", "calibration_status"],
+      "properties": {
+        "lower": {"$ref": "#/$defs/finiteNumber"},
+        "median": {"$ref": "#/$defs/finiteNumber"},
+        "upper": {"$ref": "#/$defs/finiteNumber"},
+        "resolution_seconds": {"type": "number", "exclusiveMinimum": 0},
+        "coverage": {"$ref": "#/$defs/unitInterval"},
+        "calibration_status": {
+          "enum": ["uncalibrated", "source_dev_calibrated", "split_conformal", "legacy_unverified"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "inferenceExclusionState": {
+      "anyOf": [{"const": false}, {"const": "unknown"}]
+    },
+    "provenance": {
+      "type": "object",
+      "required": [
+        "record_id",
+        "canonical_signal_sha256",
+        "preprocess_receipt_id",
+        "model_ids",
+        "policy_sha256",
+        "inference_exclusions"
+      ],
+      "properties": {
+        "record_id": {"$ref": "#/$defs/id"},
+        "canonical_signal_sha256": {"$ref": "#/$defs/sha256"},
+        "preprocess_receipt_id": {"$ref": "#/$defs/id"},
+        "model_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/id"}
+        },
+        "policy_sha256": {"$ref": "#/$defs/sha256"},
+        "inference_exclusions": {
+          "type": "object",
+          "required": [
+            "edf_annotations_used",
+            "excel_used",
+            "doctor_labels_used",
+            "clinical_text_used",
+            "patient_metadata_used",
+            "video_used",
+            "ecg_emg_eog_used",
+            "sleep_staging_used",
+            "provocation_used"
+          ],
+          "properties": {
+            "edf_annotations_used": {"$ref": "#/$defs/inferenceExclusionState"},
+            "excel_used": {"$ref": "#/$defs/inferenceExclusionState"},
+            "doctor_labels_used": {"$ref": "#/$defs/inferenceExclusionState"},
+            "clinical_text_used": {"$ref": "#/$defs/inferenceExclusionState"},
+            "patient_metadata_used": {"$ref": "#/$defs/inferenceExclusionState"},
+            "video_used": {"$ref": "#/$defs/inferenceExclusionState"},
+            "ecg_emg_eog_used": {"$ref": "#/$defs/inferenceExclusionState"},
+            "sleep_staging_used": {"$ref": "#/$defs/inferenceExclusionState"},
+            "provocation_used": {"$ref": "#/$defs/inferenceExclusionState"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "coordinates": {
+      "type": "object",
+      "required": ["system", "recording_duration_seconds", "model_sample_rate_hz"],
+      "properties": {
+        "system": {"const": "recording_relative_seconds"},
+        "recording_duration_seconds": {"type": "number", "exclusiveMinimum": 0},
+        "model_sample_rate_hz": {"type": "number", "exclusiveMinimum": 0},
+        "native_sample_rate_hz": {"type": "number", "exclusiveMinimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "registryBinding": {
+      "type": "object",
+      "required": ["registry_id", "version", "registry_sha256", "trust_status"],
+      "properties": {
+        "registry_id": {"$ref": "#/$defs/id"},
+        "version": {"type": "string", "minLength": 1, "maxLength": 64},
+        "registry_sha256": {"$ref": "#/$defs/sha256"},
+        "trust_status": {"enum": ["host_trusted", "legacy_unverified"]}
+      },
+      "additionalProperties": false
+    },
+    "registryBindings": {
+      "type": "object",
+      "required": ["term_registry", "unit_registry"],
+      "properties": {
+        "term_registry": {"$ref": "#/$defs/registryBinding"},
+        "unit_registry": {"$ref": "#/$defs/registryBinding"},
+        "pattern_term_registry": {
+          "anyOf": [
+            {"$ref": "#/$defs/patternTermRegistryBinding"},
+            {"type": "null"}
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "patternTermRegistryEntry": {
+      "type": "object",
+      "required": ["term_id", "ontology_id", "operational_rule_id"],
+      "properties": {
+        "term_id": {"$ref": "#/$defs/id"},
+        "ontology_id": {"$ref": "#/$defs/id"},
+        "operational_rule_id": {"$ref": "#/$defs/id"}
+      },
+      "additionalProperties": false
+    },
+    "patternTermRegistryBinding": {
+      "type": "object",
+      "required": [
+        "registry_id", "version", "registry_sha256", "trust_status", "terms"
+      ],
+      "properties": {
+        "registry_id": {"$ref": "#/$defs/id"},
+        "version": {"type": "string", "minLength": 1, "maxLength": 64},
+        "registry_sha256": {"$ref": "#/$defs/sha256"},
+        "trust_status": {"enum": ["host_trusted", "legacy_unverified"]},
+        "terms": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/patternTermRegistryEntry"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "leadDefinition": {
+      "type": "object",
+      "required": ["lead_id", "anode", "cathode"],
+      "properties": {
+        "lead_id": {"$ref": "#/$defs/id"},
+        "anode": {"$ref": "#/$defs/id"},
+        "cathode": {"$ref": "#/$defs/id"}
+      },
+      "additionalProperties": false
+    },
+    "inputUnit": {
+      "type": "object",
+      "required": [
+        "unit_id",
+        "unit_type",
+        "canonical_name",
+        "observation_status",
+        "evidence_eligible",
+        "missing_reason_codes",
+        "imputation_receipt_id",
+        "laterality"
+      ],
+      "properties": {
+        "unit_id": {"$ref": "#/$defs/id"},
+        "unit_type": {"enum": ["electrode", "bipolar_lead"]},
+        "canonical_name": {"$ref": "#/$defs/id"},
+        "source_name": {"type": "string", "minLength": 1},
+        "observation_status": {"enum": ["observed", "imputed", "missing", "unknown"]},
+        "evidence_eligible": {"type": "boolean"},
+        "missing_reason_codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/id"}
+        },
+        "imputation_receipt_id": {"$ref": "#/$defs/nullableId"},
+        "region": {"$ref": "#/$defs/id"},
+        "laterality": {"enum": ["left", "right", "bilateral", "midline", "indeterminate"]}
+      },
+      "additionalProperties": false
+    },
+    "montage": {
+      "type": "object",
+      "required": ["analysis_reference", "input_units", "electrode_ids", "lead_definitions", "reference_perturbations_evaluated"],
+      "properties": {
+        "analysis_reference": {"enum": ["common_average", "linked_ears", "bipolar", "laplacian", "other"]},
+        "input_units": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/inputUnit"}
+        },
+        "electrode_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/id"}
+        },
+        "lead_definitions": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/leadDefinition"}
+        },
+        "reference_perturbations_evaluated": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"enum": ["common_average", "bipolar", "laplacian"]}
+        }
+      },
+      "additionalProperties": false
+    },
+    "boundaryEstimate": {
+      "type": "object",
+      "required": ["status", "interval", "censoring_reason_codes"],
+      "properties": {
+        "status": {"enum": ["observed", "censored", "not_observed", "indeterminate"]},
+        "interval": {
+          "anyOf": [{"$ref": "#/$defs/timeInterval"}, {"type": "null"}]
+        },
+        "censoring_reason_codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/id"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "statePosterior": {
+      "type": "object",
+      "required": ["S0", "S1", "S2", "S3"],
+      "properties": {
+        "S0": {"$ref": "#/$defs/unitInterval"},
+        "S1": {"$ref": "#/$defs/unitInterval"},
+        "S2": {"$ref": "#/$defs/unitInterval"},
+        "S3": {"$ref": "#/$defs/unitInterval"}
+      },
+      "additionalProperties": false
+    },
+    "stateSegment": {
+      "type": "object",
+      "required": ["segment_id", "interval", "posterior", "source_receipt_id"],
+      "properties": {
+        "segment_id": {"$ref": "#/$defs/id"},
+        "interval": {"$ref": "#/$defs/observedSpan"},
+        "posterior": {"$ref": "#/$defs/statePosterior"},
+        "source_receipt_id": {"$ref": "#/$defs/id"}
+      },
+      "additionalProperties": false
+    },
+    "protectionZone": {
+      "type": "object",
+      "required": ["protection_zone_id", "interval", "policy_sha256"],
+      "properties": {
+        "protection_zone_id": {"$ref": "#/$defs/id"},
+        "interval": {"$ref": "#/$defs/closedInterval"},
+        "policy_sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "additionalProperties": false
+    },
+    "window": {
+      "type": "object",
+      "required": [
+        "search_interval",
+        "final_interval",
+        "protection_zone",
+        "onset_boundary",
+        "offset_boundary",
+        "state_posterior_status",
+        "state_segments",
+        "state_path_receipt_id",
+        "left_censored",
+        "right_censored",
+        "search_cap_censored",
+        "merge_split_status"
+      ],
+      "properties": {
+        "search_interval": {"$ref": "#/$defs/closedInterval"},
+        "final_interval": {"$ref": "#/$defs/closedInterval"},
+        "protection_zone": {"$ref": "#/$defs/protectionZone"},
+        "onset_boundary": {"$ref": "#/$defs/boundaryEstimate"},
+        "offset_boundary": {"$ref": "#/$defs/boundaryEstimate"},
+        "state_posterior_status": {"enum": ["available", "limited", "not_evaluable"]},
+        "state_segments": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/stateSegment"}
+        },
+        "state_path_receipt_id": {"$ref": "#/$defs/nullableId"},
+        "left_censored": {"type": "boolean"},
+        "right_censored": {"type": "boolean"},
+        "search_cap_censored": {"type": "boolean"},
+        "merge_split_status": {"enum": ["single_event", "merged", "split", "clustered", "merge_split_uncertain"]}
+      },
+      "additionalProperties": false
+    },
+    "context": {
+      "type": "object",
+      "required": [
+        "queried_intervals",
+        "local_background_intervals",
+        "distant_background_intervals",
+        "background_status",
+        "background_bank_id",
+        "selection_receipt_id",
+        "selection_scope",
+        "contamination_risk"
+      ],
+      "properties": {
+        "queried_intervals": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/closedInterval"}},
+        "local_background_intervals": {"type": "array", "items": {"$ref": "#/$defs/closedInterval"}},
+        "distant_background_intervals": {"type": "array", "items": {"$ref": "#/$defs/closedInterval"}},
+        "background_status": {"enum": ["available", "limited", "unavailable", "unknown"]},
+        "background_bank_id": {"$ref": "#/$defs/nullableId"},
+        "selection_receipt_id": {"$ref": "#/$defs/nullableId"},
+        "selection_scope": {"const": "eeg_detector_quality_only"},
+        "contamination_risk": {"$ref": "#/$defs/unitInterval"}
+      },
+      "additionalProperties": false
+    },
+    "family": {
+      "enum": ["quality", "spectral", "rhythm", "morphology", "evolution", "spatial_field", "spatial_recruitment", "termination_recovery", "high_frequency"]
+    },
+    "featureEvaluability": {
+      "type": "object",
+      "required": ["family", "status", "reason_codes", "evaluation_opportunity_ids"],
+      "properties": {
+        "family": {"$ref": "#/$defs/family"},
+        "status": {"enum": ["available", "limited", "not_evaluable"]},
+        "reason_codes": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+        "evaluation_opportunity_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}
+      },
+      "additionalProperties": false
+    },
+    "unitQuality": {
+      "type": "object",
+      "required": ["unit_id", "usable_fraction", "status", "evidence_eligible", "reason_codes"],
+      "properties": {
+        "unit_id": {"$ref": "#/$defs/id"},
+        "usable_fraction": {"$ref": "#/$defs/unitInterval"},
+        "status": {"enum": ["usable", "limited", "unusable", "not_observed", "unknown"]},
+        "evidence_eligible": {"type": "boolean"},
+        "reason_codes": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}
+      },
+      "additionalProperties": false
+    },
+    "artifactInterval": {
+      "type": "object",
+      "required": ["interval", "artifact_type", "affected_unit_ids", "assertion_level"],
+      "properties": {
+        "interval": {"$ref": "#/$defs/closedInterval"},
+        "artifact_type": {"enum": ["flat", "clipping", "step", "line_noise", "high_frequency_contamination", "movement_candidate", "electrode_candidate", "other"]},
+        "affected_unit_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+        "assertion_level": {"enum": ["measured", "model_candidate"]}
+      },
+      "additionalProperties": false
+    },
+    "quality": {
+      "type": "object",
+      "required": ["usable_fraction", "per_unit", "artifact_intervals", "feature_evaluability"],
+      "properties": {
+        "usable_fraction": {"$ref": "#/$defs/unitInterval"},
+        "per_unit": {"type": "array", "items": {"$ref": "#/$defs/unitQuality"}},
+        "artifact_intervals": {"type": "array", "items": {"$ref": "#/$defs/artifactInterval"}},
+        "feature_evaluability": {"type": "array", "items": {"$ref": "#/$defs/featureEvaluability"}}
+      },
+      "additionalProperties": false
+    },
+    "eventQualification": {
+      "type": "object",
+      "required": ["status", "qualification_receipt_id", "supporting_evidence_ids", "reason_codes"],
+      "properties": {
+        "status": {"enum": ["unqualified_candidate", "qualified_electrographic_event", "qualified_electrographic_seizure", "not_evaluable"]},
+        "qualification_receipt_id": {"$ref": "#/$defs/nullableId"},
+        "supporting_evidence_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+        "reason_codes": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}
+      },
+      "additionalProperties": false
+    },
+    "producerReceipt": {
+      "type": "object",
+      "required": ["receipt_id", "producer_id", "producer_type", "version", "artifact_sha256", "policy_sha256", "validation_scope", "patient_disjoint", "frozen_before_inference"],
+      "properties": {
+        "receipt_id": {"$ref": "#/$defs/id"},
+        "producer_id": {"$ref": "#/$defs/id"},
+        "producer_type": {"enum": ["event_findings_provider", "event_hypothesis_model", "hypothesis_relation_builder", "risk_controller"]},
+        "version": {"$ref": "#/$defs/id"},
+        "artifact_sha256": {"$ref": "#/$defs/sha256"},
+        "policy_sha256": {"$ref": "#/$defs/sha256"},
+        "validation_scope": {"enum": ["none", "source_dev_patient_disjoint", "external_patient_disjoint"]},
+        "patient_disjoint": {"type": "boolean"},
+        "frozen_before_inference": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "calibrationReceipt": {
+      "type": "object",
+      "required": ["receipt_id", "calibrator_id", "artifact_sha256", "dataset_manifest_sha256", "calibrated_outputs", "validation_scope", "patient_disjoint", "frozen_before_inference"],
+      "properties": {
+        "receipt_id": {"$ref": "#/$defs/id"},
+        "calibrator_id": {"$ref": "#/$defs/id"},
+        "artifact_sha256": {"$ref": "#/$defs/sha256"},
+        "dataset_manifest_sha256": {"$ref": "#/$defs/sha256"},
+        "calibrated_outputs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["phenotype", "laterality", "region", "lead", "electrode"]}},
+        "validation_scope": {"enum": ["source_dev_patient_disjoint", "external_patient_disjoint"]},
+        "patient_disjoint": {"const": true},
+        "frozen_before_inference": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "operatingScope": {
+      "type": "object",
+      "required": ["view_roles", "montage_references", "minimum_sample_rate_hz", "required_bandwidth_hz", "minimum_usable_fraction"],
+      "properties": {
+        "view_roles": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/viewRole"}},
+        "montage_references": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["common_average", "linked_ears", "bipolar", "laplacian", "other"]}},
+        "minimum_sample_rate_hz": {"type": "number", "exclusiveMinimum": 0},
+        "required_bandwidth_hz": {"$ref": "#/$defs/closedInterval"},
+        "minimum_usable_fraction": {"$ref": "#/$defs/unitInterval"}
+      },
+      "additionalProperties": false
+    },
+    "qualificationCohort": {
+      "type": "object",
+      "required": ["dataset_manifest_sha256", "patient_count", "event_count", "positive_reference_count"],
+      "properties": {
+        "dataset_manifest_sha256": {"$ref": "#/$defs/sha256"},
+        "patient_count": {"type": "integer", "minimum": 1},
+        "event_count": {"type": "integer", "minimum": 1},
+        "positive_reference_count": {"type": "integer", "minimum": 1}
+      },
+      "additionalProperties": false
+    },
+    "capabilityReceipt": {
+      "type": "object",
+      "required": [
+        "schema_version", "receipt_id", "producer_id", "target_domain_id", "qualified_families", "qualified_term_ids", "operating_scope", "qualification_cohort", "precision", "precision_lower_bound", "coverage", "validation_scope", "patient_disjoint", "frozen_before_inference", "policy_sha256", "validation_artifact_sha256", "receipt_sha256"
+      ],
+      "properties": {
+        "schema_version": {"const": "clinical_eeg_capability_qualification_v2"},
+        "receipt_id": {"$ref": "#/$defs/id"},
+        "producer_id": {"$ref": "#/$defs/id"},
+        "target_domain_id": {"$ref": "#/$defs/id"},
+        "qualified_families": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/family"}},
+        "qualified_term_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+        "operating_scope": {"$ref": "#/$defs/operatingScope"},
+        "qualification_cohort": {"$ref": "#/$defs/qualificationCohort"},
+        "precision": {"$ref": "#/$defs/unitInterval"},
+        "precision_lower_bound": {"$ref": "#/$defs/unitInterval"},
+        "coverage": {"$ref": "#/$defs/unitInterval"},
+        "validation_scope": {"enum": ["source_dev_expert", "external_expert"]},
+        "patient_disjoint": {"const": true},
+        "frozen_before_inference": {"const": true},
+        "policy_sha256": {"$ref": "#/$defs/sha256"},
+        "validation_artifact_sha256": {"$ref": "#/$defs/sha256"},
+        "receipt_sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "additionalProperties": false
+    },
+    "sensitivityReceipt": {
+      "type": "object",
+      "required": [
+        "schema_version", "receipt_id", "producer_id", "target_domain_id", "qualified_family", "qualified_term_id", "opportunity_policy_sha256", "qualification_cohort", "sensitivity", "sensitivity_lower_bound", "coverage", "validation_scope", "patient_disjoint", "frozen_before_inference", "policy_sha256", "validation_artifact_sha256", "receipt_sha256"
+      ],
+      "properties": {
+        "schema_version": {"const": "clinical_eeg_sensitivity_qualification_v2"},
+        "receipt_id": {"$ref": "#/$defs/id"},
+        "producer_id": {"$ref": "#/$defs/id"},
+        "target_domain_id": {"$ref": "#/$defs/id"},
+        "qualified_family": {"$ref": "#/$defs/family"},
+        "qualified_term_id": {"$ref": "#/$defs/id"},
+        "opportunity_policy_sha256": {"$ref": "#/$defs/sha256"},
+        "qualification_cohort": {"$ref": "#/$defs/qualificationCohort"},
+        "sensitivity": {"$ref": "#/$defs/unitInterval"},
+        "sensitivity_lower_bound": {"$ref": "#/$defs/unitInterval"},
+        "coverage": {"$ref": "#/$defs/unitInterval"},
+        "validation_scope": {"enum": ["source_dev_expert", "external_expert"]},
+        "patient_disjoint": {"const": true},
+        "frozen_before_inference": {"const": true},
+        "policy_sha256": {"$ref": "#/$defs/sha256"},
+        "validation_artifact_sha256": {"$ref": "#/$defs/sha256"},
+        "receipt_sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "additionalProperties": false
+    },
+    "termCriterion": {
+      "type": "object",
+      "required": ["criterion_id", "status", "evidence_ids", "measurement_ids", "waveform_evidence_ids", "evaluation_opportunity_id"],
+      "properties": {
+        "criterion_id": {"$ref": "#/$defs/id"},
+        "status": {"$ref": "#/$defs/findingStatus"},
+        "evidence_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+        "measurement_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+        "waveform_evidence_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+        "evaluation_opportunity_id": {"$ref": "#/$defs/id"}
+      },
+      "additionalProperties": false
+    },
+    "termDecisionReceipt": {
+      "type": "object",
+      "required": [
+        "schema_version", "receipt_id", "event_id", "producer_id", "term_id", "asserted_status", "decision", "criterion_results", "counterevidence_ids", "capability_receipt_id", "sensitivity_receipt_id", "policy_sha256", "source_binding_sha256", "receipt_sha256"
+      ],
+      "properties": {
+        "schema_version": {"const": "clinical_eeg_term_decision_v2"},
+        "receipt_id": {"$ref": "#/$defs/id"},
+        "event_id": {"$ref": "#/$defs/id"},
+        "producer_id": {"$ref": "#/$defs/id"},
+        "term_id": {"$ref": "#/$defs/id"},
+        "asserted_status": {"enum": ["present", "absent_with_opportunity"]},
+        "decision": {"enum": ["qualified", "not_qualified", "not_evaluable"]},
+        "criterion_results": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/termCriterion"}},
+        "counterevidence_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+        "capability_receipt_id": {"$ref": "#/$defs/id"},
+        "sensitivity_receipt_id": {"$ref": "#/$defs/nullableId"},
+        "policy_sha256": {"$ref": "#/$defs/sha256"},
+        "source_binding_sha256": {"$ref": "#/$defs/sha256"},
+        "receipt_sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "additionalProperties": false
+    },
+    "evaluationOpportunity": {
+      "type": "object",
+      "required": [
+        "evaluation_opportunity_id", "family", "term_id", "interval", "spatial_unit_keys", "source_view_ids", "status", "usable_fraction", "effective_bandwidth_hz", "quality_mask_sha256", "reason_codes"
+      ],
+      "properties": {
+        "evaluation_opportunity_id": {"$ref": "#/$defs/id"},
+        "family": {"$ref": "#/$defs/family"},
+        "term_id": {"$ref": "#/$defs/id"},
+        "interval": {"anyOf": [{"$ref": "#/$defs/observedSpan"}, {"type": "null"}]},
+        "spatial_unit_keys": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+        "source_view_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+        "status": {"enum": ["sufficient", "limited", "not_evaluable"]},
+        "usable_fraction": {"$ref": "#/$defs/unitInterval"},
+        "effective_bandwidth_hz": {"anyOf": [{"$ref": "#/$defs/closedInterval"}, {"type": "null"}]},
+        "quality_mask_sha256": {"$ref": "#/$defs/nullableSha256"},
+        "reason_codes": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}
+      },
+      "additionalProperties": false
+    },
+    "termRef": {
+      "type": "object",
+      "required": ["term_id", "ontology_id", "source_id", "source_version", "operational_rule_id"],
+      "properties": {
+        "term_id": {"$ref": "#/$defs/id"},
+        "ontology_id": {"$ref": "#/$defs/id"},
+        "source_id": {"$ref": "#/$defs/id"},
+        "source_version": {"type": "string", "minLength": 1, "maxLength": 64},
+        "operational_rule_id": {"$ref": "#/$defs/id"}
+      },
+      "additionalProperties": false
+    },
+    "findingStatus": {
+      "enum": ["present", "absent_with_opportunity", "uncertain", "not_evaluable"]
+    },
+    "stateMembership": {
+      "type": "object",
+      "required": ["S0", "S1", "S2", "S3"],
+      "properties": {
+        "S0": {"$ref": "#/$defs/unitInterval"},
+        "S1": {"$ref": "#/$defs/unitInterval"},
+        "S2": {"$ref": "#/$defs/unitInterval"},
+        "S3": {"$ref": "#/$defs/unitInterval"}
+      },
+      "additionalProperties": false
+    },
+    "findingOwnership": {
+      "type": "object",
+      "required": ["owner_event_ids", "event_group_id", "protection_zone_id", "ownership_status", "protection_zone_overlap_fraction"],
+      "properties": {
+        "owner_event_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+        "event_group_id": {"$ref": "#/$defs/nullableId"},
+        "protection_zone_id": {"$ref": "#/$defs/id"},
+        "ownership_status": {"enum": ["event_owned", "shared_overlap", "outside_protection", "unknown"]},
+        "protection_zone_overlap_fraction": {"$ref": "#/$defs/unitInterval"}
+      },
+      "additionalProperties": false
+    },
+    "fieldObservation": {
+      "type": "object",
+      "required": ["reference_type", "polarity", "field_coverage", "reference_stability", "source_unit_ids"],
+      "properties": {
+        "reference_type": {"type": "string", "minLength": 1, "maxLength": 128},
+        "polarity": {"enum": ["positive", "negative", "biphasic", "indeterminate", "not_applicable"]},
+        "field_coverage": {"$ref": "#/$defs/unitInterval"},
+        "reference_stability": {"$ref": "#/$defs/unitInterval"},
+        "source_unit_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}
+      },
+      "additionalProperties": false
+    },
+    "spatialSupport": {
+      "type": "object",
+      "required": ["unit_type", "id", "mapping_status", "observation_status", "evidence_eligible", "missing_reason_codes", "support_score", "field_observation"],
+      "properties": {
+        "unit_type": {"enum": ["lead", "electrode", "region", "laterality"]},
+        "id": {"$ref": "#/$defs/id"},
+        "mapping_status": {"enum": ["direct", "field_qualified", "derived", "candidate_only"]},
+        "observation_status": {"enum": ["observed", "derived", "imputed", "missing", "unknown"]},
+        "evidence_eligible": {"type": "boolean"},
+        "missing_reason_codes": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+        "support_score": {"anyOf": [{"$ref": "#/$defs/finiteNumber"}, {"type": "null"}]},
+        "field_observation": {"anyOf": [{"$ref": "#/$defs/fieldObservation"}, {"type": "null"}]}
+      },
+      "additionalProperties": false
+    },
+    "numericalUncertainty": {
+      "type": "object",
+      "required": ["status", "lower", "upper", "coverage", "calibration_receipt_id"],
+      "properties": {
+        "status": {"enum": ["deterministic_replay_tolerance", "estimated_interval", "calibrated_interval", "not_estimated", "legacy_unknown"]},
+        "lower": {"anyOf": [{"$ref": "#/$defs/finiteNumber"}, {"type": "null"}]},
+        "upper": {"anyOf": [{"$ref": "#/$defs/finiteNumber"}, {"type": "null"}]},
+        "coverage": {"anyOf": [{"$ref": "#/$defs/unitInterval"}, {"type": "null"}]},
+        "calibration_receipt_id": {"$ref": "#/$defs/nullableId"}
+      },
+      "additionalProperties": false
+    },
+    "viewRole": {
+      "enum": ["canonical_physical_evidence", "onset_causal", "context_offline", "detector_navigation", "unknown"]
+    },
+    "rawSampleParentViewBinding": {
+      "type": "object",
+      "required": ["view_id", "view_receipt_id", "receipt_sha256", "cache_namespace_sha256"],
+      "properties": {
+        "view_id": {"$ref": "#/$defs/id"},
+        "view_receipt_id": {"$ref": "#/$defs/id"},
+        "receipt_sha256": {"$ref": "#/$defs/sha256"},
+        "cache_namespace_sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "additionalProperties": false
+    },
+    "rawSampleReceiptLineage": {
+      "type": "object",
+      "required": [
+        "canonical_receipt_sha256", "source_view_id", "source_view_receipt_id", "source_view_receipt_sha256", "source_transform_spec_sha256", "temporal_evidence_sha256", "parent_view_bindings"
+      ],
+      "properties": {
+        "canonical_receipt_sha256": {"$ref": "#/$defs/sha256"},
+        "source_view_id": {"$ref": "#/$defs/id"},
+        "source_view_receipt_id": {"$ref": "#/$defs/id"},
+        "source_view_receipt_sha256": {"$ref": "#/$defs/sha256"},
+        "source_transform_spec_sha256": {"$ref": "#/$defs/sha256"},
+        "temporal_evidence_sha256": {"$ref": "#/$defs/sha256"},
+        "parent_view_bindings": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/rawSampleParentViewBinding"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "rawSampleInterval": {
+      "type": "object",
+      "required": [
+        "channel_id", "sample_rate_numerator", "sample_rate_denominator", "channel_sample_count", "raw_start_sample", "raw_stop_sample_exclusive", "reported_evidence_start_sample", "reported_evidence_stop_sample_exclusive", "unshifted_decision_available_stop_sample_exclusive"
+      ],
+      "properties": {
+        "channel_id": {"$ref": "#/$defs/id"},
+        "sample_rate_numerator": {"type": "integer", "minimum": 1},
+        "sample_rate_denominator": {"type": "integer", "minimum": 1},
+        "channel_sample_count": {"type": "integer", "minimum": 1},
+        "raw_start_sample": {"type": "integer", "minimum": 0},
+        "raw_stop_sample_exclusive": {"type": "integer", "minimum": 1},
+        "reported_evidence_start_sample": {"type": "integer", "minimum": 0},
+        "reported_evidence_stop_sample_exclusive": {"type": "integer", "minimum": 1},
+        "unshifted_decision_available_stop_sample_exclusive": {"type": "integer", "minimum": 1}
+      },
+      "additionalProperties": false
+    },
+    "rawSupportComponent": {
+      "type": "object",
+      "required": ["role", "recording_interval"],
+      "properties": {
+        "role": {"enum": ["reported_evidence_interval", "baseline_reference", "sustained_confirmation"]},
+        "recording_interval": {"$ref": "#/$defs/closedInterval"}
+      },
+      "additionalProperties": false
+    },
+    "rawSampleDependency": {
+      "type": "object",
+      "required": [
+        "schema_version", "dependency_id", "dependency_status", "canonical_signal_sha256", "source_view_id", "view_role", "evidence_recording_interval", "support_components", "decision_available_recording_seconds", "confirmation_latency_samples_on_view_clock", "confirmation_latency_seconds", "confirmation_policy", "view_tensor_sample_interval", "view_sampling_rate_numerator", "view_sampling_rate_denominator", "raw_sample_intervals", "dependency_policy", "future_sample_access", "onset_evidence_authorized", "onset_support_eligible", "processing_latency_samples_on_view_clock", "processing_latency_seconds", "processing_latency_policy", "raw_support_end_policy", "receipt_lineage", "dependency_sha256"
+      ],
+      "properties": {
+        "schema_version": {"const": "clinical_eeg_raw_sample_dependency_v1"},
+        "dependency_id": {"$ref": "#/$defs/id"},
+        "dependency_status": {"enum": ["bounded_past_and_present", "exact_instantaneous", "conservative_future_dependent_recording_bound"]},
+        "canonical_signal_sha256": {"$ref": "#/$defs/sha256"},
+        "source_view_id": {"$ref": "#/$defs/id"},
+        "view_role": {"$ref": "#/$defs/viewRole"},
+        "evidence_recording_interval": {"$ref": "#/$defs/closedInterval"},
+        "support_components": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/rawSupportComponent"}
+        },
+        "decision_available_recording_seconds": {"$ref": "#/$defs/finiteNumber"},
+        "confirmation_latency_samples_on_view_clock": {"type": "number", "minimum": 0},
+        "confirmation_latency_seconds": {"type": "number", "minimum": 0},
+        "confirmation_policy": {"enum": ["none", "sustained_observation_no_timestamp_advance_v1"]},
+        "view_tensor_sample_interval": {"$ref": "#/$defs/integerInterval"},
+        "view_sampling_rate_numerator": {"type": "integer", "minimum": 1},
+        "view_sampling_rate_denominator": {"type": "integer", "minimum": 1},
+        "raw_sample_intervals": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/rawSampleInterval"}
+        },
+        "dependency_policy": {"enum": ["instantaneous", "past_and_present_only", "bidirectional_or_unknown"]},
+        "future_sample_access": {"type": "boolean"},
+        "onset_evidence_authorized": {"type": "boolean"},
+        "onset_support_eligible": {"type": "boolean"},
+        "processing_latency_samples_on_view_clock": {"type": "number", "minimum": 0},
+        "processing_latency_seconds": {"type": "number", "minimum": 0},
+        "processing_latency_policy": {"enum": ["none", "report_constant_processing_latency_no_timestamp_advance_v1"]},
+        "raw_support_end_policy": {"enum": ["at_or_before_unshifted_evidence_sample_v1", "future_dependent_context_not_onset_eligible_v1"]},
+        "receipt_lineage": {"$ref": "#/$defs/rawSampleReceiptLineage"},
+        "dependency_sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "additionalProperties": false
+    },
+    "measurementSourceBinding": {
+      "type": "object",
+      "required": [
+        "canonical_signal_sha256", "source_view_id", "view_role", "view_receipt_id", "view_receipt_sha256", "transform_spec_sha256", "processed_view_sha256", "source_unit_ids", "recording_interval", "tensor_sample_interval", "effective_bandwidth_hz", "reference_type", "evidence_family", "quality_mask_sha256", "edge_mask_sha256", "padding_mask_sha256", "imputation_mask_sha256", "evidence_eligible", "ineligibility_reason_codes", "background_reference_ids", "method_id", "policy_sha256", "raw_sample_dependency"
+      ],
+      "properties": {
+        "canonical_signal_sha256": {"$ref": "#/$defs/sha256"},
+        "source_view_id": {"$ref": "#/$defs/id"},
+        "view_role": {"$ref": "#/$defs/viewRole"},
+        "view_receipt_id": {"$ref": "#/$defs/id"},
+        "view_receipt_sha256": {"$ref": "#/$defs/sha256"},
+        "transform_spec_sha256": {"$ref": "#/$defs/sha256"},
+        "processed_view_sha256": {"$ref": "#/$defs/sha256"},
+        "source_unit_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+        "recording_interval": {"$ref": "#/$defs/closedInterval"},
+        "tensor_sample_interval": {"$ref": "#/$defs/integerInterval"},
+        "effective_bandwidth_hz": {"$ref": "#/$defs/closedInterval"},
+        "reference_type": {"type": "string", "minLength": 1, "maxLength": 128},
+        "evidence_family": {"enum": ["amplitude", "morphology", "spectral", "spatial_field", "high_frequency", "waveform"]},
+        "quality_mask_sha256": {"$ref": "#/$defs/sha256"},
+        "edge_mask_sha256": {"$ref": "#/$defs/nullableSha256"},
+        "padding_mask_sha256": {"$ref": "#/$defs/nullableSha256"},
+        "imputation_mask_sha256": {"$ref": "#/$defs/nullableSha256"},
+        "evidence_eligible": {"type": "boolean"},
+        "ineligibility_reason_codes": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+        "background_reference_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+        "method_id": {"$ref": "#/$defs/id"},
+        "policy_sha256": {"$ref": "#/$defs/sha256"},
+        "raw_sample_dependency": {
+          "anyOf": [
+            {"$ref": "#/$defs/rawSampleDependency"},
+            {"type": "null"}
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "measurement": {
+      "type": "object",
+      "required": ["measurement_id", "name_id", "value", "unit_id", "unit_registry_status", "baseline_delta", "numerical_uncertainty", "producer_type", "source_binding"],
+      "properties": {
+        "measurement_id": {"$ref": "#/$defs/id"},
+        "name_id": {"$ref": "#/$defs/id"},
+        "value": {"$ref": "#/$defs/finiteNumber"},
+        "unit_id": {"$ref": "#/$defs/id"},
+        "unit_registry_status": {"enum": ["registered", "unknown"]},
+        "baseline_delta": {"anyOf": [{"$ref": "#/$defs/finiteNumber"}, {"type": "null"}]},
+        "numerical_uncertainty": {"$ref": "#/$defs/numericalUncertainty"},
+        "producer_type": {"const": "deterministic_signal_measurement"},
+        "source_binding": {"$ref": "#/$defs/measurementSourceBinding"}
+      },
+      "additionalProperties": false
+    },
+    "findingUncertainty": {
+      "type": "object",
+      "required": ["boundary", "quality", "background", "model", "reference_stability", "semantics"],
+      "properties": {
+        "boundary": {"$ref": "#/$defs/unitInterval"},
+        "quality": {"$ref": "#/$defs/unitInterval"},
+        "background": {"$ref": "#/$defs/unitInterval"},
+        "model": {"$ref": "#/$defs/unitInterval"},
+        "reference_stability": {"$ref": "#/$defs/unitInterval"},
+        "semantics": {"const": "componentwise_descriptive_not_individual_correctness_probability"}
+      },
+      "additionalProperties": false
+    },
+    "finding": {
+      "type": "object",
+      "required": [
+        "evidence_id", "finding_group_id", "pattern_instance_id", "family", "term", "assertion_level", "status", "intrinsic_evidence_role", "signal_temporal_context", "ownership", "state_membership", "time_interval", "spatial_support", "measurements", "uncertainty", "evaluation_opportunity_id", "capability_receipt_id", "sensitivity_receipt_id", "term_decision_receipt_id", "waveform_evidence_ids", "raw_sample_dependency_ids"
+      ],
+      "properties": {
+        "evidence_id": {"$ref": "#/$defs/id"},
+        "finding_group_id": {"$ref": "#/$defs/nullableId"},
+        "pattern_instance_id": {"$ref": "#/$defs/nullableId"},
+        "family": {"$ref": "#/$defs/family"},
+        "term": {"$ref": "#/$defs/termRef"},
+        "assertion_level": {"enum": ["measured", "model_candidate", "report_eligible_automated"]},
+        "status": {"$ref": "#/$defs/findingStatus"},
+        "intrinsic_evidence_role": {"enum": ["onset_eligible", "early_context", "later_involvement", "non_event_context", "limitation"]},
+        "signal_temporal_context": {"enum": ["outside_candidate_protection", "pre_candidate", "candidate_emergence", "sustained_candidate", "late_involvement", "return_candidate", "unknown"]},
+        "ownership": {"$ref": "#/$defs/findingOwnership"},
+        "state_membership": {"$ref": "#/$defs/stateMembership"},
+        "time_interval": {"anyOf": [{"$ref": "#/$defs/observedSpan"}, {"type": "null"}]},
+        "spatial_support": {"type": "array", "items": {"$ref": "#/$defs/spatialSupport"}},
+        "measurements": {"type": "array", "items": {"$ref": "#/$defs/measurement"}},
+        "uncertainty": {"$ref": "#/$defs/findingUncertainty"},
+        "evaluation_opportunity_id": {"$ref": "#/$defs/id"},
+        "capability_receipt_id": {"$ref": "#/$defs/nullableId"},
+        "sensitivity_receipt_id": {"$ref": "#/$defs/nullableId"},
+        "term_decision_receipt_id": {"$ref": "#/$defs/nullableId"},
+        "waveform_evidence_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+        "raw_sample_dependency_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}
+      },
+      "additionalProperties": false
+    },
+    "patternCandidate": {
+      "type": "object",
+      "required": [
+        "pattern_candidate_id", "pattern_instance_id", "event_id", "term", "assertion_level", "status", "source_domain_scope", "required_atom_ids", "counterevidence_ids", "qualification_rule_receipt_id", "reason_codes"
+      ],
+      "properties": {
+        "pattern_candidate_id": {"$ref": "#/$defs/id"},
+        "pattern_instance_id": {"$ref": "#/$defs/id"},
+        "event_id": {"$ref": "#/$defs/id"},
+        "term": {"$ref": "#/$defs/termRef"},
+        "assertion_level": {"enum": ["model_candidate", "report_eligible_automated"]},
+        "status": {"$ref": "#/$defs/findingStatus"},
+        "source_domain_scope": {
+          "enum": [
+            "onset_causal_only",
+            "event_course_only",
+            "mixed_onset_causal_and_event_course",
+            "non_event_context_only",
+            "not_evaluable",
+            "legacy_unknown"
+          ]
+        },
+        "required_atom_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/id"}
+        },
+        "counterevidence_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/id"}
+        },
+        "qualification_rule_receipt_id": {"$ref": "#/$defs/nullableId"},
+        "reason_codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/id"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "perUnitInvolvement": {
+      "type": "object",
+      "required": ["unit_type", "unit_id", "status", "interval", "evaluation_opportunity_id", "sensitivity_receipt_id", "evidence_ids"],
+      "properties": {
+        "unit_type": {"enum": ["lead", "electrode", "region"]},
+        "unit_id": {"$ref": "#/$defs/id"},
+        "status": {"$ref": "#/$defs/findingStatus"},
+        "interval": {"anyOf": [{"$ref": "#/$defs/timeInterval"}, {"type": "null"}]},
+        "evaluation_opportunity_id": {"$ref": "#/$defs/id"},
+        "sensitivity_receipt_id": {"$ref": "#/$defs/nullableId"},
+        "evidence_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}
+      },
+      "additionalProperties": false
+    },
+    "involvementRelation": {
+      "type": "object",
+      "required": ["relation_id", "from_type", "from_id", "to_type", "to_id", "delay_interval", "relation_status", "assertion_level", "evidence_ids"],
+      "properties": {
+        "relation_id": {"$ref": "#/$defs/id"},
+        "from_type": {"enum": ["lead", "electrode", "region"]},
+        "from_id": {"$ref": "#/$defs/id"},
+        "to_type": {"enum": ["lead", "electrode", "region"]},
+        "to_id": {"$ref": "#/$defs/id"},
+        "delay_interval": {"$ref": "#/$defs/timeInterval"},
+        "relation_status": {"enum": ["precedes", "near_synchronous", "order_unresolved"]},
+        "assertion_level": {"enum": ["model_candidate", "report_eligible_automated"]},
+        "evidence_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}
+      },
+      "additionalProperties": false
+    },
+    "candidateScore": {
+      "type": "object",
+      "required": ["rank", "axis", "candidate_type", "candidate_id", "score", "score_semantics", "calibration_receipt_id", "supporting_relation_ids", "contradictory_relation_ids"],
+      "properties": {
+        "rank": {"type": "integer", "minimum": 1},
+        "axis": {"enum": ["phenotype", "laterality", "region", "lead", "electrode"]},
+        "candidate_type": {"enum": ["phenotype", "laterality", "region", "lead", "electrode"]},
+        "candidate_id": {"$ref": "#/$defs/id"},
+        "score": {"$ref": "#/$defs/finiteNumber"},
+        "score_semantics": {"enum": ["uncalibrated_ranking_score", "patient_disjoint_calibrated_probability"]},
+        "calibration_receipt_id": {"$ref": "#/$defs/nullableId"},
+        "supporting_relation_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+        "contradictory_relation_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}
+      },
+      "additionalProperties": false
+    },
+    "scalpOnsetHypothesis": {
+      "type": "object",
+      "required": ["hypothesis_id", "layer", "claim_boundary", "event_id", "localization_status", "selected_resolution", "phenotype", "candidate_scores", "per_unit_involvement", "involvement_order", "reason_codes", "model_receipt_id"],
+      "properties": {
+        "hypothesis_id": {"$ref": "#/$defs/id"},
+        "layer": {"const": "research_ai_hypothesis"},
+        "claim_boundary": {"const": "research_scalp_eeg_onset_candidate_not_cortical_soz"},
+        "event_id": {"$ref": "#/$defs/id"},
+        "localization_status": {"enum": ["ranked_candidates", "phenotype_only", "nonlocalizable", "not_evaluable"]},
+        "selected_resolution": {"enum": ["lead", "electrode", "region", "laterality", "phenotype_only", "none"]},
+        "phenotype": {"enum": ["focal", "focal_with_rapid_bilateralization", "bilateral_synchronous_or_rapid_bilateralization_ambiguous", "generalized_synchronous", "scalp_onset_nonlocalizable", "not_evaluable"]},
+        "candidate_scores": {"type": "array", "items": {"$ref": "#/$defs/candidateScore"}},
+        "per_unit_involvement": {"type": "array", "items": {"$ref": "#/$defs/perUnitInvolvement"}},
+        "involvement_order": {"type": "array", "items": {"$ref": "#/$defs/involvementRelation"}},
+        "reason_codes": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+        "model_receipt_id": {"$ref": "#/$defs/nullableId"}
+      },
+      "additionalProperties": false
+    },
+    "hypothesisEvidenceRelation": {
+      "type": "object",
+      "required": ["relation_id", "hypothesis_id", "axis", "candidate_type", "candidate_id", "relation", "evidence_ids", "producer_receipt_id", "policy_sha256"],
+      "properties": {
+        "relation_id": {"$ref": "#/$defs/id"},
+        "hypothesis_id": {"$ref": "#/$defs/id"},
+        "axis": {"enum": ["phenotype", "laterality", "region", "lead", "electrode"]},
+        "candidate_type": {"enum": ["phenotype", "laterality", "region", "lead", "electrode"]},
+        "candidate_id": {"$ref": "#/$defs/id"},
+        "relation": {"enum": ["supports", "contradicts"]},
+        "evidence_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+        "producer_receipt_id": {"$ref": "#/$defs/id"},
+        "policy_sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "additionalProperties": false
+    },
+    "waveformEvidence": {
+      "type": "object",
+      "required": ["waveform_evidence_id", "interval", "unit_ids", "source_view_id", "view_role", "view_receipt_id", "view_receipt_sha256", "processed_view_sha256", "quality_mask_sha256", "evidence_eligible", "ineligibility_reason_codes", "render_policy", "canonical_signal_sha256", "raw_sample_dependency"],
+      "properties": {
+        "waveform_evidence_id": {"$ref": "#/$defs/id"},
+        "interval": {"$ref": "#/$defs/closedInterval"},
+        "unit_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+        "source_view_id": {"$ref": "#/$defs/id"},
+        "view_role": {"$ref": "#/$defs/viewRole"},
+        "view_receipt_id": {"$ref": "#/$defs/nullableId"},
+        "view_receipt_sha256": {"$ref": "#/$defs/nullableSha256"},
+        "processed_view_sha256": {"$ref": "#/$defs/nullableSha256"},
+        "quality_mask_sha256": {"$ref": "#/$defs/nullableSha256"},
+        "evidence_eligible": {"type": "boolean"},
+        "ineligibility_reason_codes": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+        "render_policy": {"$ref": "#/$defs/id"},
+        "canonical_signal_sha256": {"$ref": "#/$defs/sha256"},
+        "raw_sample_dependency": {
+          "anyOf": [
+            {"$ref": "#/$defs/rawSampleDependency"},
+            {"type": "null"}
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "limitation": {
+      "type": "object",
+      "required": ["code", "scope", "text_zh"],
+      "properties": {
+        "code": {"$ref": "#/$defs/id"},
+        "scope": {"enum": ["signal", "boundary", "finding", "spatial", "clinical_claim", "migration"]},
+        "text_zh": {"type": "string", "minLength": 1, "maxLength": 500}
+      },
+      "additionalProperties": false
+    },
+    "migrationReceipt": {
+      "type": "object",
+      "required": ["source_schema_version", "migration_status", "source_payload_sha256", "migrator_id", "loss_codes"],
+      "properties": {
+        "source_schema_version": {"const": "event_eeg_findings_v1"},
+        "migration_status": {"const": "lossy_fail_closed"},
+        "source_payload_sha256": {"$ref": "#/$defs/sha256"},
+        "migrator_id": {"const": "event_eeg_findings_v1_to_v2_fail_closed_v1"},
+        "loss_codes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}
+      },
+      "additionalProperties": false
+    }
+  }
+}

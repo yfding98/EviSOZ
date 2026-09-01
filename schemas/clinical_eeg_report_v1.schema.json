@@ -1,0 +1,1258 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/clinical_eeg_report_v1.schema.json",
+  "title": "clinical_eeg_report_v1 EEG-only fact ledger",
+  "description": "Strict scalp-EEG-only fact contract for the SOZ report pipeline. Clinical context, video, ECG/EMG, sleep, activation procedures, and clinical/semiologic events are outside this schema.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "report_id",
+    "patient_pseudonym",
+    "facts",
+    "eeg_event_ids",
+    "impression_fact_ids"
+  ],
+  "properties": {
+    "schema_version": {"const": "clinical_eeg_report_v1"},
+    "report_id": {"$ref": "#/$defs/sourceId"},
+    "patient_pseudonym": {"$ref": "#/$defs/sourceId"},
+    "facts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/fact"}
+    },
+    "eeg_event_ids": {"$ref": "#/$defs/idList"},
+    "impression_fact_ids": {"$ref": "#/$defs/idList"}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+    },
+    "sourceId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "eegSourceId": {
+      "allOf": [
+        {"$ref": "#/$defs/sourceId"},
+        {
+          "not": {
+            "pattern": "(?:[Vv][Ii][Dd][Ee][Oo]|[Ee][Cc][Gg]|[Ee][Kk][Gg]|[Ee][Mm][Gg]|[Ee][Oo][Gg]|[Cc][Ll][Ii][Nn](?:[Ii][Cc][Aa][Ll])?|[Ss][Ee][Mm][Ii](?:[Oo][Ll][Oo][Gg][Yy])?)"
+          }
+        }
+      ]
+    },
+    "idList": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/id"},
+      "uniqueItems": true
+    },
+    "nonEmptyIdList": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/id"},
+      "uniqueItems": true
+    },
+    "evidenceIdList": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/eegSourceId"},
+      "uniqueItems": true
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "(?:Z|[+-][0-9]{2}:[0-9]{2})$"
+    },
+    "eegText": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000,
+      "not": {
+        "pattern": "(?:临床|视频|症状|意识|行为|自动症|呼之不应|惯常|心电|心率|肌电|眼电|病史|病历|用药|服药|药物|诊断|既往|转诊|影像|头颅|患者|受检者|睡眠|困倦|诱发试验|过度换气|闪光刺激|睁闭眼|(?:^|[^A-Za-z0-9])(?:[Vv][Ii][Dd][Ee][Oo]|[Cc][Ll][Ii][Nn][Ii][Cc][Aa][Ll]|[Ss][Ee][Mm][Ii][Oo][Ll][Oo][Gg][Yy]|[Aa][Ww][Aa][Rr][Ee][Nn][Ee][Ss][Ss]|[Rr][Ee][Ss][Pp][Oo][Nn][Ss][Ii][Vv][Ee][Nn][Ee][Ss][Ss]|[Hh][Aa][Bb][Ii][Tt][Uu][Aa][Ll]|[Ee][Cc][Gg]|[Ee][Kk][Gg]|[Ee][Mm][Gg]|[Ee][Oo][Gg]|[Mm][Rr][Ii]|[Cc][Tt]|[Rr][Ee][Mm]|[Nn][123]|[Ss][Ll][Ee][Ee][Pp]|[Dd][Rr][Oo][Ww][Ss](?:[Yy]|[Ii][Nn][Ee][Ss][Ss])|[Hh][Yy][Pp][Ee][Rr][Vv][Ee][Nn][Tt][Ii][Ll][Aa][Tt][Ii][Oo][Nn]|[Pp][Hh][Oo][Tt][Ii][Cc])(?:$|[^A-Za-z0-9]))"
+      }
+    },
+    "neutralTemporalEEGText": {
+      "allOf": [
+        {"$ref": "#/$defs/eegText"},
+        {
+          "not": {
+            "pattern": "(?:发作(?:期(?:脑电)?)?起始|脑电(?:发作)?起始|(?:发作期|脑电)(?:变化)?起点|临床(?:确认的?)?起始|(?:皮层|癫痫灶|SOZ)(?:起始|起点|起源)|最早(?:头皮可见|电极|导联)|传播|扩散|蔓延|空间扩展|(?:^|[^A-Za-z0-9])(?:[Oo][Nn][Ss][Ee][Tt]|[Oo][Rr][Ii][Gg][Ii][Nn]|[Pp][Rr][Oo][Pp][Aa][Gg][Aa][Tt][Ii][Oo][Nn]|[Ss][Pp][Rr][Ee][Aa][Dd])(?:$|[^A-Za-z0-9]))"
+          }
+        }
+      ]
+    },
+    "electrode": {
+      "enum": [
+        "FP1", "FPZ", "FP2",
+        "AF9", "AF7", "AF5", "AF3", "AF1", "AFZ", "AF2", "AF4", "AF6", "AF8", "AF10",
+        "F9", "F7", "F5", "F3", "F1", "FZ", "F2", "F4", "F6", "F8", "F10",
+        "FT9", "FT7", "FT5", "FT3", "FT1", "FT2", "FT4", "FT6", "FT8", "FT10",
+        "T9", "T7", "T8", "T10",
+        "C5", "C3", "C1", "CZ", "C2", "C4", "C6",
+        "TP9", "TP7", "TP5", "TP3", "TP1", "TP2", "TP4", "TP6", "TP8", "TP10",
+        "P9", "P7", "P5", "P3", "P1", "PZ", "P2", "P4", "P6", "P8", "P10",
+        "PO9", "PO7", "PO5", "PO3", "PO1", "POZ", "PO2", "PO4", "PO6", "PO8", "PO10",
+        "O1", "OZ", "O2", "IZ", "M1", "M2"
+      ]
+    },
+    "electrodeList": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/electrode"},
+      "uniqueItems": true
+    },
+    "electrodeListAllowEmpty": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/electrode"},
+      "uniqueItems": true
+    },
+    "derivation": {
+      "type": "string",
+      "pattern": "^(?:FP1|FPZ|FP2|AF9|AF7|AF5|AF3|AF1|AFZ|AF2|AF4|AF6|AF8|AF10|F9|F7|F5|F3|F1|FZ|F2|F4|F6|F8|F10|FT9|FT7|FT5|FT3|FT1|FT2|FT4|FT6|FT8|FT10|T9|T7|T8|T10|C5|C3|C1|CZ|C2|C4|C6|TP9|TP7|TP5|TP3|TP1|TP2|TP4|TP6|TP8|TP10|P9|P7|P5|P3|P1|PZ|P2|P4|P6|P8|P10|PO9|PO7|PO5|PO3|PO1|POZ|PO2|PO4|PO6|PO8|PO10|O1|OZ|O2|IZ|M1|M2)-(?:FP1|FPZ|FP2|AF9|AF7|AF5|AF3|AF1|AFZ|AF2|AF4|AF6|AF8|AF10|F9|F7|F5|F3|F1|FZ|F2|F4|F6|F8|F10|FT9|FT7|FT5|FT3|FT1|FT2|FT4|FT6|FT8|FT10|T9|T7|T8|T10|C5|C3|C1|CZ|C2|C4|C6|TP9|TP7|TP5|TP3|TP1|TP2|TP4|TP6|TP8|TP10|P9|P7|P5|P3|P1|PZ|P2|P4|P6|P8|P10|PO9|PO7|PO5|PO3|PO1|POZ|PO2|PO4|PO6|PO8|PO10|O1|OZ|O2|IZ|M1|M2)$"
+    },
+    "derivationListAllowEmpty": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/derivation"},
+      "uniqueItems": true
+    },
+    "numericRange": {
+      "type": "object",
+      "required": ["min", "max"],
+      "properties": {
+        "min": {"type": "number", "minimum": 0},
+        "max": {"type": "number", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "positiveNumericRange": {
+      "type": "object",
+      "required": ["min", "max"],
+      "properties": {
+        "min": {"type": "number", "exclusiveMinimum": 0},
+        "max": {"type": "number", "exclusiveMinimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "signalFindingQualification": {
+      "type": "object",
+      "required": [
+        "producer_id",
+        "policy_sha256",
+        "artifact_gate_passed",
+        "sustained_change_gate_passed",
+        "reproducibility_gate_passed",
+        "source_signal_only",
+        "external_context_used",
+        "research_ranking_used",
+        "morphology_terms_qualified",
+        "spatial_spread_terms_qualified"
+      ],
+      "properties": {
+        "producer_id": {"type": "string", "minLength": 1},
+        "policy_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "artifact_gate_passed": {"const": true},
+        "sustained_change_gate_passed": {"const": true},
+        "reproducibility_gate_passed": {"const": true},
+        "source_signal_only": {"const": true},
+        "external_context_used": {"const": false},
+        "research_ranking_used": {"const": false},
+        "morphology_terms_qualified": {"type": "boolean"},
+        "spatial_spread_terms_qualified": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "laterality": {
+      "enum": ["left", "right", "bilateral", "midline", "none", "indeterminate"]
+    },
+    "distribution": {
+      "enum": [
+        "focal",
+        "multifocal",
+        "hemispheric",
+        "bilateral_independent",
+        "bilateral_synchronous",
+        "generalized",
+        "diffuse"
+      ]
+    },
+    "region": {
+      "enum": [
+        "frontal",
+        "temporal",
+        "central",
+        "parietal",
+        "occipital",
+        "frontotemporal",
+        "centrotemporal",
+        "temporoparietal",
+        "posterior",
+        "diffuse",
+        "midline",
+        "unknown"
+      ]
+    },
+    "regionList": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/region"},
+      "uniqueItems": true
+    },
+    "frequencyBand": {
+      "enum": ["delta", "theta", "alpha", "beta", "gamma", "broadband", "unknown"]
+    },
+    "rhythmicity": {
+      "enum": ["rhythmic", "quasi_rhythmic", "nonrhythmic", "indeterminate"]
+    },
+    "symmetry": {
+      "enum": ["symmetric", "asymmetric", "indeterminate"]
+    },
+    "ictalMorphology": {
+      "enum": [
+        "spike",
+        "sharp_wave",
+        "spike_and_slow_wave",
+        "sharp_and_slow_wave",
+        "polyspike",
+        "fast_activity",
+        "theta_activity",
+        "delta_activity",
+        "attenuation",
+        "mixed",
+        "other"
+      ]
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["source_type", "source_id", "method"],
+      "properties": {
+        "source_type": {
+          "enum": [
+            "acquisition_system",
+            "signal_algorithm",
+            "technologist_observation",
+            "physician_observation"
+          ]
+        },
+        "source_id": {"$ref": "#/$defs/eegSourceId"},
+        "method": {"$ref": "#/$defs/eegText"},
+        "acquired_at": {"$ref": "#/$defs/timestamp"}
+      },
+      "additionalProperties": false
+    },
+    "verification": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": {
+          "enum": [
+            "unverified",
+            "algorithm_candidate",
+            "technologist_verified",
+            "physician_verified"
+          ]
+        },
+        "verified_by": {"$ref": "#/$defs/sourceId"},
+        "verified_at": {"$ref": "#/$defs/timestamp"}
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": ["technologist_verified", "physician_verified"]
+              }
+            }
+          },
+          "then": {"required": ["verified_by", "verified_at"]},
+          "else": {
+            "not": {
+              "anyOf": [
+                {"required": ["verified_by"]},
+                {"required": ["verified_at"]}
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "recordingModalityValue": {
+      "type": "object",
+      "required": ["modality"],
+      "properties": {
+        "modality": {
+          "enum": [
+            "routine_scalp_eeg",
+            "ambulatory_scalp_eeg",
+            "long_term_scalp_eeg",
+            "continuous_scalp_eeg"
+          ]
+        },
+        "text_zh": {"$ref": "#/$defs/eegText"}
+      },
+      "additionalProperties": false
+    },
+    "recordingDurationValue": {
+      "type": "object",
+      "required": ["duration_seconds"],
+      "properties": {
+        "duration_seconds": {"type": "number", "exclusiveMinimum": 0},
+        "text_zh": {"$ref": "#/$defs/eegText"}
+      },
+      "additionalProperties": false
+    },
+    "electrodeSetupValue": {
+      "type": "object",
+      "required": ["system", "electrodes", "montages"],
+      "properties": {
+        "system": {
+          "enum": ["international_10_20", "international_10_10", "custom"]
+        },
+        "electrodes": {"$ref": "#/$defs/electrodeList"},
+        "montages": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "longitudinal_bipolar",
+              "transverse_bipolar",
+              "common_average",
+              "linked_mastoids",
+              "ipsilateral_mastoid",
+              "referential",
+              "laplacian",
+              "custom_scalp_eeg"
+            ]
+          }
+        },
+        "reference": {
+          "oneOf": [
+            {
+              "enum": [
+                "average",
+                "linked_mastoids",
+                "ipsilateral_mastoid",
+                "source_reference",
+                "unknown"
+              ]
+            },
+            {"$ref": "#/$defs/electrode"}
+          ]
+        },
+        "text_zh": {"$ref": "#/$defs/eegText"}
+      },
+      "additionalProperties": false
+    },
+    "acquisitionSettingsValue": {
+      "type": "object",
+      "required": ["sampling_rate_hz", "low_cut_hz", "high_cut_hz"],
+      "properties": {
+        "sampling_rate_hz": {"type": "number", "exclusiveMinimum": 0},
+        "low_cut_hz": {"type": "number", "minimum": 0},
+        "high_cut_hz": {"type": "number", "exclusiveMinimum": 0},
+        "notch_hz": {"type": "number", "exclusiveMinimum": 0},
+        "text_zh": {"$ref": "#/$defs/eegText"}
+      },
+      "additionalProperties": false
+    },
+    "recordingQualityValue": {
+      "type": "object",
+      "required": ["quality"],
+      "properties": {
+        "quality": {"enum": ["good", "limited", "unusable"]},
+        "interpretable_fraction": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "affected_assessments": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"enum": ["background", "interictal", "ictal"]}
+        },
+        "text_zh": {"$ref": "#/$defs/eegText"}
+      },
+      "additionalProperties": false
+    },
+    "pdrValue": {
+      "type": "object",
+      "required": ["frequency_hz", "symmetry"],
+      "properties": {
+        "frequency_hz": {"$ref": "#/$defs/positiveNumericRange"},
+        "symmetry": {"$ref": "#/$defs/symmetry"},
+        "amplitude_uv": {"$ref": "#/$defs/numericRange"},
+        "maximal_electrodes": {"$ref": "#/$defs/electrodeList"},
+        "text_zh": {"$ref": "#/$defs/eegText"}
+      },
+      "additionalProperties": false
+    },
+    "backgroundOrganizationValue": {
+      "type": "object",
+      "required": ["organization", "continuity", "voltage"],
+      "properties": {
+        "organization": {
+          "enum": [
+            "well_organized",
+            "fairly_organized",
+            "poorly_organized",
+            "disorganized"
+          ]
+        },
+        "continuity": {
+          "enum": ["continuous", "discontinuous", "burst_suppression", "suppressed"]
+        },
+        "voltage": {"enum": ["normal", "low", "high", "mixed", "indeterminate"]},
+        "text_zh": {"$ref": "#/$defs/eegText"}
+      },
+      "additionalProperties": false
+    },
+    "backgroundSlowingValue": {
+      "type": "object",
+      "required": [
+        "distribution",
+        "laterality",
+        "regions",
+        "electrodes",
+        "frequency_band",
+        "rhythmicity"
+      ],
+      "properties": {
+        "distribution": {"$ref": "#/$defs/distribution"},
+        "laterality": {"$ref": "#/$defs/laterality"},
+        "regions": {"$ref": "#/$defs/regionList"},
+        "electrodes": {"$ref": "#/$defs/electrodeListAllowEmpty"},
+        "frequency_band": {"$ref": "#/$defs/frequencyBand"},
+        "rhythmicity": {"$ref": "#/$defs/rhythmicity"},
+        "frequency_hz": {"$ref": "#/$defs/positiveNumericRange"},
+        "amplitude_uv": {"$ref": "#/$defs/numericRange"},
+        "maximal_electrodes": {"$ref": "#/$defs/electrodeList"},
+        "text_zh": {"$ref": "#/$defs/eegText"}
+      },
+      "additionalProperties": false
+    },
+    "backgroundAsymmetryValue": {
+      "type": "object",
+      "required": ["lower_amplitude_side", "affected_electrodes", "descriptor"],
+      "properties": {
+        "lower_amplitude_side": {"enum": ["left", "right", "indeterminate"]},
+        "affected_electrodes": {"$ref": "#/$defs/electrodeList"},
+        "descriptor": {"enum": ["mild", "moderate", "marked", "indeterminate"]},
+        "amplitude_difference_percent": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "text_zh": {"$ref": "#/$defs/eegText"}
+      },
+      "additionalProperties": false
+    },
+    "artifactValue": {
+      "type": "object",
+      "required": ["artifact_types", "burden", "affected_electrodes"],
+      "properties": {
+        "artifact_types": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "eye_movement",
+              "blink",
+              "muscle",
+              "movement",
+              "electrode",
+              "sweat",
+              "pulse",
+              "line_noise",
+              "other"
+            ]
+          }
+        },
+        "burden": {
+          "enum": ["minimal", "mild", "moderate", "severe", "intermittent", "continuous"]
+        },
+        "affected_electrodes": {"$ref": "#/$defs/electrodeListAllowEmpty"},
+        "text_zh": {"$ref": "#/$defs/eegText"}
+      },
+      "additionalProperties": false
+    },
+    "prevalence": {
+      "type": "object",
+      "required": ["descriptor"],
+      "properties": {
+        "descriptor": {
+          "enum": [
+            "single",
+            "rare",
+            "occasional",
+            "frequent",
+            "abundant",
+            "continuous",
+            "clustered"
+          ]
+        },
+        "count": {"type": "integer", "minimum": 1},
+        "rate_per_hour": {"type": "number", "exclusiveMinimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "interictalValue": {
+      "type": "object",
+      "required": [
+        "morphology",
+        "distribution",
+        "laterality",
+        "regions",
+        "electrodes",
+        "maximal_electrodes",
+        "prevalence",
+        "rhythmicity"
+      ],
+      "properties": {
+        "morphology": {
+          "enum": [
+            "spike",
+            "sharp_wave",
+            "spike_and_slow_wave",
+            "sharp_and_slow_wave",
+            "polyspike",
+            "polyspike_and_slow_wave",
+            "periodic_discharge",
+            "rhythmic_delta",
+            "other"
+          ]
+        },
+        "distribution": {"$ref": "#/$defs/distribution"},
+        "laterality": {"$ref": "#/$defs/laterality"},
+        "regions": {"$ref": "#/$defs/regionList"},
+        "electrodes": {"$ref": "#/$defs/electrodeListAllowEmpty"},
+        "maximal_electrodes": {"$ref": "#/$defs/electrodeListAllowEmpty"},
+        "prevalence": {"$ref": "#/$defs/prevalence"},
+        "rhythmicity": {"$ref": "#/$defs/rhythmicity"},
+        "amplitude_uv": {"$ref": "#/$defs/numericRange"},
+        "frequency_hz": {"$ref": "#/$defs/positiveNumericRange"},
+        "spread_to_electrodes": {"$ref": "#/$defs/electrodeListAllowEmpty"},
+        "derivations": {"$ref": "#/$defs/derivationListAllowEmpty"},
+        "text_zh": {"$ref": "#/$defs/eegText"}
+      },
+      "additionalProperties": false
+    },
+    "normalVariantValue": {
+      "type": "object",
+      "required": ["pattern_code", "classification", "laterality", "electrodes"],
+      "properties": {
+        "pattern_code": {
+          "enum": [
+            "lambda_waves",
+            "wicket_waves",
+            "SREDA",
+            "breach_rhythm",
+            "uncertain_sharp_transient",
+            "other"
+          ]
+        },
+        "classification": {"enum": ["normal_variant", "uncertain_significance"]},
+        "laterality": {"$ref": "#/$defs/laterality"},
+        "electrodes": {"$ref": "#/$defs/electrodeListAllowEmpty"},
+        "text_zh": {"$ref": "#/$defs/eegText"}
+      },
+      "additionalProperties": false
+    },
+    "eventOccurrenceValue": {
+      "type": "object",
+      "required": [
+        "event_number",
+        "start_offset_seconds",
+        "duration_seconds",
+        "event_class"
+      ],
+      "properties": {
+        "event_number": {"type": "integer", "minimum": 1},
+        "start_offset_seconds": {"type": "number", "minimum": 0},
+        "duration_seconds": {"type": "number", "exclusiveMinimum": 0},
+        "event_class": {
+          "enum": [
+            "electrographic_seizure",
+            "electrographic_event",
+            "uncertain_electrographic_pattern"
+          ]
+        },
+        "text_zh": {"$ref": "#/$defs/eegText"}
+      },
+      "additionalProperties": false
+    },
+    "sourceEEGAnnotationTimingMarker": {
+      "type": "object",
+      "required": ["marker_kind", "recording_offset_seconds", "point_marker"],
+      "properties": {
+        "marker_kind": {
+          "enum": ["event_marker", "eeg_event_marker", "end_marker"]
+        },
+        "recording_offset_seconds": {"type": "number", "minimum": 0},
+        "point_marker": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "sourceEEGAnnotationTimingValue": {
+      "type": "object",
+      "description": "Controlled EDF point markers only; runtime validation also rejects duplicate marker kinds and an end marker not later than an EEG event marker.",
+      "required": [
+        "time_coordinate",
+        "markers",
+        "point_markers_only",
+        "onset_confirmed",
+        "termination_confirmed",
+        "duration_derived"
+      ],
+      "properties": {
+        "time_coordinate": {"const": "original_recording_start_seconds"},
+        "markers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
+          "items": {"$ref": "#/$defs/sourceEEGAnnotationTimingMarker"}
+        },
+        "point_markers_only": {"const": true},
+        "onset_confirmed": {"const": false},
+        "termination_confirmed": {"const": false},
+        "duration_derived": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "algorithmicSustainedEEGChangeValue": {
+      "type": "object",
+      "description": "A neutral algorithm-marked interval; end_offset_seconds is additionally required by the runtime validator to be greater than start_offset_seconds.",
+      "required": ["start_offset_seconds", "end_offset_seconds", "derivations"],
+      "properties": {
+        "start_offset_seconds": {"type": "number", "minimum": 0},
+        "end_offset_seconds": {"type": "number", "minimum": 0},
+        "derivations": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/derivation"},
+          "uniqueItems": true
+        },
+        "electrodes": {"$ref": "#/$defs/electrodeList"},
+        "maximal_electrodes": {"$ref": "#/$defs/electrodeList"},
+        "laterality": {"$ref": "#/$defs/laterality"},
+        "distribution": {"$ref": "#/$defs/distribution"},
+        "regions": {"$ref": "#/$defs/regionList"},
+        "frequency_hz": {"$ref": "#/$defs/positiveNumericRange"},
+        "frequency_band": {
+          "enum": ["delta", "theta", "alpha", "beta", "gamma", "broadband", "unknown"]
+        },
+        "amplitude_uv": {"$ref": "#/$defs/numericRange"},
+        "rhythmicity": {"$ref": "#/$defs/rhythmicity"},
+        "qualification": {"$ref": "#/$defs/signalFindingQualification"},
+        "text_zh": {"$ref": "#/$defs/neutralTemporalEEGText"}
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "anyOf": [
+              {"required": ["electrodes"]},
+              {"required": ["maximal_electrodes"]},
+              {"required": ["laterality"]},
+              {"required": ["distribution"]},
+              {"required": ["regions"]},
+              {"required": ["frequency_hz"]},
+              {"required": ["frequency_band"]},
+              {"required": ["amplitude_uv"]},
+              {"required": ["rhythmicity"]}
+            ]
+          },
+          "then": {"required": ["qualification"]}
+        }
+      ]
+    },
+    "laterScalpVisibleEEGChangeObservation": {
+      "type": "object",
+      "required": ["electrode", "delay_seconds"],
+      "properties": {
+        "electrode": {"$ref": "#/$defs/electrode"},
+        "delay_seconds": {"type": "number", "exclusiveMinimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "laterScalpVisibleEEGChangeValue": {
+      "type": "object",
+      "required": ["observations", "temporal_relation_only"],
+      "properties": {
+        "observations": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/laterScalpVisibleEEGChangeObservation"},
+          "uniqueItems": true
+        },
+        "temporal_relation_only": {"const": true},
+        "qualification": {"$ref": "#/$defs/signalFindingQualification"},
+        "text_zh": {"$ref": "#/$defs/neutralTemporalEEGText"}
+      },
+      "additionalProperties": false
+    },
+    "ictalOnsetValue": {
+      "type": "object",
+      "required": [
+        "onset_offset_seconds",
+        "onset_type",
+        "laterality",
+        "distribution",
+        "regions",
+        "electrodes",
+        "maximal_electrodes",
+        "morphology",
+        "rhythmicity"
+      ],
+      "properties": {
+        "onset_offset_seconds": {"type": "number", "minimum": 0},
+        "onset_type": {
+          "enum": [
+            "low_voltage_fast_activity",
+            "rhythmic_activity",
+            "repetitive_spikes",
+            "electrodecrement",
+            "attenuation",
+            "irregular_activity",
+            "other"
+          ]
+        },
+        "laterality": {"$ref": "#/$defs/laterality"},
+        "distribution": {"$ref": "#/$defs/distribution"},
+        "regions": {"$ref": "#/$defs/regionList"},
+        "electrodes": {"$ref": "#/$defs/electrodeListAllowEmpty"},
+        "maximal_electrodes": {"$ref": "#/$defs/electrodeListAllowEmpty"},
+        "morphology": {"$ref": "#/$defs/ictalMorphology"},
+        "rhythmicity": {"$ref": "#/$defs/rhythmicity"},
+        "frequency_hz": {"$ref": "#/$defs/positiveNumericRange"},
+        "amplitude_uv": {"$ref": "#/$defs/numericRange"},
+        "derivations": {"$ref": "#/$defs/derivationListAllowEmpty"},
+        "text_zh": {"$ref": "#/$defs/eegText"}
+      },
+      "additionalProperties": false
+    },
+    "ictalEvolutionValue": {
+      "type": "object",
+      "required": ["sequence_index", "onset_offset_seconds", "change_dimensions"],
+      "properties": {
+        "sequence_index": {"type": "integer", "minimum": 1},
+        "onset_offset_seconds": {"type": "number", "minimum": 0},
+        "change_dimensions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": ["frequency", "amplitude", "morphology", "spatial_distribution"]
+          }
+        },
+        "frequency_hz": {"$ref": "#/$defs/positiveNumericRange"},
+        "amplitude_uv": {"$ref": "#/$defs/numericRange"},
+        "morphology": {"$ref": "#/$defs/ictalMorphology"},
+        "electrodes": {"$ref": "#/$defs/electrodeList"},
+        "regions": {"$ref": "#/$defs/regionList"},
+        "laterality": {"$ref": "#/$defs/laterality"},
+        "qualification": {"$ref": "#/$defs/signalFindingQualification"},
+        "text_zh": {"$ref": "#/$defs/eegText"}
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {"properties": {"change_dimensions": {"contains": {"const": "frequency"}}}},
+          "then": {"required": ["frequency_hz"]}
+        },
+        {
+          "if": {"properties": {"change_dimensions": {"contains": {"const": "amplitude"}}}},
+          "then": {"required": ["amplitude_uv"]}
+        },
+        {
+          "if": {"properties": {"change_dimensions": {"contains": {"const": "morphology"}}}},
+          "then": {"required": ["morphology"]}
+        },
+        {
+          "if": {"properties": {"change_dimensions": {"contains": {"const": "spatial_distribution"}}}},
+          "then": {"required": ["electrodes"]}
+        },
+        {
+          "if": {
+            "required": ["qualification"],
+            "properties": {"change_dimensions": {"contains": {"const": "morphology"}}}
+          },
+          "then": {
+            "properties": {
+              "qualification": {
+                "properties": {"morphology_terms_qualified": {"const": true}}
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": ["qualification"],
+            "properties": {"change_dimensions": {"contains": {"const": "spatial_distribution"}}}
+          },
+          "then": {
+            "properties": {
+              "qualification": {
+                "properties": {"spatial_spread_terms_qualified": {"const": true}}
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ictalSpreadValue": {
+      "type": "object",
+      "required": [
+        "onset_offset_seconds",
+        "from_electrodes",
+        "to_electrodes",
+        "to_regions",
+        "laterality"
+      ],
+      "properties": {
+        "onset_offset_seconds": {"type": "number", "minimum": 0},
+        "from_electrodes": {"$ref": "#/$defs/electrodeList"},
+        "to_electrodes": {"$ref": "#/$defs/electrodeList"},
+        "to_regions": {"$ref": "#/$defs/regionList"},
+        "laterality": {"$ref": "#/$defs/laterality"},
+        "text_zh": {"$ref": "#/$defs/eegText"}
+      },
+      "additionalProperties": false
+    },
+    "ictalTerminationValue": {
+      "type": "object",
+      "required": ["offset_seconds", "duration_seconds"],
+      "properties": {
+        "offset_seconds": {"type": "number", "minimum": 0},
+        "duration_seconds": {"type": "number", "exclusiveMinimum": 0},
+        "qualification": {"$ref": "#/$defs/signalFindingQualification"},
+        "text_zh": {"$ref": "#/$defs/eegText"}
+      },
+      "additionalProperties": false
+    },
+    "postictalValue": {
+      "type": "object",
+      "required": [
+        "onset_offset_seconds",
+        "pattern",
+        "laterality",
+        "regions",
+        "electrodes"
+      ],
+      "properties": {
+        "onset_offset_seconds": {"type": "number", "minimum": 0},
+        "pattern": {
+          "enum": [
+            "suppression",
+            "attenuation",
+            "slowing",
+            "periodic_discharge",
+            "return_to_baseline",
+            "other"
+          ]
+        },
+        "laterality": {"$ref": "#/$defs/laterality"},
+        "regions": {"$ref": "#/$defs/regionList"},
+        "electrodes": {"$ref": "#/$defs/electrodeListAllowEmpty"},
+        "duration_seconds": {"type": "number", "exclusiveMinimum": 0},
+        "text_zh": {"$ref": "#/$defs/eegText"}
+      },
+      "additionalProperties": false
+    },
+    "impressionValue": {
+      "type": "object",
+      "required": ["statement", "supported_fact_ids"],
+      "properties": {
+        "statement": {"$ref": "#/$defs/eegText"},
+        "supported_fact_ids": {"$ref": "#/$defs/nonEmptyIdList"},
+        "text_zh": {"$ref": "#/$defs/eegText"}
+      },
+      "additionalProperties": false
+    },
+    "classificationImpressionValue": {
+      "type": "object",
+      "required": ["statement", "supported_fact_ids", "classification"],
+      "properties": {
+        "statement": {"$ref": "#/$defs/eegText"},
+        "supported_fact_ids": {"$ref": "#/$defs/nonEmptyIdList"},
+        "classification": {"enum": ["normal", "abnormal", "limited", "indeterminate"]},
+        "text_zh": {"$ref": "#/$defs/eegText"}
+      },
+      "additionalProperties": false
+    },
+    "ictalImpressionValue": {
+      "type": "object",
+      "required": ["statement", "supported_fact_ids", "eeg_event_ids"],
+      "properties": {
+        "statement": {"$ref": "#/$defs/eegText"},
+        "supported_fact_ids": {"$ref": "#/$defs/nonEmptyIdList"},
+        "eeg_event_ids": {"$ref": "#/$defs/nonEmptyIdList"},
+        "text_zh": {"$ref": "#/$defs/eegText"}
+      },
+      "additionalProperties": false
+    },
+    "fact": {
+      "type": "object",
+      "required": [
+        "fact_id",
+        "section",
+        "fact_type",
+        "state",
+        "value",
+        "provenance",
+        "verification",
+        "evidence_ids"
+      ],
+      "properties": {
+        "fact_id": {"$ref": "#/$defs/id"},
+        "section": {
+          "enum": ["metadata", "background", "interictal", "ictal", "impression"]
+        },
+        "fact_type": {
+          "enum": [
+            "recording_modality",
+            "recording_duration",
+            "electrode_setup",
+            "acquisition_settings",
+            "recording_quality",
+            "posterior_dominant_rhythm",
+            "background_organization",
+            "background_slowing",
+            "background_asymmetry",
+            "artifact_observation",
+            "epileptiform_discharge",
+            "periodic_pattern",
+            "rhythmic_delta_activity",
+            "normal_variant_or_uncertain_pattern",
+            "electrographic_event_occurrence",
+            "source_eeg_annotation_timing",
+            "algorithmic_sustained_eeg_change",
+            "later_scalp_visible_eeg_change",
+            "ictal_onset_pattern",
+            "ictal_evolution",
+            "ictal_spread",
+            "ictal_termination",
+            "postictal_pattern",
+            "study_classification",
+            "interictal_impression",
+            "ictal_eeg_impression",
+            "recording_limitation"
+          ]
+        },
+        "state": {
+          "enum": [
+            "present",
+            "absent",
+            "not_recorded",
+            "not_assessable",
+            "uncertain"
+          ]
+        },
+        "value": {
+          "anyOf": [
+            {"type": "null"},
+            {"type": "object"}
+          ]
+        },
+        "provenance": {"$ref": "#/$defs/provenance"},
+        "verification": {"$ref": "#/$defs/verification"},
+        "evidence_ids": {"$ref": "#/$defs/evidenceIdList"},
+        "eeg_event_id": {"$ref": "#/$defs/id"}
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {"properties": {"state": {"enum": ["present", "uncertain"]}}},
+          "then": {"properties": {"value": {"type": "object"}}},
+          "else": {"properties": {"value": {"type": "null"}}}
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {"enum": ["present", "absent", "uncertain"]}
+            }
+          },
+          "then": {"properties": {"evidence_ids": {"minItems": 1}}}
+        },
+        {
+          "if": {"properties": {"section": {"const": "ictal"}}},
+          "then": {"required": ["eeg_event_id"]},
+          "else": {"not": {"required": ["eeg_event_id"]}}
+        },
+        {
+          "if": {"properties": {"section": {"const": "impression"}}},
+          "then": {
+            "properties": {
+              "state": {"const": "present"},
+              "verification": {
+                "properties": {"status": {"const": "physician_verified"}}
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "fact_type": {
+                "enum": [
+                  "recording_modality",
+                  "recording_duration",
+                  "electrode_setup",
+                  "acquisition_settings",
+                  "recording_quality"
+                ]
+              }
+            }
+          },
+          "then": {"properties": {"section": {"const": "metadata"}}}
+        },
+        {
+          "if": {
+            "properties": {
+              "fact_type": {
+                "enum": [
+                  "posterior_dominant_rhythm",
+                  "background_organization",
+                  "background_slowing",
+                  "background_asymmetry",
+                  "artifact_observation"
+                ]
+              }
+            }
+          },
+          "then": {"properties": {"section": {"const": "background"}}}
+        },
+        {
+          "if": {
+            "properties": {
+              "fact_type": {
+                "enum": [
+                  "epileptiform_discharge",
+                  "periodic_pattern",
+                  "rhythmic_delta_activity",
+                  "normal_variant_or_uncertain_pattern"
+                ]
+              }
+            }
+          },
+          "then": {"properties": {"section": {"const": "interictal"}}}
+        },
+        {
+          "if": {
+            "properties": {
+              "fact_type": {
+                "enum": [
+                  "electrographic_event_occurrence",
+                  "source_eeg_annotation_timing",
+                  "algorithmic_sustained_eeg_change",
+                  "later_scalp_visible_eeg_change",
+                  "ictal_onset_pattern",
+                  "ictal_evolution",
+                  "ictal_spread",
+                  "ictal_termination",
+                  "postictal_pattern"
+                ]
+              }
+            }
+          },
+          "then": {"properties": {"section": {"const": "ictal"}}}
+        },
+        {
+          "if": {
+            "properties": {
+              "fact_type": {
+                "enum": [
+                  "study_classification",
+                  "interictal_impression",
+                  "ictal_eeg_impression",
+                  "recording_limitation"
+                ]
+              }
+            }
+          },
+          "then": {"properties": {"section": {"const": "impression"}}}
+        },
+        {
+          "if": {"properties": {"fact_type": {"const": "electrographic_event_occurrence"}}},
+          "then": {"properties": {"state": {"enum": ["present", "uncertain"]}}}
+        },
+        {
+          "if": {
+            "properties": {
+              "fact_type": {"const": "electrographic_event_occurrence"},
+              "state": {"const": "present"}
+            }
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "properties": {
+                  "event_class": {
+                    "enum": ["electrographic_seizure", "electrographic_event"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "fact_type": {"const": "electrographic_event_occurrence"},
+              "state": {"const": "uncertain"}
+            }
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "properties": {
+                  "event_class": {"const": "uncertain_electrographic_pattern"}
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "fact_type": {"const": "electrographic_event_occurrence"},
+              "value": {
+                "properties": {
+                  "event_class": {"const": "electrographic_seizure"}
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "verification": {
+                "properties": {
+                  "status": {"const": "physician_verified"}
+                }
+              },
+              "value": {
+                "properties": {
+                  "duration_seconds": {"minimum": 10}
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {"properties": {"fact_type": {"const": "recording_modality"}}},
+          "then": {"properties": {"value": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/recordingModalityValue"}]}}}
+        },
+        {
+          "if": {"properties": {"fact_type": {"const": "recording_duration"}}},
+          "then": {"properties": {"value": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/recordingDurationValue"}]}}}
+        },
+        {
+          "if": {"properties": {"fact_type": {"const": "electrode_setup"}}},
+          "then": {"properties": {"value": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/electrodeSetupValue"}]}}}
+        },
+        {
+          "if": {"properties": {"fact_type": {"const": "acquisition_settings"}}},
+          "then": {"properties": {"value": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/acquisitionSettingsValue"}]}}}
+        },
+        {
+          "if": {"properties": {"fact_type": {"const": "recording_quality"}}},
+          "then": {"properties": {"value": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/recordingQualityValue"}]}}}
+        },
+        {
+          "if": {"properties": {"fact_type": {"const": "posterior_dominant_rhythm"}}},
+          "then": {"properties": {"value": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/pdrValue"}]}}}
+        },
+        {
+          "if": {"properties": {"fact_type": {"const": "background_organization"}}},
+          "then": {"properties": {"value": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/backgroundOrganizationValue"}]}}}
+        },
+        {
+          "if": {"properties": {"fact_type": {"const": "background_slowing"}}},
+          "then": {"properties": {"value": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/backgroundSlowingValue"}]}}}
+        },
+        {
+          "if": {"properties": {"fact_type": {"const": "background_asymmetry"}}},
+          "then": {"properties": {"value": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/backgroundAsymmetryValue"}]}}}
+        },
+        {
+          "if": {"properties": {"fact_type": {"const": "artifact_observation"}}},
+          "then": {"properties": {"value": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/artifactValue"}]}}}
+        },
+        {
+          "if": {
+            "properties": {
+              "fact_type": {
+                "enum": [
+                  "epileptiform_discharge",
+                  "periodic_pattern",
+                  "rhythmic_delta_activity"
+                ]
+              }
+            }
+          },
+          "then": {"properties": {"value": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/interictalValue"}]}}}
+        },
+        {
+          "if": {"properties": {"fact_type": {"const": "normal_variant_or_uncertain_pattern"}}},
+          "then": {"properties": {"value": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/normalVariantValue"}]}}}
+        },
+        {
+          "if": {"properties": {"fact_type": {"const": "electrographic_event_occurrence"}}},
+          "then": {"properties": {"value": {"$ref": "#/$defs/eventOccurrenceValue"}}}
+        },
+        {
+          "if": {"properties": {"fact_type": {"const": "source_eeg_annotation_timing"}}},
+          "then": {"properties": {"value": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/sourceEEGAnnotationTimingValue"}]}}}
+        },
+        {
+          "if": {"properties": {"fact_type": {"const": "algorithmic_sustained_eeg_change"}}},
+          "then": {"properties": {"value": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/algorithmicSustainedEEGChangeValue"}]}}}
+        },
+        {
+          "if": {"properties": {"fact_type": {"const": "later_scalp_visible_eeg_change"}}},
+          "then": {"properties": {"value": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/laterScalpVisibleEEGChangeValue"}]}}}
+        },
+        {
+          "if": {"properties": {"fact_type": {"const": "ictal_onset_pattern"}}},
+          "then": {"properties": {"value": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/ictalOnsetValue"}]}}}
+        },
+        {
+          "if": {"properties": {"fact_type": {"const": "ictal_evolution"}}},
+          "then": {"properties": {"value": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/ictalEvolutionValue"}]}}}
+        },
+        {
+          "if": {"properties": {"fact_type": {"const": "ictal_spread"}}},
+          "then": {"properties": {"value": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/ictalSpreadValue"}]}}}
+        },
+        {
+          "if": {"properties": {"fact_type": {"const": "ictal_termination"}}},
+          "then": {"properties": {"value": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/ictalTerminationValue"}]}}}
+        },
+        {
+          "if": {"properties": {"fact_type": {"const": "postictal_pattern"}}},
+          "then": {"properties": {"value": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/postictalValue"}]}}}
+        },
+        {
+          "if": {"properties": {"fact_type": {"const": "study_classification"}}},
+          "then": {"properties": {"value": {"$ref": "#/$defs/classificationImpressionValue"}}}
+        },
+        {
+          "if": {
+            "properties": {
+              "fact_type": {"enum": ["interictal_impression", "recording_limitation"]}
+            }
+          },
+          "then": {"properties": {"value": {"$ref": "#/$defs/impressionValue"}}}
+        },
+        {
+          "if": {"properties": {"fact_type": {"const": "ictal_eeg_impression"}}},
+          "then": {"properties": {"value": {"$ref": "#/$defs/ictalImpressionValue"}}}
+        }
+      ]
+    }
+  }
+}

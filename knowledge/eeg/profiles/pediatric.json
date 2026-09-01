@@ -1,0 +1,11 @@
+{
+  "schema_version": "eeg_knowledge_profile_v2",
+  "profile_id": "pediatric",
+  "requires": ["chronological_age", "state", "medications_when_available", "age_appropriate_background_reference"],
+  "rules": [
+    "adult_background_thresholds_must_not_be_applied_without_age_adjustment",
+    "sleep_related_high_amplitude_transients_and_hypersynchrony_require_age_and_state_context",
+    "syndrome_names_are_patient_level_clinical_entities_not_single_image_labels",
+    "pediatric_dataset_results_must_not_be_generalized_to_adults_without_external_validation"
+  ]
+}

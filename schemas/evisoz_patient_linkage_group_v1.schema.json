@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evisoz_patient_linkage_group_v1.schema.json",
+  "title": "EviSOZ patient linkage group v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "linkage_group_id",
+    "linkage_status",
+    "members",
+    "linkage_evidence_refs",
+    "raw_patient_identifiers_stored",
+    "receipt_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "evisoz_patient_linkage_group_v1"},
+    "linkage_group_id": {"type": "string", "pattern": "^EVISOZ-PAT-[0-9a-f]{24}$"},
+    "linkage_status": {"enum": ["singleton", "verified_cross_dataset"]},
+    "members": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/member"}},
+    "linkage_evidence_refs": {
+      "type": "array",
+      "items": {
+        "allOf": [
+          {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+          {
+            "type": "object",
+            "properties": {
+              "artifact_kind": {"const": "patient_linkage_evidence"},
+              "media_type": {"const": "application/json"},
+              "payload_schema_version": {
+                "const": "evisoz_patient_linkage_evidence_v1"
+              },
+              "content_hash": {
+                "type": "object",
+                "properties": {
+                  "domain": {"const": "canonical_json_v1"}
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "raw_patient_identifiers_stored": {"const": false},
+    "receipt_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {"linkage_status": {"const": "singleton"}},
+        "required": ["linkage_status"]
+      },
+      "then": {
+        "properties": {
+          "members": {"maxItems": 1},
+          "linkage_evidence_refs": {"maxItems": 0}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "linkage_status": {"const": "verified_cross_dataset"}
+        },
+        "required": ["linkage_status"]
+      },
+      "then": {
+        "properties": {
+          "members": {"minItems": 2},
+          "linkage_evidence_refs": {"minItems": 1}
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "member": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dataset_id", "patient_key", "source_patient_sha256"],
+      "properties": {
+        "dataset_id": {"type": "string", "minLength": 1},
+        "patient_key": {"type": "string", "minLength": 1},
+        "source_patient_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}

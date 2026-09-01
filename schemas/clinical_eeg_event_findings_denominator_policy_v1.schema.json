@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/schemas/clinical_eeg_event_findings_denominator_policy_v1.schema.json",
+  "title": "Independent per-event EEG Findings denominator policy",
+  "description": "A host-trusted policy mapping every closed atom-roster item to one physical-time opportunity scope. It is deliberately separate from event_eeg_findings_v3 so a Findings producer cannot shrink its own evaluation denominator.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "policy_id",
+    "policy_status",
+    "atom_roster_policy_sha256",
+    "source_firewall",
+    "structural_absence_policy",
+    "scope_ids",
+    "item_scopes",
+    "interval_union_policy",
+    "policy_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "clinical_eeg_event_findings_denominator_policy_v1"
+    },
+    "policy_id": {
+      "const": "CLINICAL-EEG-EVENT-FINDINGS-DENOMINATOR-POLICY-V1"
+    },
+    "policy_status": {
+      "enum": ["draft_shadow", "frozen_for_evaluation"]
+    },
+    "atom_roster_policy_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "source_firewall": {
+      "type": "object",
+      "required": [
+        "event_findings_payload_used",
+        "findings_candidates_used",
+        "edf_annotations_used",
+        "spreadsheet_used",
+        "doctor_labels_used",
+        "clinical_text_used",
+        "patient_metadata_used",
+        "video_used",
+        "sleep_staging_used",
+        "provocation_used",
+        "ecg_emg_eog_used"
+      ],
+      "properties": {
+        "event_findings_payload_used": {"const": false},
+        "findings_candidates_used": {"const": false},
+        "edf_annotations_used": {"const": false},
+        "spreadsheet_used": {"const": false},
+        "doctor_labels_used": {"const": false},
+        "clinical_text_used": {"const": false},
+        "patient_metadata_used": {"const": false},
+        "video_used": {"const": false},
+        "sleep_staging_used": {"const": false},
+        "provocation_used": {"const": false},
+        "ecg_emg_eog_used": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "structural_absence_policy": {
+      "type": "object",
+      "required": [
+        "complete_opportunity_required_for_authorization",
+        "roster_spec_false_means_not_applicable",
+        "sensitivity_required_when_roster_specified",
+        "clinical_term_authorization"
+      ],
+      "properties": {
+        "complete_opportunity_required_for_authorization": {"const": true},
+        "roster_spec_false_means_not_applicable": {"const": true},
+        "sensitivity_required_when_roster_specified": {"const": true},
+        "clinical_term_authorization": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "scope_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/id"}
+    },
+    "item_scopes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/itemScope"}
+    },
+    "interval_union_policy": {
+      "type": "object",
+      "required": [
+        "policy_id",
+        "timebase",
+        "merge_overlapping_intervals",
+        "merge_touching_intervals",
+        "comparison_tolerance_seconds",
+        "double_counting_allowed"
+      ],
+      "properties": {
+        "policy_id": {"const": "PHYSICAL-TIME-INTERVAL-UNION-V1"},
+        "timebase": {"const": "recording_relative_seconds"},
+        "merge_overlapping_intervals": {"const": true},
+        "merge_touching_intervals": {"const": true},
+        "comparison_tolerance_seconds": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.000001
+        },
+        "double_counting_allowed": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "policy_sha256": {
+      "$ref": "#/$defs/sha256"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "itemScope": {
+      "type": "object",
+      "required": [
+        "roster_item_kind",
+        "roster_item_id",
+        "scope_id",
+        "granularity",
+        "enumeration_policy"
+      ],
+      "properties": {
+        "roster_item_kind": {
+          "enum": ["core_atom", "child_roster"]
+        },
+        "roster_item_id": {
+          "$ref": "#/$defs/id"
+        },
+        "scope_id": {
+          "$ref": "#/$defs/id"
+        },
+        "granularity": {
+          "enum": ["event", "unit"]
+        },
+        "enumeration_policy": {
+          "const": "all_registered_terms_even_when_not_emitted"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

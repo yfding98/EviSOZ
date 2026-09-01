@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evisoz_findings_claim_report_materialization_v1.schema.json",
+  "title": "EviSOZ Findings, claim graph and report materialization v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "materialization_id", "status", "source_refs", "event_rows", "patient_rows", "counts", "permissions", "receipt_sha256"],
+  "properties": {
+    "schema_version": {"const": "evisoz_findings_claim_report_materialization_v1"},
+    "materialization_id": {"type": "string", "pattern": "^EVISOZ-FCR-[0-9a-f]{24}$"},
+    "status": {"const": "complete_signal_shadow_evaluator_reference_materialization"},
+    "source_refs": {"type": "object"},
+    "event_rows": {"type": "array", "minItems": 1},
+    "patient_rows": {"type": "array", "minItems": 1},
+    "counts": {"type": "object"},
+    "permissions": {"type": "object"},
+    "receipt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evisoz_artifact_ref_v1.schema.json",
+  "title": "EviSOZ content-addressed artifact reference v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_id",
+    "artifact_kind",
+    "media_type",
+    "content_hash",
+    "payload_schema_version",
+    "ref_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "evisoz_artifact_ref_v1"},
+    "artifact_id": {
+      "type": "string",
+      "pattern": "^EVISOZ-ART-[0-9a-f]{24}$"
+    },
+    "artifact_kind": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_.-]{0,127}$"
+    },
+    "media_type": {"type": "string", "minLength": 1},
+    "content_hash": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["domain", "sha256", "size_bytes"],
+      "properties": {
+        "domain": {"enum": ["raw_bytes_v1", "canonical_json_v1"]},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "size_bytes": {"type": "integer", "minimum": 0}
+      }
+    },
+    "payload_schema_version": {
+      "type": ["string", "null"],
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+    },
+    "ref_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

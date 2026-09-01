@@ -1,0 +1,268 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/clinical_eeg_record_non_event_context_card_v1.schema.json",
+  "title": "Clinical EEG record non-event context card v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "card_id",
+    "card_status",
+    "source_scope",
+    "eeg_signal_domain",
+    "policy_binding",
+    "owner",
+    "source_firewall",
+    "slots",
+    "evidence_bindings",
+    "closure",
+    "authorization",
+    "card_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "clinical_eeg_record_non_event_context_card_v1"},
+    "card_id": {"type": "string", "pattern": "^RNECARD-[a-f0-9]{24}$"},
+    "card_status": {"const": "draft_eeg_signal_domain_shadow"},
+    "source_scope": {"const": "eeg_signal_only"},
+    "eeg_signal_domain": {"enum": ["private", "public", "synthetic"]},
+    "policy_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policy_id", "policy_sha256"],
+      "properties": {
+        "policy_id": {"const": "CLINICAL-EEG-RECORD-NON-EVENT-CONTEXT-CARD-POLICY-V1"},
+        "policy_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "owner": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owner_kind",
+        "recording_id",
+        "source_signal_sha256",
+        "canonical_clock_id",
+        "recording_duration_seconds",
+        "cardinality_key",
+        "card_instance_ordinal",
+        "event_scoped",
+        "shared_with_event_cards_by_reference_only"
+      ],
+      "properties": {
+        "owner_kind": {"const": "recording"},
+        "recording_id": {"$ref": "#/$defs/identifier"},
+        "source_signal_sha256": {"$ref": "#/$defs/sha256"},
+        "canonical_clock_id": {"$ref": "#/$defs/identifier"},
+        "recording_duration_seconds": {"type": "number", "exclusiveMinimum": 0},
+        "cardinality_key": {"$ref": "#/$defs/sha256"},
+        "card_instance_ordinal": {"const": 1},
+        "event_scoped": {"const": false},
+        "shared_with_event_cards_by_reference_only": {"const": true}
+      }
+    },
+    "source_firewall": {"$ref": "#/$defs/sourceFirewall"},
+    "slots": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": {"$ref": "#/$defs/slot"}
+    },
+    "evidence_bindings": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/evidenceBinding"}
+    },
+    "closure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "expected_slot_count",
+        "observed_slot_count",
+        "every_slot_present_exactly_once",
+        "slot_order_matches_policy",
+        "every_evidence_binding_referenced_exactly_once",
+        "record_scope_only",
+        "single_cardinality_key_for_recording",
+        "event_payload_embedded"
+      ],
+      "properties": {
+        "expected_slot_count": {"const": 6},
+        "observed_slot_count": {"const": 6},
+        "every_slot_present_exactly_once": {"const": true},
+        "slot_order_matches_policy": {"const": true},
+        "every_evidence_binding_referenced_exactly_once": {"const": true},
+        "record_scope_only": {"const": true},
+        "single_cardinality_key_for_recording": {"const": true},
+        "event_payload_embedded": {"const": false}
+      }
+    },
+    "authorization": {"$ref": "#/$defs/authorization"},
+    "card_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,255}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "sourceFirewall": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "private_auxiliary_data_used",
+        "private_labels_used",
+        "private_annotations_used",
+        "edf_annotations_used",
+        "spreadsheet_used",
+        "doctor_labels_used",
+        "clinical_text_used",
+        "clinical_reports_used",
+        "patient_metadata_used",
+        "video_or_behavior_used",
+        "sleep_staging_used",
+        "provocation_used",
+        "ecg_emg_eog_used",
+        "qwen_used",
+        "production_route_used"
+      ],
+      "properties": {
+        "private_auxiliary_data_used": {"const": false},
+        "private_labels_used": {"const": false},
+        "private_annotations_used": {"const": false},
+        "edf_annotations_used": {"const": false},
+        "spreadsheet_used": {"const": false},
+        "doctor_labels_used": {"const": false},
+        "clinical_text_used": {"const": false},
+        "clinical_reports_used": {"const": false},
+        "patient_metadata_used": {"const": false},
+        "video_or_behavior_used": {"const": false},
+        "sleep_staging_used": {"const": false},
+        "provocation_used": {"const": false},
+        "ecg_emg_eog_used": {"const": false},
+        "qwen_used": {"const": false},
+        "production_route_used": {"const": false}
+      }
+    },
+    "slot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "slot_index",
+        "slot_id",
+        "status",
+        "assertion_level",
+        "evidence_ids",
+        "opportunity_complete",
+        "opportunity_receipt_ids",
+        "sensitivity_receipt_ids",
+        "reason_codes",
+        "onset_support_permission",
+        "report_promotion_authorized"
+      ],
+      "properties": {
+        "slot_index": {"type": "integer", "minimum": 1, "maximum": 6},
+        "slot_id": {"$ref": "#/$defs/identifier"},
+        "status": {
+          "enum": ["present", "absent_with_opportunity", "uncertain", "not_evaluable"]
+        },
+        "assertion_level": {"enum": ["measured", "model_candidate"]},
+        "evidence_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/identifier"}
+        },
+        "opportunity_complete": {"type": "boolean"},
+        "opportunity_receipt_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/identifier"}
+        },
+        "sensitivity_receipt_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/identifier"}
+        },
+        "reason_codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/identifier"}
+        },
+        "onset_support_permission": {"const": "forbidden"},
+        "report_promotion_authorized": {"const": false}
+      }
+    },
+    "evidenceBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence_id",
+        "evidence_kind",
+        "assertion_level",
+        "intrinsic_evidence_role",
+        "scope_id",
+        "recording_id",
+        "source_signal_sha256",
+        "evidence_payload_sha256",
+        "onset_support_permission",
+        "mode_ranking_change_authorized",
+        "report_promotion_authorized"
+      ],
+      "properties": {
+        "evidence_id": {"$ref": "#/$defs/identifier"},
+        "evidence_kind": {"$ref": "#/$defs/identifier"},
+        "assertion_level": {"enum": ["measured", "model_candidate"]},
+        "intrinsic_evidence_role": {"enum": ["non_event_context", "limitation"]},
+        "scope_id": {"const": "record_non_event_context"},
+        "recording_id": {"$ref": "#/$defs/identifier"},
+        "source_signal_sha256": {"$ref": "#/$defs/sha256"},
+        "evidence_payload_sha256": {"$ref": "#/$defs/sha256"},
+        "mode_id": {"$ref": "#/$defs/identifier"},
+        "context_relation": {
+          "enum": ["concordant", "discordant", "mixed", "uncertain", "not_evaluable"]
+        },
+        "comparison_basis": {
+          "enum": ["electrode_set", "field_distribution", "laterality", "region", "none"]
+        },
+        "onset_support_permission": {"const": "forbidden"},
+        "mode_ranking_change_authorized": {"const": false},
+        "report_promotion_authorized": {"const": false}
+      }
+    },
+    "authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "shadow_contract_only",
+        "clinical_correctness_claimed",
+        "training_authorized",
+        "production_connection_authorized",
+        "qwen_authorized",
+        "report_promotion_authorized",
+        "clinical_absence_promotion_authorized",
+        "onset_time_claim_authorized",
+        "onset_topography_claim_authorized",
+        "soz_or_ez_positive_support_authorized",
+        "mode_ranking_change_authorized",
+        "non_event_context_may_create_ictal_onset",
+        "non_event_context_may_create_propagation"
+      ],
+      "properties": {
+        "shadow_contract_only": {"const": true},
+        "clinical_correctness_claimed": {"const": false},
+        "training_authorized": {"const": false},
+        "production_connection_authorized": {"const": false},
+        "qwen_authorized": {"const": false},
+        "report_promotion_authorized": {"const": false},
+        "clinical_absence_promotion_authorized": {"const": false},
+        "onset_time_claim_authorized": {"const": false},
+        "onset_topography_claim_authorized": {"const": false},
+        "soz_or_ez_positive_support_authorized": {"const": false},
+        "mode_ranking_change_authorized": {"const": false},
+        "non_event_context_may_create_ictal_onset": {"const": false},
+        "non_event_context_may_create_propagation": {"const": false}
+      }
+    }
+  }
+}

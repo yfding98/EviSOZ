@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/eeg/source-passage-v1-compat.schema.json",
+  "title": "EEG source passage compatibility record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "collection",
+    "title",
+    "citation",
+    "year",
+    "source_type",
+    "url",
+    "license_note",
+    "concepts",
+    "summary_zh",
+    "application_rules",
+    "limitations"
+  ],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "collection": {"type": "string", "minLength": 1},
+    "title": {"type": "string", "minLength": 1},
+    "citation": {"type": "string", "minLength": 1},
+    "year": {"type": "integer", "minimum": 1900, "maximum": 2100},
+    "source_type": {"type": "string", "minLength": 1},
+    "url": {"type": "string", "pattern": "^https?://"},
+    "license_note": {"type": "string", "minLength": 1},
+    "concepts": {"type": "array", "minItems": 3, "items": {"type": "string", "minLength": 1}},
+    "summary_zh": {"type": "string", "minLength": 1},
+    "application_rules": {"type": "array", "minItems": 2, "items": {"type": "string", "minLength": 1}},
+    "limitations": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+  },
+  "x-migration-gaps": [
+    "claim_level_source_locator",
+    "document_version",
+    "reviewer_and_reviewed_date",
+    "atomic_claim_id",
+    "content_sha256"
+  ]
+}

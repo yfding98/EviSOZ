@@ -1,0 +1,33 @@
+{
+  "$id": "evisoz_teacher_artifact_discovery_v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EviSOZ offline teacher artifact discovery",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "discovery_id", "teacher_id", "status", "scan", "candidates", "counts", "permissions", "missing_closure_codes", "receipt_sha256"],
+  "properties": {
+    "schema_version": {"const": "evisoz_teacher_artifact_discovery_v1"},
+    "discovery_id": {"type": "string", "pattern": "^EVISOZ-TEACHER-DISC-[0-9a-f]{24}$"},
+    "teacher_id": {"enum": ["cerebragloss", "elm"]},
+    "status": {"enum": ["missing", "found_unvalidated"]},
+    "scan": {
+      "type": "object", "additionalProperties": false,
+      "required": ["roots", "max_depth", "candidate_limit", "truncated", "hash_files"],
+      "properties": {
+        "roots": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["root", "exists", "regular_directory"], "properties": {"root": {"type": "string", "minLength": 1}, "exists": {"const": true}, "regular_directory": {"const": true}}}},
+        "max_depth": {"type": "integer", "minimum": 0},
+        "candidate_limit": {"type": "integer", "minimum": 1},
+        "truncated": {"type": "boolean"},
+        "hash_files": {"type": "boolean"}
+      }
+    },
+    "candidates": {
+      "type": "array",
+      "items": {"type": "object", "additionalProperties": false, "required": ["root", "relative_path", "suffix", "size_bytes", "sha256", "hash_status"], "properties": {"root": {"type": "string", "minLength": 1}, "relative_path": {"type": "string", "minLength": 1}, "suffix": {"type": "string", "enum": [".bin", ".ckpt", ".h5", ".json", ".pkl", ".pt", ".pth", ".safetensors", ".yaml", ".yml"]}, "size_bytes": {"type": "integer", "minimum": 0}, "sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"}, "hash_status": {"enum": ["not_hashed", "sha256_full"]}}}
+    },
+    "counts": {"type": "object", "additionalProperties": false, "required": ["root_count", "candidate_count"], "properties": {"root_count": {"type": "integer", "minimum": 1}, "candidate_count": {"type": "integer", "minimum": 0}}},
+    "permissions": {"type": "object", "additionalProperties": false, "required": ["training_authorized", "calibration_authorized", "teacher_cache_materialization_authorized", "patient_fact_creation_allowed"], "properties": {"training_authorized": {"const": false}, "calibration_authorized": {"const": false}, "teacher_cache_materialization_authorized": {"const": false}, "patient_fact_creation_allowed": {"const": false}}},
+    "missing_closure_codes": {"type": "array", "items": {"type": "string"}},
+    "receipt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

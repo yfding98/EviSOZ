@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evisoz_event_identity_v1.schema.json",
+  "title": "EviSOZ seizure-conditioned event identity v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "identity_id",
+    "dataset_id",
+    "sample_id",
+    "event_id",
+    "linkage_group_id",
+    "source_patient_sha256",
+    "parent_signal_ref",
+    "anchor_source_ref",
+    "anchor",
+    "raw_patient_identifiers_stored",
+    "receipt_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "evisoz_event_identity_v1"},
+    "identity_id": {"type": "string", "pattern": "^EVISOZ-EVENT-[0-9a-f]{24}$"},
+    "dataset_id": {"type": "string", "minLength": 1},
+    "sample_id": {"type": "string", "minLength": 1},
+    "event_id": {"type": "string", "minLength": 1},
+    "linkage_group_id": {"type": "string", "minLength": 1},
+    "source_patient_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "parent_signal_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+    "anchor_source_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+    "anchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "condition",
+        "quality",
+        "sampling_rate_numerator",
+        "sampling_rate_denominator",
+        "sample_count",
+        "t0_sample_index",
+        "analysis_interval_seconds"
+      ],
+      "properties": {
+        "condition": {"const": "known_seizure_segment"},
+        "quality": {"enum": ["exact", "approximate", "provided_interval"]},
+        "sampling_rate_numerator": {"const": 200},
+        "sampling_rate_denominator": {"const": 1},
+        "sample_count": {"const": 12000},
+        "t0_sample_index": {"const": 2400},
+        "analysis_interval_seconds": {"const": [-12.0, 48.0]}
+      }
+    },
+    "raw_patient_identifiers_stored": {"const": false},
+    "receipt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

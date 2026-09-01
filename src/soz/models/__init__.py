@@ -1,0 +1,108 @@
+"""Model components for evidence-only SOZ localization."""
+
+from .baselines import (
+    ChannelIdentityBaseline,
+    DirectFrozenTokenHead,
+    ElectrodePrevalencePrior,
+    MatchedDirectFrozenTokenHead,
+    MatchedDirectOutput,
+)
+from .concept_heads import (
+    EvolutionHeadOutput,
+    IctalInvolvementHead,
+    MorphologyEvidenceHead,
+    NodeToEdgeTokens,
+    TemporalEvolutionHead,
+)
+from .foundation import (
+    FrozenFoundationEncoder,
+    OverlappingContextFoundationEncoder,
+    TiledFoundationEncoder,
+    load_checkpoint_strict,
+    sha256_file,
+)
+from .labram import (
+    AUDITED_LABRAM_BASE_SHA256,
+    AUDITED_LABRAM_MODELING_SHA256,
+    LABRAM_LEGACY_POSITION_NAMES,
+    LaBraMFeatureReceipt,
+    OfficialLaBraMEncoder,
+)
+from .labram_peft import (
+    LABRAM_PEFT_ALPHA,
+    LABRAM_PEFT_BLOCKS,
+    LABRAM_PEFT_DROPOUT,
+    LABRAM_PEFT_PREFIX_TOKENS,
+    LABRAM_PEFT_RANK,
+    LABRAM_PEFT_TRAINABLE_PARAMETERS,
+    LaBraMMinimalPEFTConfig,
+    LaBraMQKVWeightLoRA,
+    OfficialLaBraMFrozenPrefixEncoder,
+    OfficialLaBraMMinimalPEFTSuffix,
+)
+from .reasoner import AdditiveEvidenceReasoner, ReasonerOutput
+from .standard19_motif_filter import (
+    C18_CHANNELS,
+    C18_INDICES,
+    CanonicalConnectivity,
+    FrozenTFMMotifExtractor,
+    Standard19MotifModel,
+    Standard19MotifOutput,
+    TFMMotifTokens,
+    canonicalize_connectivity,
+    patient_bag_positive_set_mass_loss,
+    standard19_physical_support,
+)
+from .observability import (
+    ObservabilityGatedOutput,
+    apply_monotone_observability_gate,
+    gate_reasoner_output,
+)
+
+__all__ = [
+    "AdditiveEvidenceReasoner",
+    "AUDITED_LABRAM_BASE_SHA256",
+    "AUDITED_LABRAM_MODELING_SHA256",
+    "ChannelIdentityBaseline",
+    "C18_CHANNELS",
+    "C18_INDICES",
+    "CanonicalConnectivity",
+    "DirectFrozenTokenHead",
+    "ElectrodePrevalencePrior",
+    "MatchedDirectFrozenTokenHead",
+    "MatchedDirectOutput",
+    "EvolutionHeadOutput",
+    "FrozenFoundationEncoder",
+    "FrozenTFMMotifExtractor",
+    "IctalInvolvementHead",
+    "LABRAM_LEGACY_POSITION_NAMES",
+    "LABRAM_PEFT_ALPHA",
+    "LABRAM_PEFT_BLOCKS",
+    "LABRAM_PEFT_DROPOUT",
+    "LABRAM_PEFT_PREFIX_TOKENS",
+    "LABRAM_PEFT_RANK",
+    "LABRAM_PEFT_TRAINABLE_PARAMETERS",
+    "LaBraMFeatureReceipt",
+    "LaBraMMinimalPEFTConfig",
+    "LaBraMQKVWeightLoRA",
+    "MorphologyEvidenceHead",
+    "NodeToEdgeTokens",
+    "OfficialLaBraMEncoder",
+    "OfficialLaBraMFrozenPrefixEncoder",
+    "OfficialLaBraMMinimalPEFTSuffix",
+    "OverlappingContextFoundationEncoder",
+    "ObservabilityGatedOutput",
+    "ReasonerOutput",
+    "Standard19MotifModel",
+    "Standard19MotifOutput",
+    "TFMMotifTokens",
+    "TemporalEvolutionHead",
+    "TiledFoundationEncoder",
+    "apply_monotone_observability_gate",
+    "canonicalize_connectivity",
+    "gate_reasoner_output",
+    "load_checkpoint_strict",
+    "patient_bag_positive_set_mass_loss",
+    "sha256_file",
+    "standard19_physical_support",
+]

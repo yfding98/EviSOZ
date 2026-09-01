@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evisoz_report_factuality_evaluation_v1.schema.json",
+  "title": "EviSOZ structured report factuality evaluation v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "status", "metrics", "counts", "diagnostics", "policy", "receipt_sha256"],
+  "properties": {
+    "schema_version": {"const": "evisoz_report_factuality_evaluation_v1"},
+    "status": {"const": "structured_report_factuality_evaluation"},
+    "metrics": {
+      "type": "object",
+      "additionalProperties": {"type": "number", "minimum": 0, "maximum": 1}
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": {"type": "integer", "minimum": 0}
+    },
+    "diagnostics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unsupported_claim_ids", "boundary_violations", "report_scope"],
+      "properties": {
+        "unsupported_claim_ids": {"type": "array", "items": {"type": "string"}},
+        "boundary_violations": {"type": "array", "items": {"type": "string"}},
+        "report_scope": {"type": "string", "minLength": 1}
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["direct_or_bound_structured_evidence_only", "teacher_candidates_not_promoted", "tcp22_edges_expanded_to_nodes", "physician_report_text_used"],
+      "properties": {
+        "direct_or_bound_structured_evidence_only": {"const": true},
+        "teacher_candidates_not_promoted": {"const": true},
+        "tcp22_edges_expanded_to_nodes": {"const": false},
+        "physician_report_text_used": {"const": false}
+      }
+    },
+    "receipt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

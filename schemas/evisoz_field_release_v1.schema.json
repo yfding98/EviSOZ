@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evisoz_field_release_v1.schema.json",
+  "title": "EviSOZ field-level release and permission receipt v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "release_id",
+    "dataset_id",
+    "sample_id",
+    "event_identity_ref",
+    "dataset_capability",
+    "report_scope",
+    "fields",
+    "generated_text_is_not_a_label",
+    "knowledge_creates_patient_facts",
+    "receipt_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "evisoz_field_release_v1"},
+    "release_id": {"type": "string", "pattern": "^EVISOZ-FIELDS-[0-9a-f]{24}$"},
+    "dataset_id": {"type": "string", "minLength": 1},
+    "sample_id": {"type": "string", "minLength": 1},
+    "event_identity_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+    "dataset_capability": {"$ref": "#/$defs/datasetCapability"},
+    "report_scope": {
+      "enum": ["atomic_event", "ictal_findings", "soz_localization", "full_soz", "nonlocalizing"]
+    },
+    "fields": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/field"}},
+    "generated_text_is_not_a_label": {"const": true},
+    "knowledge_creates_patient_facts": {"const": false},
+    "receipt_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "lossPermissions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["typed_slot_loss", "node_localization_loss", "report_text_loss"],
+      "properties": {
+        "typed_slot_loss": {"type": "boolean"},
+        "node_localization_loss": {"type": "boolean"},
+        "report_text_loss": {"type": "boolean"}
+      }
+    },
+    "datasetCapability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dataset_id", "patient_roster_sha256", "field_roster"],
+      "properties": {
+        "dataset_id": {"type": "string", "minLength": 1},
+        "patient_roster_sha256": {"$ref": "#/$defs/sha256"},
+        "field_roster": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/fieldCapability"}
+        }
+      }
+    },
+    "fieldCapability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "field_id",
+        "field_path",
+        "semantic_role",
+        "payload_schema_version",
+        "allowed_roles",
+        "loss_allowed",
+        "report_target_allowed",
+        "prompt_or_rag_allowed"
+      ],
+      "properties": {
+        "field_id": {"type": "string", "minLength": 1},
+        "field_path": {"type": "string", "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)*$"},
+        "semantic_role": {
+          "enum": ["node_label", "region_label", "laterality_label", "morphology", "spread", "evolution", "quality", "localizability", "text", "knowledge_rule", "other"]
+        },
+        "payload_schema_version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+        },
+        "allowed_roles": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"enum": ["development_cv", "locked_test", "external_evaluation"]}
+        },
+        "loss_allowed": {"$ref": "#/$defs/lossPermissions"},
+        "report_target_allowed": {"type": "boolean"},
+        "prompt_or_rag_allowed": {"type": "boolean"}
+      }
+    },
+    "field": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "field_id",
+        "field_path",
+        "state",
+        "authority",
+        "quality_tier",
+        "semantic_role",
+        "value_ref",
+        "value_payload",
+        "claim_permission",
+        "loss_permissions"
+      ],
+      "properties": {
+        "field_id": {"type": "string", "minLength": 1},
+        "field_path": {"type": "string", "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)*$"},
+        "state": {"enum": ["provided", "not_provided", "not_evaluable", "technical_failure"]},
+        "authority": {
+          "enum": ["physician", "physician_authored_text", "dataset_direct", "teacher_programmatic", "signal_derived", "generated_text", "knowledge_rule"]
+        },
+        "quality_tier": {"enum": ["gold_lite", "silver", "programmatic", "uncertain", "not_applicable"]},
+        "semantic_role": {
+          "enum": ["node_label", "region_label", "laterality_label", "morphology", "spread", "evolution", "quality", "localizability", "text", "knowledge_rule", "other"]
+        },
+        "value_ref": {
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "evisoz_artifact_ref_v1.schema.json"}
+          ]
+        },
+        "value_payload": {"type": ["object", "null"]},
+        "claim_permission": {"enum": ["direct", "candidate_only", "none"]},
+        "loss_permissions": {"$ref": "#/$defs/lossPermissions"}
+      }
+    }
+  }
+}

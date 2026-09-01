@@ -1,0 +1,274 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/schemas/clinical_eeg_findings_v1_core_readiness_receipt.schema.json",
+  "title": "Clinical EEG Findings v1-core readiness receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "method_id",
+    "receipt_id",
+    "profile_binding",
+    "source_contract_bindings",
+    "surface_readiness",
+    "atom_roster_rows",
+    "term_query_rows",
+    "readiness_summary",
+    "stage_readiness",
+    "qualification_boundary",
+    "source_firewall",
+    "release_ready",
+    "readiness_status",
+    "blocker_ids",
+    "receipt_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "clinical_eeg_findings_v1_core_readiness_receipt_v1"
+    },
+    "method_id": {"$ref": "#/$defs/id"},
+    "receipt_id": {"$ref": "#/$defs/id"},
+    "profile_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile_id", "profile_sha256"],
+      "properties": {
+        "profile_id": {"$ref": "#/$defs/id"},
+        "profile_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "source_contract_bindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "atom_roster_policy_id",
+        "atom_roster_policy_sha256",
+        "term_query_policy_id",
+        "term_query_policy_sha256"
+      ],
+      "properties": {
+        "atom_roster_policy_id": {"$ref": "#/$defs/id"},
+        "atom_roster_policy_sha256": {"$ref": "#/$defs/sha256"},
+        "term_query_policy_id": {"$ref": "#/$defs/id"},
+        "term_query_policy_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "surface_readiness": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "surface_id",
+          "contract_id",
+          "contract_sha256",
+          "observed_slot_or_query_count",
+          "status",
+          "closes_atomic_query_gaps"
+        ],
+        "properties": {
+          "surface_id": {"$ref": "#/$defs/id"},
+          "contract_id": {"$ref": "#/$defs/id"},
+          "contract_sha256": {"$ref": "#/$defs/sha256"},
+          "observed_slot_or_query_count": {"type": "integer", "minimum": 1},
+          "status": {"const": "implemented_structural_shadow"},
+          "closes_atomic_query_gaps": {"const": false}
+        }
+      }
+    },
+    "atom_roster_rows": {
+      "type": "array",
+      "minItems": 40,
+      "maxItems": 40,
+      "items": {"$ref": "#/$defs/atomRow"}
+    },
+    "term_query_rows": {
+      "type": "array",
+      "minItems": 41,
+      "maxItems": 41,
+      "items": {"$ref": "#/$defs/queryRow"}
+    },
+    "readiness_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["atom_roster", "term_queries"],
+      "properties": {
+        "atom_roster": {"$ref": "#/$defs/summary"},
+        "term_queries": {"$ref": "#/$defs/summary"}
+      }
+    },
+    "stage_readiness": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "stage",
+          "status",
+          "required_gap_query_ids",
+          "positive_qualification_deferred_query_ids"
+        ],
+        "properties": {
+          "stage": {
+            "enum": [
+              "proposal",
+              "deterministic_measurement",
+              "rule_composer",
+              "qualification"
+            ]
+          },
+          "status": {
+            "enum": [
+              "required_gap",
+              "implemented_fail_closed_positive_qualification_deferred"
+            ]
+          },
+          "required_gap_query_ids": {"$ref": "#/$defs/idArray"},
+          "positive_qualification_deferred_query_ids": {"$ref": "#/$defs/idArray"}
+        }
+      }
+    },
+    "qualification_boundary": {"type": "object"},
+    "source_firewall": {"type": "object"},
+    "release_ready": {"type": "boolean"},
+    "readiness_status": {
+      "enum": ["ready_v1_core", "not_ready_required_core_gaps"]
+    },
+    "blocker_ids": {"$ref": "#/$defs/idArray"},
+    "receipt_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "idArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/id"}
+    },
+    "stringArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string"}
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "total_count",
+        "implemented_now_count",
+        "required_gap_count",
+        "deferred_term_count",
+        "implemented_now_ids",
+        "required_gap_ids",
+        "deferred_term_ids"
+      ],
+      "properties": {
+        "total_count": {"type": "integer", "minimum": 1},
+        "implemented_now_count": {"type": "integer", "minimum": 0},
+        "required_gap_count": {"type": "integer", "minimum": 0},
+        "deferred_term_count": {"type": "integer", "minimum": 0},
+        "implemented_now_ids": {"$ref": "#/$defs/idArray"},
+        "required_gap_ids": {"$ref": "#/$defs/idArray"},
+        "deferred_term_ids": {"$ref": "#/$defs/idArray"}
+      }
+    },
+    "atomRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "roster_item_kind",
+        "roster_item_id",
+        "observed_implementation_status",
+        "release_disposition",
+        "v1_core_required",
+        "current_readiness",
+        "source_allowed_assertion_levels",
+        "effective_assertion_levels",
+        "source_allowed_term_ids",
+        "v1_permitted_term_ids",
+        "report_promotion_authorized",
+        "clinical_absence_authorized"
+      ],
+      "properties": {
+        "roster_item_kind": {"enum": ["core_atom", "child_roster"]},
+        "roster_item_id": {"$ref": "#/$defs/id"},
+        "observed_implementation_status": {"type": "string"},
+        "release_disposition": {
+          "enum": ["implemented_now", "required_gap", "deferred_term"]
+        },
+        "v1_core_required": {"type": "boolean"},
+        "current_readiness": {
+          "enum": ["implemented_now", "required_gap", "intentionally_deferred"]
+        },
+        "source_allowed_assertion_levels": {"$ref": "#/$defs/stringArray"},
+        "effective_assertion_levels": {"$ref": "#/$defs/stringArray"},
+        "source_allowed_term_ids": {"$ref": "#/$defs/idArray"},
+        "v1_permitted_term_ids": {"$ref": "#/$defs/idArray"},
+        "report_promotion_authorized": {"const": false},
+        "clinical_absence_authorized": {"const": false}
+      }
+    },
+    "queryRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "term_query_id",
+        "term_id",
+        "claim_kind",
+        "primary_roster_item_kind",
+        "primary_roster_item_id",
+        "observed_implementation_status",
+        "release_disposition",
+        "v1_core_required",
+        "current_readiness",
+        "blocking_closure_layers",
+        "effective_assertion_levels",
+        "negative_semantics",
+        "onset_support_permission",
+        "report_promotion_authorized",
+        "positive_clinical_qualification_status",
+        "clinical_absence_authorized"
+      ],
+      "properties": {
+        "term_query_id": {"$ref": "#/$defs/id"},
+        "term_id": {"$ref": "#/$defs/id"},
+        "claim_kind": {"type": "string"},
+        "primary_roster_item_kind": {"enum": ["core_atom", "child_roster"]},
+        "primary_roster_item_id": {"$ref": "#/$defs/id"},
+        "observed_implementation_status": {"type": "string"},
+        "release_disposition": {
+          "enum": ["implemented_now", "required_gap", "deferred_term"]
+        },
+        "v1_core_required": {"type": "boolean"},
+        "current_readiness": {
+          "enum": ["implemented_now", "required_gap", "intentionally_deferred"]
+        },
+        "blocking_closure_layers": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": ["proposal", "deterministic_measurement", "rule_composer"]
+          }
+        },
+        "effective_assertion_levels": {"$ref": "#/$defs/stringArray"},
+        "negative_semantics": {"type": "string"},
+        "onset_support_permission": {"type": "string"},
+        "report_promotion_authorized": {"const": false},
+        "positive_clinical_qualification_status": {
+          "const": "deferred_fail_closed_no_report_allowlist"
+        },
+        "clinical_absence_authorized": {"const": false}
+      }
+    }
+  }
+}

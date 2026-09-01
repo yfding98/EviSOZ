@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evisoz_predicted_evidence_v1.schema.json",
+  "title": "EviSOZ model-predicted research-shadow evidence packet v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "packet_id",
+    "event_id",
+    "stage0_status",
+    "status",
+    "node_units",
+    "edge_units",
+    "candidate_node_mask",
+    "observed_node_mask",
+    "observed_edge_mask",
+    "node_probabilities",
+    "edge_probabilities",
+    "motif_probabilities",
+    "quality_probabilities",
+    "evolution_probabilities",
+    "localizability_probabilities",
+    "uncertainty",
+    "permissions",
+    "receipt_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "evisoz_predicted_evidence_v1"},
+    "packet_id": {"type": "string", "pattern": "^EVISOZ-EVID-[0-9a-f]{24}$"},
+    "event_id": {"type": "string", "minLength": 1},
+    "stage0_status": {"enum": ["GO", "NO_GO"]},
+    "status": {"const": "research_shadow"},
+    "node_units": {"type": "array", "minItems": 19, "maxItems": 19, "items": {"type": "string", "minLength": 1}},
+    "edge_units": {"type": "array", "minItems": 22, "maxItems": 22, "items": {"type": "string", "minLength": 1}},
+    "candidate_node_mask": {"type": "array", "minItems": 19, "maxItems": 19, "items": {"type": "boolean"}},
+    "observed_node_mask": {"type": "array", "minItems": 19, "maxItems": 19, "items": {"type": "boolean"}},
+    "observed_edge_mask": {"type": "array", "minItems": 22, "maxItems": 22, "items": {"type": "boolean"}},
+    "node_probabilities": {"$ref": "#/$defs/probabilities19"},
+    "edge_probabilities": {"$ref": "#/$defs/probabilities22"},
+    "motif_probabilities": {"$ref": "#/$defs/probabilities9"},
+    "quality_probabilities": {"$ref": "#/$defs/probabilities3"},
+    "evolution_probabilities": {"$ref": "#/$defs/probabilities4"},
+    "localizability_probabilities": {"$ref": "#/$defs/probabilities3"},
+    "uncertainty": {"type": "number", "minimum": 0, "maximum": 1},
+    "permissions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["can_create_patient_fact", "can_supervise_node_localization", "report_mode", "knowledge_can_create_patient_fact"],
+      "properties": {
+        "can_create_patient_fact": {"const": false},
+        "can_supervise_node_localization": {"const": false},
+        "report_mode": {"const": "candidate_only"},
+        "knowledge_can_create_patient_fact": {"const": false}
+      }
+    },
+    "receipt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "$defs": {
+    "probabilities3": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number", "minimum": 0, "maximum": 1}},
+    "probabilities4": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "number", "minimum": 0, "maximum": 1}},
+    "probabilities9": {"type": "array", "minItems": 9, "maxItems": 9, "items": {"type": "number", "minimum": 0, "maximum": 1}},
+    "probabilities19": {"type": "array", "minItems": 19, "maxItems": 19, "items": {"type": "number", "minimum": 0, "maximum": 1}},
+    "probabilities22": {"type": "array", "minItems": 22, "maxItems": 22, "items": {"type": "number", "minimum": 0, "maximum": 1}}
+  }
+}

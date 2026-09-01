@@ -1,0 +1,201 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/schemas/clinical_eeg_finding_term_manifest_v2.schema.json",
+  "title": "Closed EEG-only Finding term manifest v2",
+  "description": "A public/synthetic-only closed term manifest. It freezes machine terms and their clinical protection class, but never authorizes report promotion or clinical correctness.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "manifest_id",
+    "manifest_version",
+    "manifest_status",
+    "claim_boundary",
+    "source_scope",
+    "source_firewall",
+    "terms",
+    "manifest_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "clinical_eeg_finding_term_manifest_v2"
+    },
+    "manifest_id": {
+      "const": "CLINICAL-EEG-FINDING-TERM-MANIFEST-V2"
+    },
+    "manifest_version": {
+      "const": "2.0.0"
+    },
+    "manifest_status": {
+      "const": "draft_public_synthetic_only"
+    },
+    "claim_boundary": {
+      "const": "research_scalp_eeg_findings_not_cortical_soz_ez_diagnosis_or_treatment_target"
+    },
+    "source_scope": {
+      "const": "public_or_synthetic_eeg_only"
+    },
+    "source_firewall": {
+      "$ref": "#/$defs/sourceFirewall"
+    },
+    "terms": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/term"
+      }
+    },
+    "manifest_sha256": {
+      "$ref": "#/$defs/sha256"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "family": {
+      "enum": [
+        "quality",
+        "spectral",
+        "rhythm",
+        "morphology",
+        "evolution",
+        "spatial_field",
+        "spatial_recruitment",
+        "termination_recovery",
+        "high_frequency"
+      ]
+    },
+    "temporalContext": {
+      "enum": [
+        "quality_evaluable",
+        "non_event_background",
+        "event_analysis",
+        "candidate_emergence",
+        "event_course",
+        "post_event_context",
+        "record_non_event_context",
+        "acquisition_sensitive_event"
+      ]
+    },
+    "term": {
+      "type": "object",
+      "required": [
+        "term_id",
+        "family",
+        "semantic_class",
+        "clinical_protection",
+        "surface_policy",
+        "allowed_temporal_contexts",
+        "authority_source_ids",
+        "legacy_aliases",
+        "current_report_eligible"
+      ],
+      "properties": {
+        "term_id": {
+          "$ref": "#/$defs/id"
+        },
+        "family": {
+          "$ref": "#/$defs/family"
+        },
+        "semantic_class": {
+          "enum": [
+            "technical_assessment",
+            "physical_measurement",
+            "research_candidate",
+            "controlled_clinical_pattern",
+            "protected_clinical_term",
+            "research_onset_hypothesis"
+          ]
+        },
+        "clinical_protection": {
+          "enum": [
+            "not_clinical",
+            "qualification_required",
+            "protected_term_decision_required"
+          ]
+        },
+        "surface_policy": {
+          "enum": [
+            "technical_only",
+            "measurement_only",
+            "research_candidate_only",
+            "qualification_required",
+            "research_hypothesis_only"
+          ]
+        },
+        "allowed_temporal_contexts": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/temporalContext"
+          }
+        },
+        "authority_source_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "legacy_aliases": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "current_report_eligible": {
+          "const": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "sourceFirewall": {
+      "type": "object",
+      "required": [
+        "private_data_used",
+        "event_findings_payload_used",
+        "findings_candidates_used",
+        "edf_annotations_used",
+        "spreadsheet_used",
+        "doctor_labels_used",
+        "clinical_text_used",
+        "patient_metadata_used",
+        "video_used",
+        "sleep_staging_used",
+        "provocation_used",
+        "ecg_emg_eog_used",
+        "qwen_used",
+        "production_route_used"
+      ],
+      "properties": {
+        "private_data_used": {"const": false},
+        "event_findings_payload_used": {"const": false},
+        "findings_candidates_used": {"const": false},
+        "edf_annotations_used": {"const": false},
+        "spreadsheet_used": {"const": false},
+        "doctor_labels_used": {"const": false},
+        "clinical_text_used": {"const": false},
+        "patient_metadata_used": {"const": false},
+        "video_used": {"const": false},
+        "sleep_staging_used": {"const": false},
+        "provocation_used": {"const": false},
+        "ecg_emg_eog_used": {"const": false},
+        "qwen_used": {"const": false},
+        "production_route_used": {"const": false}
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+set -u
+
+# Recoverable single-GPU pilot queue for the label-neutral preselector and
+# offline Qwen3.6 multimodal SOZ review.  Each dataset is kept in a separate
+# output directory so --resume can reuse completed records after interruption.
+
+PROJECT_ROOT="${EVISOZ_PROJECT_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+PRIVATE_MAX_EVENTS="${PRIVATE_MAX_EVENTS:-3}"
+TUSZ_MAX_EVENTS="${TUSZ_MAX_EVENTS:-3}"
+PRIVATE_START_ROW="${PRIVATE_START_ROW:-0}"
+TUSZ_START_ROW="${TUSZ_START_ROW:-0}"
+RUN_TAG="${RUN_TAG:-20260722}"
+
+cd "$PROJECT_ROOT" || exit 2
+rtk mkdir -p outputs/qwen36_batch_logs
+
+rtk .venv-qwen35/bin/python -u scripts/run_qwen36_soz_annotation.py \
+  --dataset private \
+  --start-row "$PRIVATE_START_ROW" \
+  --max-events "$PRIVATE_MAX_EVENTS" \
+  --max-review-rounds 2 \
+  --local-validation-retries 2 \
+  --local-narrative-max-tokens 2400 \
+  --output-dir "outputs/qwen36_soz_private_batch_${RUN_TAG}" \
+  --resume \
+  --no-fail-fast \
+  > "outputs/qwen36_batch_logs/private_${RUN_TAG}.log" 2>&1
+PRIVATE_EXIT=$?
+
+rtk .venv-qwen35/bin/python -u scripts/run_qwen36_soz_annotation.py \
+  --dataset tusz \
+  --start-row "$TUSZ_START_ROW" \
+  --max-events "$TUSZ_MAX_EVENTS" \
+  --max-review-rounds 2 \
+  --local-validation-retries 2 \
+  --local-narrative-max-tokens 2400 \
+  --output-dir "outputs/qwen36_soz_tusz_batch_${RUN_TAG}" \
+  --resume \
+  --no-fail-fast \
+  > "outputs/qwen36_batch_logs/tusz_${RUN_TAG}.log" 2>&1
+TUSZ_EXIT=$?
+
+if (( PRIVATE_EXIT != 0 || TUSZ_EXIT != 0 )); then
+  exit 1
+fi

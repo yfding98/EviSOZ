@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/eeg/knowledge-selection-receipt-v2.schema.json",
+  "title": "Auditable EEG knowledge selection receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "knowledge_version",
+    "bundle_sha256",
+    "profile_id",
+    "query_fact_ids",
+    "selected_cards",
+    "selected_source_ids",
+    "selection_reasons",
+    "patient_fact_creation_allowed"
+  ],
+  "properties": {
+    "schema_version": {"const": "eeg_knowledge_selection_receipt_v2"},
+    "knowledge_version": {"type": "string", "minLength": 1},
+    "bundle_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "profile_id": {"type": "string", "minLength": 1},
+    "query_fact_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "selected_cards": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["card_id", "card_sha256", "role", "score"],
+        "properties": {
+          "card_id": {"type": "string"},
+          "card_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "role": {"enum": ["primary", "differential", "safety_boundary"]},
+          "score": {"type": "number"}
+        }
+      }
+    },
+    "selected_source_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}, "uniqueItems": true},
+    "selection_reasons": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "rejected_high_risk_cards": {"type": "array", "items": {"type": "string"}},
+    "patient_fact_creation_allowed": {"const": false}
+  }
+}

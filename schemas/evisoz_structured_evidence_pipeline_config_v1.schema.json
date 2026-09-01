@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evisoz_structured_evidence_pipeline_config_v1.schema.json",
+  "title": "EviSOZ structured clinical evidence pipeline configuration v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "status",
+    "baseline",
+    "input_contract",
+    "query_names",
+    "motif_names",
+    "qwen_connector",
+    "safety"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "evisoz_structured_evidence_pipeline_config_v1"
+    },
+    "status": {
+      "enum": [
+        "implementation_only_stage0_training_blocked",
+        "stage0_go_ready_for_calibration",
+        "training_enabled"
+      ]
+    },
+    "baseline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model",
+        "route",
+        "frozen",
+        "residual_default_enabled",
+        "residual_requires_stage0_status"
+      ],
+      "properties": {
+        "model": {"const": "canonical_v29_H_D"},
+        "route": {"const": "standard19_car_exact_reference"},
+        "frozen": {"const": true},
+        "residual_default_enabled": {"const": false},
+        "residual_requires_stage0_status": {"const": "GO"}
+      }
+    },
+    "input_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "node_token_shape",
+        "edge_token_shape",
+        "node_mask_required",
+        "edge_mask_required_when_edge_tokens_present",
+        "missing_channel_policy",
+        "interpolation"
+      ],
+      "properties": {
+        "node_token_shape": {
+          "type": "array",
+          "prefixItems": [
+            {"const": "B"},
+            {"const": 19},
+            {"const": "T"},
+            {"const": 128}
+          ],
+          "minItems": 4,
+          "maxItems": 4
+        },
+        "edge_token_shape": {
+          "type": "array",
+          "prefixItems": [
+            {"const": "B"},
+            {"const": 22},
+            {"const": "T"},
+            {"const": 128}
+          ],
+          "minItems": 4,
+          "maxItems": 4
+        },
+        "node_mask_required": {"const": true},
+        "edge_mask_required_when_edge_tokens_present": {"const": true},
+        "missing_channel_policy": {"const": "explicit_mask_only"},
+        "interpolation": {"const": "independent_ablation_only"}
+      }
+    },
+    "query_names": {
+      "type": "array",
+      "const": [
+        "quality",
+        "morphology",
+        "onset",
+        "spread",
+        "evolution",
+        "localizability"
+      ]
+    },
+    "motif_names": {
+      "type": "array",
+      "const": [
+        "attenuation",
+        "LVFA",
+        "rhythmic_theta",
+        "rhythmic_delta",
+        "rhythmic_alpha_beta",
+        "spike_or_sharp_like",
+        "evolving_rhythm",
+        "artifact",
+        "uncertain"
+      ]
+    },
+    "qwen_connector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model_family",
+        "hidden_size",
+        "evidence_token_count",
+        "base_model_frozen",
+        "visual_tower_frozen",
+        "lora_enabled",
+        "requires_stage0_go_for_training"
+      ],
+      "properties": {
+        "model_family": {"const": "Qwen3.8-27B"},
+        "hidden_size": {"const": 5120},
+        "evidence_token_count": {"const": 32},
+        "base_model_frozen": {"const": true},
+        "visual_tower_frozen": {"const": true},
+        "lora_enabled": {"type": "boolean"},
+        "requires_stage0_go_for_training": {"const": true}
+      }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "edge_to_node_endpoint_expansion",
+        "text_directly_supervises_localization",
+        "knowledge_creates_patient_facts",
+        "teacher_runtime_required",
+        "negative_residual_allowed"
+      ],
+      "properties": {
+        "edge_to_node_endpoint_expansion": {"const": false},
+        "text_directly_supervises_localization": {"const": false},
+        "knowledge_creates_patient_facts": {"const": false},
+        "teacher_runtime_required": {"const": false},
+        "negative_residual_allowed": {"const": false}
+      }
+    }
+  }
+}

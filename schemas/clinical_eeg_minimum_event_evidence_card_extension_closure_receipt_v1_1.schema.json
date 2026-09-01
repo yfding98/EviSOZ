@@ -1,0 +1,238 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/schemas/clinical_eeg_minimum_event_evidence_card_extension_closure_receipt_v1_1.schema.json",
+  "title": "Minimum Event Evidence Card additive extension closure receipt v1.1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "method_id",
+    "registry_id",
+    "registry_sha256",
+    "base_registry",
+    "source_firewall",
+    "candidate_blind_denominator",
+    "destinations",
+    "summary",
+    "authorization",
+    "receipt_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "clinical_eeg_minimum_event_evidence_card_extension_closure_receipt_v1_1"
+    },
+    "method_id": {
+      "const": "CANDIDATE-BLIND-MINIMUM-EVENT-EVIDENCE-CARD-EXTENSION-CLOSURE-V1.1"
+    },
+    "registry_id": {
+      "const": "CLINICAL-EEG-MINIMUM-EVENT-EVIDENCE-CARD-EXTENSION-REGISTRY-V1.1"
+    },
+    "registry_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "base_registry": {
+      "type": "object",
+      "required": ["registry_id", "registry_sha256"],
+      "properties": {
+        "registry_id": {
+          "const": "CLINICAL-EEG-MINIMUM-EVENT-EVIDENCE-CARD-REGISTRY-V1"
+        },
+        "registry_sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "additionalProperties": false
+    },
+    "source_firewall": {
+      "type": "object",
+      "additionalProperties": {"const": false},
+      "minProperties": 16,
+      "maxProperties": 16
+    },
+    "candidate_blind_denominator": {
+      "const": true
+    },
+    "destinations": {
+      "type": "array",
+      "minItems": 13,
+      "maxItems": 13,
+      "items": {
+        "$ref": "#/$defs/destination"
+      }
+    },
+    "summary": {
+      "$ref": "#/$defs/summary"
+    },
+    "authorization": {
+      "type": "object",
+      "required": [
+        "registry_is_structural_only",
+        "status_or_assertion_mutation_authorized",
+        "clinical_absence_authorized",
+        "report_promotion_authorized",
+        "clinical_correctness_claimed",
+        "cortical_propagation_velocity_claim_authorized",
+        "soz_or_ez_claim_authorized"
+      ],
+      "properties": {
+        "registry_is_structural_only": {"const": true},
+        "status_or_assertion_mutation_authorized": {"const": false},
+        "clinical_absence_authorized": {"const": false},
+        "report_promotion_authorized": {"const": false},
+        "clinical_correctness_claimed": {"const": false},
+        "cortical_propagation_velocity_claim_authorized": {"const": false},
+        "soz_or_ez_claim_authorized": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "receipt_sha256": {
+      "$ref": "#/$defs/sha256"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "destination": {
+      "type": "object",
+      "required": [
+        "destination_index",
+        "destination_id",
+        "analysis_unit",
+        "extension_queries"
+      ],
+      "properties": {
+        "destination_index": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 13
+        },
+        "destination_id": {
+          "$ref": "#/$defs/id"
+        },
+        "analysis_unit": {
+          "enum": ["event", "recording"]
+        },
+        "extension_queries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/queryRow"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "queryRow": {
+      "type": "object",
+      "required": [
+        "extension_query_id",
+        "analysis_unit",
+        "destination_id",
+        "output_type",
+        "derived_from_query_ids",
+        "required_receipt_kinds",
+        "assertion_level_domain",
+        "status_domain",
+        "evidence_role_ceiling",
+        "source_implementation_status",
+        "source_report_promotion_authorized"
+      ],
+      "properties": {
+        "extension_query_id": {"$ref": "#/$defs/id"},
+        "analysis_unit": {"enum": ["event", "recording"]},
+        "destination_id": {"$ref": "#/$defs/id"},
+        "output_type": {
+          "enum": [
+            "interval",
+            "interval_set",
+            "categorical",
+            "field_set",
+            "quantity",
+            "distribution"
+          ]
+        },
+        "derived_from_query_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/id"}
+        },
+        "required_receipt_kinds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/id"}
+        },
+        "assertion_level_domain": {
+          "const": [
+            "measured",
+            "model_candidate",
+            "report_eligible_automated"
+          ]
+        },
+        "status_domain": {
+          "const": [
+            "present",
+            "absent_with_opportunity",
+            "uncertain",
+            "not_evaluable"
+          ]
+        },
+        "evidence_role_ceiling": {
+          "enum": [
+            "onset_time_support",
+            "course_or_spread_support",
+            "counterevidence_or_limitation",
+            "record_aggregation_only"
+          ]
+        },
+        "source_implementation_status": {
+          "const": "unimplemented_not_evaluable"
+        },
+        "source_report_promotion_authorized": {
+          "const": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "destination_count",
+        "legacy_event_slot_count",
+        "recording_aggregate_destination_count",
+        "extension_query_count",
+        "event_extension_query_count",
+        "recording_extension_query_count",
+        "retained_unimplemented_query_count",
+        "report_promoted_query_count",
+        "all_extension_queries_mapped_exactly_once",
+        "dependencies_resolved",
+        "dependency_graph_acyclic",
+        "four_state_missingness_preserved",
+        "event_and_recording_outputs_separated"
+      ],
+      "properties": {
+        "destination_count": {"const": 13},
+        "legacy_event_slot_count": {"const": 12},
+        "recording_aggregate_destination_count": {"const": 1},
+        "extension_query_count": {"const": 17},
+        "event_extension_query_count": {"const": 14},
+        "recording_extension_query_count": {"const": 3},
+        "retained_unimplemented_query_count": {"const": 17},
+        "report_promoted_query_count": {"const": 0},
+        "all_extension_queries_mapped_exactly_once": {"const": true},
+        "dependencies_resolved": {"const": true},
+        "dependency_graph_acyclic": {"const": true},
+        "four_state_missingness_preserved": {"const": true},
+        "event_and_recording_outputs_separated": {"const": true}
+      },
+      "additionalProperties": false
+    }
+  }
+}

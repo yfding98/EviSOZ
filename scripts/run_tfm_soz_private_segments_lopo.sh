@@ -1,0 +1,381 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PREPROCESSED_DIR="${PREPROCESSED_DIR:-outputs/tfm_soz/private_0622_fix_rows119_segments_15s}"
+MANIFEST="${MANIFEST:-private_sz_union_relabel_manifest_0622_fix.csv}"
+REGION_LABEL_SOURCE="${REGION_LABEL_SOURCE:-soz_bipolar}"
+OUTPUT_ROOT="${OUTPUT_ROOT:-outputs/tfm_soz/private_0622_fix_rows119_segment_lopo}"
+PRE_SEC="${PRE_SEC:-5}"
+ONSET_SEC="${ONSET_SEC:-5}"
+POST_SEC="${POST_SEC:-5}"
+TOKENIZER_EPOCHS="${TOKENIZER_EPOCHS:-16}"
+CLASSIFIER_EPOCHS="${CLASSIFIER_EPOCHS:-90}"
+BATCH_SIZE="${BATCH_SIZE:-8}"
+SEED="${SEED:-2026}"
+SPLIT_SEED="${SPLIT_SEED:-$SEED}"
+DEVICE="${DEVICE:-cuda}"
+TRAINING_OBJECTIVE="${TRAINING_OBJECTIVE:-multitask}"
+PATIENTS="${PATIENTS:-}"
+VAL_PATIENTS="${VAL_PATIENTS:-}"
+CALIBRATION_PATIENTS="${CALIBRATION_PATIENTS:-}"
+MAX_PATIENTS="${MAX_PATIENTS:-0}"
+FORCE_PREPROCESS="${FORCE_PREPROCESS:-0}"
+SKIP_EXISTING="${SKIP_EXISTING:-1}"
+SKIP_TEST_EVAL="${SKIP_TEST_EVAL:-0}"
+HARD_NEGATIVE_FRACTION="${HARD_NEGATIVE_FRACTION:-0.25}"
+CHANNEL_HARD_NEGATIVE_WEIGHT="${CHANNEL_HARD_NEGATIVE_WEIGHT:-0.05}"
+REGION_HARD_NEGATIVE_WEIGHT="${REGION_HARD_NEGATIVE_WEIGHT:-0.25}"
+CHANNEL_TOP1_MARGIN_WEIGHT="${CHANNEL_TOP1_MARGIN_WEIGHT:-0.0}"
+REGION_TOP1_MARGIN_WEIGHT="${REGION_TOP1_MARGIN_WEIGHT:-0.0}"
+TOP1_MARGIN="${TOP1_MARGIN:-0.2}"
+CHANNEL_TKPR_WEIGHT="${CHANNEL_TKPR_WEIGHT:-0.0}"
+CHANNEL_TKPR_K="${CHANNEL_TKPR_K:-2}"
+CHANNEL_POSITIVE_SET_MARGIN_WEIGHT="${CHANNEL_POSITIVE_SET_MARGIN_WEIGHT:-0.0}"
+REGION_POSITIVE_SET_MARGIN_WEIGHT="${REGION_POSITIVE_SET_MARGIN_WEIGHT:-0.0}"
+POSITIVE_SET_MARGIN="${POSITIVE_SET_MARGIN:-0.2}"
+CHANNEL_CONTEXT_MAX_WEIGHT="${CHANNEL_CONTEXT_MAX_WEIGHT:-0.0}"
+REGION_CONTEXT_MAX_WEIGHT="${REGION_CONTEXT_MAX_WEIGHT:-0.0}"
+CHANNEL_CONTEXT_FOCAL_WEIGHT="${CHANNEL_CONTEXT_FOCAL_WEIGHT:-0.0}"
+REGION_CONTEXT_FOCAL_WEIGHT="${REGION_CONTEXT_FOCAL_WEIGHT:-0.0}"
+CHANNEL_POSITIVE_CONTEXT_MARGIN_WEIGHT="${CHANNEL_POSITIVE_CONTEXT_MARGIN_WEIGHT:-0.0}"
+REGION_POSITIVE_CONTEXT_MARGIN_WEIGHT="${REGION_POSITIVE_CONTEXT_MARGIN_WEIGHT:-0.0}"
+REGION_EMBEDDING_CONTRASTIVE_WEIGHT="${REGION_EMBEDDING_CONTRASTIVE_WEIGHT:-0.0}"
+REGION_EMBEDDING_CONTRASTIVE_MARGIN="${REGION_EMBEDDING_CONTRASTIVE_MARGIN:-0.5}"
+REGION_BACKGROUND_EMBEDDING_COMPACT_WEIGHT="${REGION_BACKGROUND_EMBEDDING_COMPACT_WEIGHT:-0.25}"
+POSITIVE_CONTEXT_MARGIN="${POSITIVE_CONTEXT_MARGIN:-0.2}"
+CONTEXT_FOCAL_GAMMA="${CONTEXT_FOCAL_GAMMA:-2.0}"
+USE_SEGMENT_EVENTNESS_HEAD="${USE_SEGMENT_EVENTNESS_HEAD:-0}"
+SEGMENT_EVENTNESS_LOSS_WEIGHT="${SEGMENT_EVENTNESS_LOSS_WEIGHT:-0.0}"
+SEGMENT_EVENTNESS_CONTRASTIVE_WEIGHT="${SEGMENT_EVENTNESS_CONTRASTIVE_WEIGHT:-0.0}"
+SEGMENT_EVENTNESS_CONTRASTIVE_MARGIN="${SEGMENT_EVENTNESS_CONTRASTIVE_MARGIN:-0.2}"
+SEGMENT_EVENTNESS_BACKGROUND_MAX_WEIGHT="${SEGMENT_EVENTNESS_BACKGROUND_MAX_WEIGHT:-0.0}"
+SEGMENT_EVENTNESS_HARD_BACKGROUND_MAX_WEIGHT="${SEGMENT_EVENTNESS_HARD_BACKGROUND_MAX_WEIGHT:-0.0}"
+SEGMENT_EVENTNESS_CLUSTER_BACKGROUND_MAX_WEIGHT="${SEGMENT_EVENTNESS_CLUSTER_BACKGROUND_MAX_WEIGHT:-0.0}"
+CHANNEL_BACKGROUND_MAX_WEIGHT="${CHANNEL_BACKGROUND_MAX_WEIGHT:-0.0}"
+CHANNEL_HARD_BACKGROUND_MAX_WEIGHT="${CHANNEL_HARD_BACKGROUND_MAX_WEIGHT:-0.0}"
+CHANNEL_CLUSTER_BACKGROUND_MAX_WEIGHT="${CHANNEL_CLUSTER_BACKGROUND_MAX_WEIGHT:-0.0}"
+REGION_BACKGROUND_MAX_WEIGHT="${REGION_BACKGROUND_MAX_WEIGHT:-0.0}"
+REGION_HARD_BACKGROUND_MAX_WEIGHT="${REGION_HARD_BACKGROUND_MAX_WEIGHT:-0.0}"
+REGION_HARD_BACKGROUND_TARGET_WEIGHT="${REGION_HARD_BACKGROUND_TARGET_WEIGHT:-0.0}"
+REGION_HARD_BACKGROUND_TARGET_REGIONS="${REGION_HARD_BACKGROUND_TARGET_REGIONS:-}"
+REGION_CLUSTER_BACKGROUND_MAX_WEIGHT="${REGION_CLUSTER_BACKGROUND_MAX_WEIGHT:-0.0}"
+AUGMENT_NOISE_STD="${AUGMENT_NOISE_STD:-0.03}"
+AUGMENT_SCALE_STD="${AUGMENT_SCALE_STD:-0.08}"
+AUGMENT_SEGMENT_RECONSTRUCT_PROB="${AUGMENT_SEGMENT_RECONSTRUCT_PROB:-0.0}"
+AUGMENT_SEGMENT_RECONSTRUCT_PIECES="${AUGMENT_SEGMENT_RECONSTRUCT_PIECES:-4}"
+AUGMENT_NEGATIVE_CHANNEL_DROP_PROB="${AUGMENT_NEGATIVE_CHANNEL_DROP_PROB:-0.0}"
+AUGMENT_NEGATIVE_CHANNEL_DROP_MAX_FRACTION="${AUGMENT_NEGATIVE_CHANNEL_DROP_MAX_FRACTION:-0.25}"
+AUGMENT_LABEL_PRESERVING_TIME_MASK_PROB="${AUGMENT_LABEL_PRESERVING_TIME_MASK_PROB:-0.0}"
+AUGMENT_LABEL_PRESERVING_TIME_MASK_MAX_SEC="${AUGMENT_LABEL_PRESERVING_TIME_MASK_MAX_SEC:-0.5}"
+AUGMENT_FREQUENCY_MASK_PROB="${AUGMENT_FREQUENCY_MASK_PROB:-0.0}"
+AUGMENT_FREQUENCY_MASK_MAX_FRACTION="${AUGMENT_FREQUENCY_MASK_MAX_FRACTION:-0.08}"
+USE_CONTEXT_DELTA_HEADS="${USE_CONTEXT_DELTA_HEADS:-0}"
+USE_REGION_ATTENTION_POOLING="${USE_REGION_ATTENTION_POOLING:-0}"
+USE_REGION_EMBEDDING_HEAD="${USE_REGION_EMBEDDING_HEAD:-0}"
+DISABLE_REGION_BIAS_CALIBRATION="${DISABLE_REGION_BIAS_CALIBRATION:-0}"
+USE_CBRAMOD_CRISS_CROSS="${USE_CBRAMOD_CRISS_CROSS:-0}"
+USE_CBRAMOD_RESIDUAL_BRANCH="${USE_CBRAMOD_RESIDUAL_BRANCH:-0}"
+CBRAMOD_RESIDUAL_INIT="${CBRAMOD_RESIDUAL_INIT:--4.0}"
+USE_HIERARCHICAL_SET_RESIDUAL="${USE_HIERARCHICAL_SET_RESIDUAL:-0}"
+HIERARCHICAL_SET_RESIDUAL_INIT="${HIERARCHICAL_SET_RESIDUAL_INIT:-0.0}"
+USE_REGION_CHANNEL_SET_HEAD="${USE_REGION_CHANNEL_SET_HEAD:-0}"
+REGION_CHANNEL_SET_BOTTLENECK="${REGION_CHANNEL_SET_BOTTLENECK:-16}"
+REGION_CHANNEL_SET_MAPPING_POLICY="${REGION_CHANNEL_SET_MAPPING_POLICY:-canonical}"
+REGION_CHANNEL_SET_RESIDUAL_INIT="${REGION_CHANNEL_SET_RESIDUAL_INIT:-0.0}"
+USE_CPBF_GRAPH="${USE_CPBF_GRAPH:-0}"
+CPBF_MODE="${CPBF_MODE:-router}"
+CPBF_TOPK="${CPBF_TOPK:-6}"
+CPBF_RESIDUAL_INIT="${CPBF_RESIDUAL_INIT:-0.0}"
+CPBF_CANDIDATE_POLICY="${CPBF_CANDIDATE_POLICY:-legacy}"
+CPBF_INPUT_STAGE="${CPBF_INPUT_STAGE:-post_global}"
+DISABLE_CPBF_REGION_BIAS="${DISABLE_CPBF_REGION_BIAS:-0}"
+CPBF_REFINE_REGION="${CPBF_REFINE_REGION:-0}"
+CPBF_RESIDUAL_POLICY="${CPBF_RESIDUAL_POLICY:-signed_scalar}"
+CPBF_CONFIDENCE_MAX_SCALE="${CPBF_CONFIDENCE_MAX_SCALE:-0.5}"
+USE_CPBF_TEMPORAL_ADAPTER="${USE_CPBF_TEMPORAL_ADAPTER:-0}"
+CPBF_ADAPTER_BOTTLENECK="${CPBF_ADAPTER_BOTTLENECK:-16}"
+FREEZE_BASE_FOR_CPBF="${FREEZE_BASE_FOR_CPBF:-0}"
+FREEZE_BASE_CHANNEL_HEAD_ONLY="${FREEZE_BASE_CHANNEL_HEAD_ONLY:-0}"
+TRAIN_REGION_PATH_WITH_FROZEN_BASE="${TRAIN_REGION_PATH_WITH_FROZEN_BASE:-0}"
+QUIET_SUMMARY="${QUIET_SUMMARY:-1}"
+USE_ADAPTIVE_POSITION_ENCODING="${USE_ADAPTIVE_POSITION_ENCODING:-0}"
+DISABLE_ADAPTIVE_POSITION_ENCODING="${DISABLE_ADAPTIVE_POSITION_ENCODING:-0}"
+ADAPTIVE_POSITION_SPATIAL_KERNEL="${ADAPTIVE_POSITION_SPATIAL_KERNEL:-19}"
+ADAPTIVE_POSITION_TEMPORAL_KERNEL="${ADAPTIVE_POSITION_TEMPORAL_KERNEL:-7}"
+BACKGROUND_NEGATIVE_DIR="${BACKGROUND_NEGATIVE_DIR:-}"
+BACKGROUND_NEGATIVE_RATIO="${BACKGROUND_NEGATIVE_RATIO:-0}"
+BACKGROUND_NEGATIVE_MAX_SAMPLES="${BACKGROUND_NEGATIVE_MAX_SAMPLES:-0}"
+BACKGROUND_NEGATIVE_SEED="${BACKGROUND_NEGATIVE_SEED:--1}"
+BACKGROUND_NEGATIVE_SAMPLING_MODE="${BACKGROUND_NEGATIVE_SAMPLING_MODE:-random}"
+VALIDATION_BACKGROUND_NEGATIVE_DIR="${VALIDATION_BACKGROUND_NEGATIVE_DIR:-}"
+VALIDATION_BACKGROUND_MAX_SAMPLES="${VALIDATION_BACKGROUND_MAX_SAMPLES:-0}"
+VALIDATION_BACKGROUND_SEED="${VALIDATION_BACKGROUND_SEED:--1}"
+VALIDATION_BACKGROUND_SELECTION_WEIGHT="${VALIDATION_BACKGROUND_SELECTION_WEIGHT:-0}"
+SELECTION_PRIMARY_SOURCE="${SELECTION_PRIMARY_SOURCE:-auto}"
+SELECTION_MIN_PRIMARY_TOP1="${SELECTION_MIN_PRIMARY_TOP1:-0}"
+SELECTION_MIN_PRIMARY_TOP2="${SELECTION_MIN_PRIMARY_TOP2:-0}"
+SELECTION_PRIMARY_TOP1_PENALTY_WEIGHT="${SELECTION_PRIMARY_TOP1_PENALTY_WEIGHT:-0}"
+SELECTION_PRIMARY_TOP2_PENALTY_WEIGHT="${SELECTION_PRIMARY_TOP2_PENALTY_WEIGHT:-0}"
+SELECTION_BACKGROUND_REQUIRES_PRIMARY_TOP1="${SELECTION_BACKGROUND_REQUIRES_PRIMARY_TOP1:-0}"
+SELECTION_BACKGROUND_REQUIRES_PRIMARY_TOP2="${SELECTION_BACKGROUND_REQUIRES_PRIMARY_TOP2:-0}"
+TEACHER_CACHE_DIR="${TEACHER_CACHE_DIR:-}"
+TEACHER_DISTILL_REGION_WEIGHT="${TEACHER_DISTILL_REGION_WEIGHT:-0}"
+TEACHER_DISTILL_CHANNEL_WEIGHT="${TEACHER_DISTILL_CHANNEL_WEIGHT:-0}"
+TEACHER_DISTILL_TEMPERATURE="${TEACHER_DISTILL_TEMPERATURE:-2.0}"
+MODEL_LEVEL_GATING_CONTRACT_JSON="${MODEL_LEVEL_GATING_CONTRACT_JSON:-}"
+MODEL_LEVEL_GATING_SCHEMA="${MODEL_LEVEL_GATING_SCHEMA:-}"
+MODEL_LEVEL_GATING_NEGATIVE_PRIORITY="${MODEL_LEVEL_GATING_NEGATIVE_PRIORITY:-}"
+MODEL_LEVEL_GATING_NON_EXECUTING="${MODEL_LEVEL_GATING_NON_EXECUTING:-0}"
+INIT_LOPO_ROOT="${INIT_LOPO_ROOT:-}"
+PATIENT_LIST="$(mktemp "${TMPDIR:-/tmp}/tfm_soz_lopo_patients.XXXXXX")"
+trap 'rm -f "$PATIENT_LIST"' EXIT
+
+EXTRA_ARGS=()
+if [[ "$SKIP_TEST_EVAL" == "1" ]]; then
+  EXTRA_ARGS+=(--skip-test-eval)
+fi
+if [[ "$USE_CONTEXT_DELTA_HEADS" == "1" ]]; then
+  EXTRA_ARGS+=(--use-context-delta-heads)
+fi
+if [[ "$USE_SEGMENT_EVENTNESS_HEAD" == "1" ]]; then
+  EXTRA_ARGS+=(--use-segment-eventness-head)
+fi
+if [[ "$USE_REGION_ATTENTION_POOLING" == "1" ]]; then
+  EXTRA_ARGS+=(--use-region-attention-pooling)
+fi
+if [[ "$USE_REGION_EMBEDDING_HEAD" == "1" ]]; then
+  EXTRA_ARGS+=(--use-region-embedding-head)
+fi
+if [[ "$DISABLE_REGION_BIAS_CALIBRATION" == "1" ]]; then
+  EXTRA_ARGS+=(--disable-region-bias-calibration)
+fi
+if [[ "$USE_CBRAMOD_CRISS_CROSS" == "1" ]]; then
+  EXTRA_ARGS+=(--use-cbramod-criss-cross)
+fi
+if [[ "$USE_CBRAMOD_RESIDUAL_BRANCH" == "1" ]]; then
+  EXTRA_ARGS+=(--use-cbramod-residual-branch --cbramod-residual-init "$CBRAMOD_RESIDUAL_INIT")
+fi
+if [[ "$USE_HIERARCHICAL_SET_RESIDUAL" == "1" ]]; then
+  EXTRA_ARGS+=(
+    --use-hierarchical-set-residual
+    --hierarchical-set-residual-init "$HIERARCHICAL_SET_RESIDUAL_INIT"
+  )
+fi
+if [[ "$USE_REGION_CHANNEL_SET_HEAD" == "1" ]]; then
+  EXTRA_ARGS+=(
+    --use-region-channel-set-head
+    --region-channel-set-bottleneck "$REGION_CHANNEL_SET_BOTTLENECK"
+    --region-channel-set-mapping-policy "$REGION_CHANNEL_SET_MAPPING_POLICY"
+    --region-channel-set-residual-init "$REGION_CHANNEL_SET_RESIDUAL_INIT"
+  )
+fi
+if [[ "$USE_CPBF_GRAPH" == "1" ]]; then
+  EXTRA_ARGS+=(
+    --use-cpbf-graph
+    --cpbf-mode "$CPBF_MODE"
+    --cpbf-topk "$CPBF_TOPK"
+    --cpbf-residual-init "$CPBF_RESIDUAL_INIT"
+    --cpbf-candidate-policy "$CPBF_CANDIDATE_POLICY"
+    --cpbf-input-stage "$CPBF_INPUT_STAGE"
+    --cpbf-residual-policy "$CPBF_RESIDUAL_POLICY"
+    --cpbf-confidence-max-scale "$CPBF_CONFIDENCE_MAX_SCALE"
+    --cpbf-adapter-bottleneck "$CPBF_ADAPTER_BOTTLENECK"
+  )
+fi
+if [[ "$USE_CPBF_TEMPORAL_ADAPTER" == "1" ]]; then
+  EXTRA_ARGS+=(--use-cpbf-temporal-adapter)
+fi
+if [[ "$FREEZE_BASE_FOR_CPBF" == "1" ]]; then
+  EXTRA_ARGS+=(--freeze-base-for-cpbf)
+fi
+if [[ "$DISABLE_CPBF_REGION_BIAS" == "1" ]]; then
+  EXTRA_ARGS+=(--disable-cpbf-region-bias)
+fi
+if [[ "$CPBF_REFINE_REGION" == "1" ]]; then
+  EXTRA_ARGS+=(--cpbf-refine-region)
+fi
+if [[ "$FREEZE_BASE_CHANNEL_HEAD_ONLY" == "1" ]]; then
+  EXTRA_ARGS+=(--freeze-base-channel-head-only)
+fi
+if [[ "$TRAIN_REGION_PATH_WITH_FROZEN_BASE" == "1" ]]; then
+  EXTRA_ARGS+=(--train-region-path-with-frozen-base)
+fi
+if [[ "$QUIET_SUMMARY" == "1" ]]; then
+  EXTRA_ARGS+=(--quiet-summary)
+fi
+if [[ "$USE_ADAPTIVE_POSITION_ENCODING" == "1" ]]; then
+  EXTRA_ARGS+=(--use-adaptive-position-encoding)
+fi
+if [[ "$DISABLE_ADAPTIVE_POSITION_ENCODING" == "1" ]]; then
+  EXTRA_ARGS+=(--disable-adaptive-position-encoding)
+fi
+EXTRA_ARGS+=(
+  --adaptive-position-spatial-kernel "$ADAPTIVE_POSITION_SPATIAL_KERNEL"
+  --adaptive-position-temporal-kernel "$ADAPTIVE_POSITION_TEMPORAL_KERNEL"
+)
+if [[ -n "$BACKGROUND_NEGATIVE_DIR" && "$BACKGROUND_NEGATIVE_RATIO" != "0" ]]; then
+  EXTRA_ARGS+=(
+    --background-negative-dir "$BACKGROUND_NEGATIVE_DIR"
+    --background-negative-ratio "$BACKGROUND_NEGATIVE_RATIO"
+    --background-negative-max-samples "$BACKGROUND_NEGATIVE_MAX_SAMPLES"
+    --background-negative-seed "$BACKGROUND_NEGATIVE_SEED"
+    --background-negative-sampling-mode "$BACKGROUND_NEGATIVE_SAMPLING_MODE"
+  )
+fi
+if [[ -n "$VALIDATION_BACKGROUND_NEGATIVE_DIR" ]]; then
+  EXTRA_ARGS+=(
+    --validation-background-negative-dir "$VALIDATION_BACKGROUND_NEGATIVE_DIR"
+    --validation-background-max-samples "$VALIDATION_BACKGROUND_MAX_SAMPLES"
+    --validation-background-seed "$VALIDATION_BACKGROUND_SEED"
+    --validation-background-selection-weight "$VALIDATION_BACKGROUND_SELECTION_WEIGHT"
+  )
+fi
+EXTRA_ARGS+=(
+  --selection-primary-source "$SELECTION_PRIMARY_SOURCE"
+  --selection-min-primary-top1 "$SELECTION_MIN_PRIMARY_TOP1"
+  --selection-min-primary-top2 "$SELECTION_MIN_PRIMARY_TOP2"
+  --selection-primary-top1-penalty-weight "$SELECTION_PRIMARY_TOP1_PENALTY_WEIGHT"
+  --selection-primary-top2-penalty-weight "$SELECTION_PRIMARY_TOP2_PENALTY_WEIGHT"
+)
+if [[ "$SELECTION_BACKGROUND_REQUIRES_PRIMARY_TOP1" == "1" ]]; then
+  EXTRA_ARGS+=(--selection-background-requires-primary-top1)
+fi
+if [[ "$SELECTION_BACKGROUND_REQUIRES_PRIMARY_TOP2" == "1" ]]; then
+  EXTRA_ARGS+=(--selection-background-requires-primary-top2)
+fi
+if [[ -n "$TEACHER_CACHE_DIR" ]]; then
+  EXTRA_ARGS+=(
+    --teacher-cache-dir "$TEACHER_CACHE_DIR"
+    --teacher-distill-region-weight "$TEACHER_DISTILL_REGION_WEIGHT"
+    --teacher-distill-channel-weight "$TEACHER_DISTILL_CHANNEL_WEIGHT"
+    --teacher-distill-temperature "$TEACHER_DISTILL_TEMPERATURE"
+  )
+fi
+if [[ -n "${MODEL_LEVEL_GATING_CONTRACT_JSON}${MODEL_LEVEL_GATING_SCHEMA}${MODEL_LEVEL_GATING_NEGATIVE_PRIORITY}" || "$MODEL_LEVEL_GATING_NON_EXECUTING" == "1" ]]; then
+  EXTRA_ARGS+=(
+    --model-level-gating-contract-json "$MODEL_LEVEL_GATING_CONTRACT_JSON"
+    --model-level-gating-schema "$MODEL_LEVEL_GATING_SCHEMA"
+    --model-level-gating-negative-priority "$MODEL_LEVEL_GATING_NEGATIVE_PRIORITY"
+    --model-level-gating-non-executing "$MODEL_LEVEL_GATING_NON_EXECUTING"
+  )
+fi
+
+preprocess_needed=0
+if [[ "$FORCE_PREPROCESS" == "1" || ! -f "$PREPROCESSED_DIR/index.csv" ]]; then
+  preprocess_needed=1
+elif [[ "$MANIFEST" -nt "$PREPROCESSED_DIR/index.csv" ]]; then
+  preprocess_needed=1
+elif [[ -f "$PREPROCESSED_DIR/preprocess_summary.json" && "$MANIFEST" -nt "$PREPROCESSED_DIR/preprocess_summary.json" ]]; then
+  preprocess_needed=1
+fi
+
+if [[ "$preprocess_needed" == "1" ]]; then
+  python3 -u code/tfm_soz/preprocess_private_tfm_soz_segments.py \
+    --manifest "$MANIFEST" \
+    --output-dir "$PREPROCESSED_DIR" \
+    --region-label-source "$REGION_LABEL_SOURCE" \
+    --pre-sec "$PRE_SEC" \
+    --onset-sec "$ONSET_SEC" \
+    --post-sec "$POST_SEC"
+else
+  echo "Using existing preprocessed data: $PREPROCESSED_DIR"
+fi
+
+if [[ -n "$PATIENTS" ]]; then
+  printf '%s\n' "$PATIENTS" | tr ',' '\n' | sed '/^$/d' > "$PATIENT_LIST"
+else
+  set +e
+  python3 code/tfm_soz/list_lopo_patients.py \
+    "$PREPROCESSED_DIR" \
+    --max-patients "$MAX_PATIENTS" \
+    > "$PATIENT_LIST"
+  patient_list_status=$?
+  set -e
+  if [[ "$patient_list_status" != "0" ]]; then
+    echo "Failed to build LOPO patient list: status ${patient_list_status}" >&2
+    exit "$patient_list_status"
+  fi
+fi
+
+patient_count="$(wc -l < "$PATIENT_LIST" | tr -d '[:space:]')"
+echo "LOPO patient list: ${patient_count} patients (${PATIENT_LIST})"
+sed -n '1,5p' "$PATIENT_LIST" | sed 's/^/  - /'
+
+while IFS= read -r patient; do
+  echo "== LOPO patient: ${patient} =="
+  if [[ "$SKIP_EXISTING" == "1" && -f "$OUTPUT_ROOT/${patient}/metrics.json" ]]; then
+    if [[ "$SKIP_TEST_EVAL" == "1" && -f "$OUTPUT_ROOT/${patient}/test_predictions.csv" ]]; then
+      echo "Refusing stale non-blind fold in validation-only mode: $OUTPUT_ROOT/${patient}" >&2
+      exit 3
+    fi
+    echo "Skipping existing fold: $OUTPUT_ROOT/${patient}"
+    continue
+  fi
+  init_args=()
+  if [[ -n "$INIT_LOPO_ROOT" ]]; then
+    init_args=(--init-run-dir "$INIT_LOPO_ROOT/${patient}")
+  fi
+  python3 -u code/tfm_soz/train_private_soz_segments.py \
+    --preprocessed-dir "$PREPROCESSED_DIR" \
+    --output-dir "$OUTPUT_ROOT/${patient}" \
+    --tokenizer-epochs "$TOKENIZER_EPOCHS" \
+    --classifier-epochs "$CLASSIFIER_EPOCHS" \
+    --batch-size "$BATCH_SIZE" \
+    --pre-sec "$PRE_SEC" \
+    --onset-sec "$ONSET_SEC" \
+    --seed "$SEED" \
+    --split-seed "$SPLIT_SEED" \
+    --val-patients "$VAL_PATIENTS" \
+    --calibration-patients "$CALIBRATION_PATIENTS" \
+    --test-patient "$patient" \
+    --hard-negative-fraction "$HARD_NEGATIVE_FRACTION" \
+    --channel-hard-negative-weight "$CHANNEL_HARD_NEGATIVE_WEIGHT" \
+    --region-hard-negative-weight "$REGION_HARD_NEGATIVE_WEIGHT" \
+    --channel-top1-margin-weight "$CHANNEL_TOP1_MARGIN_WEIGHT" \
+    --region-top1-margin-weight "$REGION_TOP1_MARGIN_WEIGHT" \
+    --top1-margin "$TOP1_MARGIN" \
+    --channel-tkpr-weight "$CHANNEL_TKPR_WEIGHT" \
+    --channel-tkpr-k "$CHANNEL_TKPR_K" \
+    --channel-positive-set-margin-weight "$CHANNEL_POSITIVE_SET_MARGIN_WEIGHT" \
+    --region-positive-set-margin-weight "$REGION_POSITIVE_SET_MARGIN_WEIGHT" \
+    --positive-set-margin "$POSITIVE_SET_MARGIN" \
+    --channel-context-max-weight "$CHANNEL_CONTEXT_MAX_WEIGHT" \
+    --region-context-max-weight "$REGION_CONTEXT_MAX_WEIGHT" \
+    --channel-context-focal-weight "$CHANNEL_CONTEXT_FOCAL_WEIGHT" \
+    --region-context-focal-weight "$REGION_CONTEXT_FOCAL_WEIGHT" \
+    --channel-positive-context-margin-weight "$CHANNEL_POSITIVE_CONTEXT_MARGIN_WEIGHT" \
+    --region-positive-context-margin-weight "$REGION_POSITIVE_CONTEXT_MARGIN_WEIGHT" \
+    --region-embedding-contrastive-weight "$REGION_EMBEDDING_CONTRASTIVE_WEIGHT" \
+    --region-embedding-contrastive-margin "$REGION_EMBEDDING_CONTRASTIVE_MARGIN" \
+    --region-background-embedding-compact-weight "$REGION_BACKGROUND_EMBEDDING_COMPACT_WEIGHT" \
+    --positive-context-margin "$POSITIVE_CONTEXT_MARGIN" \
+    --context-focal-gamma "$CONTEXT_FOCAL_GAMMA" \
+    --segment-eventness-loss-weight "$SEGMENT_EVENTNESS_LOSS_WEIGHT" \
+    --segment-eventness-contrastive-weight "$SEGMENT_EVENTNESS_CONTRASTIVE_WEIGHT" \
+    --segment-eventness-contrastive-margin "$SEGMENT_EVENTNESS_CONTRASTIVE_MARGIN" \
+    --segment-eventness-background-max-weight "$SEGMENT_EVENTNESS_BACKGROUND_MAX_WEIGHT" \
+    --segment-eventness-hard-background-max-weight "$SEGMENT_EVENTNESS_HARD_BACKGROUND_MAX_WEIGHT" \
+    --segment-eventness-cluster-background-max-weight "$SEGMENT_EVENTNESS_CLUSTER_BACKGROUND_MAX_WEIGHT" \
+    --channel-background-max-weight "$CHANNEL_BACKGROUND_MAX_WEIGHT" \
+    --channel-hard-background-max-weight "$CHANNEL_HARD_BACKGROUND_MAX_WEIGHT" \
+    --channel-cluster-background-max-weight "$CHANNEL_CLUSTER_BACKGROUND_MAX_WEIGHT" \
+    --region-background-max-weight "$REGION_BACKGROUND_MAX_WEIGHT" \
+    --region-hard-background-max-weight "$REGION_HARD_BACKGROUND_MAX_WEIGHT" \
+    --region-hard-background-target-weight "$REGION_HARD_BACKGROUND_TARGET_WEIGHT" \
+    --region-hard-background-target-regions "$REGION_HARD_BACKGROUND_TARGET_REGIONS" \
+    --region-cluster-background-max-weight "$REGION_CLUSTER_BACKGROUND_MAX_WEIGHT" \
+    --augment-noise-std "$AUGMENT_NOISE_STD" \
+    --augment-scale-std "$AUGMENT_SCALE_STD" \
+    --augment-segment-reconstruct-prob "$AUGMENT_SEGMENT_RECONSTRUCT_PROB" \
+    --augment-segment-reconstruct-pieces "$AUGMENT_SEGMENT_RECONSTRUCT_PIECES" \
+    --augment-negative-channel-drop-prob "$AUGMENT_NEGATIVE_CHANNEL_DROP_PROB" \
+    --augment-negative-channel-drop-max-fraction "$AUGMENT_NEGATIVE_CHANNEL_DROP_MAX_FRACTION" \
+    --augment-label-preserving-time-mask-prob "$AUGMENT_LABEL_PRESERVING_TIME_MASK_PROB" \
+    --augment-label-preserving-time-mask-max-sec "$AUGMENT_LABEL_PRESERVING_TIME_MASK_MAX_SEC" \
+    --augment-frequency-mask-prob "$AUGMENT_FREQUENCY_MASK_PROB" \
+    --augment-frequency-mask-max-fraction "$AUGMENT_FREQUENCY_MASK_MAX_FRACTION" \
+    --device "$DEVICE" \
+    --training-objective "$TRAINING_OBJECTIVE" \
+    "${init_args[@]}" \
+    "${EXTRA_ARGS[@]}"
+done < "$PATIENT_LIST"

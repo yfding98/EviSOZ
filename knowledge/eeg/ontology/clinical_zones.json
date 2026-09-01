@@ -1,0 +1,67 @@
+{
+  "schema_version": "epilepsy_clinical_zone_concepts_v2",
+  "zones": [
+    {
+      "id": "irritative_zone",
+      "name_zh": "刺激区/发作间期放电区",
+      "observable_by": ["interictal_eeg", "meg"],
+      "not_equivalent_to": ["seizure_onset_zone", "epileptogenic_zone"]
+    },
+    {
+      "id": "symptomatogenic_zone",
+      "name_zh": "症状产生区",
+      "observable_by": ["semiology", "stimulation_mapping"],
+      "not_equivalent_to": ["seizure_onset_zone", "epileptogenic_zone"]
+    },
+    {
+      "id": "seizure_onset_zone",
+      "name_zh": "发作起始区",
+      "definition": "发作在其中起始的皮层区域概念；任何观测结果都依赖采样模态与空间覆盖，必须按证据类型分别记录，不能用未标型字段合并。",
+      "typed_evidence_objects": ["multidisciplinary_noninvasive_soz_hypothesis", "invasive_eeg_onset_zone_observation"],
+      "head_scalp_eeg_alone_is_definitive": false
+    },
+    {
+      "id": "epileptogenic_lesion",
+      "name_zh": "致痫性病变",
+      "not_equivalent_to": ["seizure_onset_zone", "epileptogenic_zone"]
+    },
+    {
+      "id": "epileptogenic_zone",
+      "name_zh": "致痫区",
+      "definition": "为获得持续无发作所需处理的最小皮层区域，是综合推断并由治疗结局间接验证的概念。",
+      "directly_measurable_by_single_test": false
+    },
+    {
+      "id": "eloquent_cortex",
+      "name_zh": "功能重要皮层",
+      "role": "treatment_risk_context_not_soz_evidence"
+    }
+  ],
+  "scalp_observation_terms": [
+    "earliest_scalp_visible_change",
+    "earliest_scalp_visible_derivation_set",
+    "scalp_visible_onset_topography"
+  ],
+  "scalp_observation_terms_are_clinical_zones": false,
+  "clinical_evidence_objects": [
+    {
+      "id": "multidisciplinary_noninvasive_soz_hypothesis",
+      "kind": "clinical_working_hypothesis",
+      "must_not_be_merged_with": ["invasive_eeg_onset_zone_observation"]
+    },
+    {
+      "id": "invasive_eeg_onset_zone_observation",
+      "kind": "modality_and_coverage_conditioned_observation",
+      "requires": ["implant_coverage", "unsampled_region_limitations", "event_count", "review_status"]
+    },
+    {
+      "id": "preoperative_epileptogenic_zone_hypothesis",
+      "kind": "multidisciplinary_clinical_hypothesis"
+    },
+    {
+      "id": "outcome_anchored_ez_assessment",
+      "kind": "post_treatment_indirect_assessment",
+      "requires": ["treatment_extent", "outcome_and_follow_up", "alternative_network_explanations"]
+    }
+  ]
+}

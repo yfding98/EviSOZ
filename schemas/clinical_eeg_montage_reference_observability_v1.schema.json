@@ -1,0 +1,205 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "clinical_eeg_montage_reference_observability_v1.schema.json",
+  "title": "Clinical EEG montage/reference observability receipt v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "source_signal_sha256",
+    "signal_labels_sha256",
+    "observation_policy",
+    "montage_class",
+    "classification_reason_codes",
+    "signal_label_observations",
+    "direct_electrode_ids",
+    "duplicate_direct_electrode_ids",
+    "common_reference_compatibility",
+    "acquisition_reference_model",
+    "derived_reference_contracts",
+    "quality_propagation_policy",
+    "scope_receipt",
+    "receipt_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "clinical_eeg_montage_reference_observability_v1"
+    },
+    "source_signal_sha256": {"$ref": "#/$defs/sha256"},
+    "signal_labels_sha256": {"$ref": "#/$defs/sha256"},
+    "observation_policy": {"type": "string", "minLength": 1},
+    "montage_class": {
+      "enum": [
+        "common_compatible_referential",
+        "already_bipolar",
+        "mixed",
+        "unknown"
+      ]
+    },
+    "classification_reason_codes": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "signal_label_observations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/signalObservation"}
+    },
+    "direct_electrode_ids": {"$ref": "#/$defs/stringArray"},
+    "duplicate_direct_electrode_ids": {"$ref": "#/$defs/stringArray"},
+    "common_reference_compatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["compatible", "reference_token", "semantics", "reason_codes"],
+      "properties": {
+        "compatible": {"type": "boolean"},
+        "reference_token": {"type": ["string", "null"]},
+        "semantics": {"type": "string", "minLength": 1},
+        "reason_codes": {"$ref": "#/$defs/stringArray"}
+      }
+    },
+    "acquisition_reference_model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "interpretation_policy",
+        "matrix_coverage_complete",
+        "unmodeled_eeg_signal_indices",
+        "reference_matrix_observability"
+      ],
+      "properties": {
+        "interpretation_policy": {"type": "string", "minLength": 1},
+        "matrix_coverage_complete": {"type": "boolean"},
+        "unmodeled_eeg_signal_indices": {
+          "type": "array",
+          "items": {"type": "integer", "minimum": 0},
+          "uniqueItems": true
+        },
+        "reference_matrix_observability": {
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "#/$defs/referenceMatrix"}
+          ]
+        }
+      }
+    },
+    "derived_reference_contracts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tcp_bipolar", "car", "laplacian"],
+      "properties": {
+        "tcp_bipolar": {"$ref": "#/$defs/derivedReference"},
+        "car": {"$ref": "#/$defs/derivedReference"},
+        "laplacian": {"$ref": "#/$defs/derivedReference"}
+      }
+    },
+    "quality_propagation_policy": {"type": "object"},
+    "scope_receipt": {"type": "object"},
+    "receipt_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "stringArray": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "signalObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "signal_index",
+        "raw_label",
+        "normalized_label",
+        "signal_role",
+        "positive_electrode",
+        "negative_electrode",
+        "reference_token",
+        "modeled_reference_node"
+      ],
+      "properties": {
+        "signal_index": {"type": "integer", "minimum": 0},
+        "raw_label": {"type": "string", "minLength": 1},
+        "normalized_label": {"type": "string"},
+        "signal_role": {
+          "enum": [
+            "direct_standard_electrode",
+            "direct_standard_electrode_unknown_reference",
+            "standard_bipolar",
+            "eeg_unknown",
+            "non_eeg_ignored"
+          ]
+        },
+        "positive_electrode": {"type": ["string", "null"]},
+        "negative_electrode": {"type": ["string", "null"]},
+        "reference_token": {"type": ["string", "null"]},
+        "modeled_reference_node": {"type": ["string", "null"]}
+      }
+    },
+    "referenceMatrix": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "row_unit_ids",
+        "column_unit_ids",
+        "matrix",
+        "matrix_sha256",
+        "numerical_diagnostics",
+        "support_connectivity"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "clinical_eeg_reference_matrix_observability_v1"
+        },
+        "row_unit_ids": {"$ref": "#/$defs/stringArray"},
+        "column_unit_ids": {"$ref": "#/$defs/stringArray"},
+        "matrix": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"type": "number"}
+          }
+        },
+        "matrix_sha256": {"$ref": "#/$defs/sha256"},
+        "numerical_diagnostics": {"type": "object"},
+        "support_connectivity": {"type": "object"}
+      }
+    },
+    "derivedReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reference_kind",
+        "reference_type",
+        "tensor_materialization_authorized",
+        "any_output_evidence_eligible",
+        "all_outputs_evidence_eligible",
+        "global_reason_codes",
+        "reference_matrix_observability",
+        "output_support",
+        "interpretation_limit"
+      ],
+      "properties": {
+        "reference_kind": {
+          "enum": ["tcp_bipolar", "car", "laplacian"]
+        },
+        "reference_type": {"type": "string", "minLength": 1},
+        "tensor_materialization_authorized": {"type": "boolean"},
+        "any_output_evidence_eligible": {"type": "boolean"},
+        "all_outputs_evidence_eligible": {"type": "boolean"},
+        "global_reason_codes": {"$ref": "#/$defs/stringArray"},
+        "reference_matrix_observability": {"$ref": "#/$defs/referenceMatrix"},
+        "output_support": {"type": "array", "minItems": 1},
+        "interpretation_limit": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

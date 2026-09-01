@@ -1,0 +1,325 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/schemas/clinical_eeg_minimum_event_evidence_card_extension_registry_v1_1.schema.json",
+  "title": "Minimum Event Evidence Card additive extension registry v1.1",
+  "description": "Candidate-blind additive questions that close the explicitly identified gaps in the v1 twelve-slot registry. Event-level questions remain in the twelve-slot card; recording-level burden questions live in a separate recording aggregate destination. The registry is structural only and cannot promote a Finding or authorize an SOZ/EZ claim.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "registry_id",
+    "registry_status",
+    "source_scope",
+    "base_registry",
+    "source_firewall",
+    "destination_order",
+    "query_specs",
+    "closure_policy",
+    "authorization",
+    "registry_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "clinical_eeg_minimum_event_evidence_card_extension_registry_v1_1"
+    },
+    "registry_id": {
+      "const": "CLINICAL-EEG-MINIMUM-EVENT-EVIDENCE-CARD-EXTENSION-REGISTRY-V1.1"
+    },
+    "registry_status": {
+      "const": "draft_public_synthetic_shadow"
+    },
+    "source_scope": {
+      "const": "candidate_blind_frozen_public_or_synthetic_contracts_only"
+    },
+    "base_registry": {
+      "$ref": "#/$defs/baseRegistry"
+    },
+    "source_firewall": {
+      "$ref": "#/$defs/sourceFirewall"
+    },
+    "destination_order": {
+      "const": [
+        "S01_SOURCE_EVALUABILITY",
+        "S02_EVENT_BOUNDARY",
+        "S03_FREQUENCY",
+        "S04_PHYSICAL_AMPLITUDE",
+        "S05_WAVEFORM_MORPHOLOGY",
+        "S06_RHYTHMICITY_PERIODICITY",
+        "S07_EARLIEST_VISIBLE_SET",
+        "S08_SPATIAL_FIELD_REFERENCE_STABILITY",
+        "S09_CHANGE_POINTS_EVOLUTION",
+        "S10_LATER_INVOLVEMENT",
+        "S11_TERMINATION_POST_EVENT",
+        "S12_COMPARABLE_BACKGROUND_RECOVERY",
+        "R01_RECORD_EVENT_ROSTER_AND_BURDEN"
+      ]
+    },
+    "query_specs": {
+      "type": "array",
+      "minItems": 17,
+      "maxItems": 17,
+      "items": {
+        "$ref": "#/$defs/querySpec"
+      }
+    },
+    "closure_policy": {
+      "$ref": "#/$defs/closurePolicy"
+    },
+    "authorization": {
+      "$ref": "#/$defs/authorization"
+    },
+    "registry_sha256": {
+      "$ref": "#/$defs/sha256"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "idArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/id"
+      }
+    },
+    "baseRegistry": {
+      "type": "object",
+      "required": ["registry_id", "registry_sha256"],
+      "properties": {
+        "registry_id": {
+          "const": "CLINICAL-EEG-MINIMUM-EVENT-EVIDENCE-CARD-REGISTRY-V1"
+        },
+        "registry_sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "additionalProperties": false
+    },
+    "sourceFirewall": {
+      "type": "object",
+      "required": [
+        "private_data_used",
+        "event_findings_payload_used",
+        "findings_candidates_used",
+        "payload_evaluation_opportunities_used",
+        "event_outcome_used",
+        "scalp_onset_hypothesis_used",
+        "edf_annotations_used",
+        "spreadsheet_used",
+        "doctor_labels_used",
+        "clinical_text_used",
+        "patient_metadata_used",
+        "video_used",
+        "sleep_staging_used",
+        "provocation_used",
+        "ecg_emg_eog_used",
+        "qwen_used"
+      ],
+      "properties": {
+        "private_data_used": {"const": false},
+        "event_findings_payload_used": {"const": false},
+        "findings_candidates_used": {"const": false},
+        "payload_evaluation_opportunities_used": {"const": false},
+        "event_outcome_used": {"const": false},
+        "scalp_onset_hypothesis_used": {"const": false},
+        "edf_annotations_used": {"const": false},
+        "spreadsheet_used": {"const": false},
+        "doctor_labels_used": {"const": false},
+        "clinical_text_used": {"const": false},
+        "patient_metadata_used": {"const": false},
+        "video_used": {"const": false},
+        "sleep_staging_used": {"const": false},
+        "provocation_used": {"const": false},
+        "ecg_emg_eog_used": {"const": false},
+        "qwen_used": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "querySpec": {
+      "type": "object",
+      "required": [
+        "extension_query_id",
+        "analysis_unit",
+        "destination_id",
+        "label_zh",
+        "output_type",
+        "scope_id",
+        "eeg_only_definition",
+        "derived_from_query_ids",
+        "required_receipt_kinds",
+        "assertion_level_domain",
+        "status_domain",
+        "evidence_role_ceiling",
+        "negative_semantics",
+        "implementation_status",
+        "report_promotion_authorized",
+        "forbidden_interpretations"
+      ],
+      "properties": {
+        "extension_query_id": {
+          "$ref": "#/$defs/id"
+        },
+        "analysis_unit": {
+          "enum": ["event", "recording"]
+        },
+        "destination_id": {
+          "enum": [
+            "S01_SOURCE_EVALUABILITY",
+            "S02_EVENT_BOUNDARY",
+            "S03_FREQUENCY",
+            "S04_PHYSICAL_AMPLITUDE",
+            "S05_WAVEFORM_MORPHOLOGY",
+            "S06_RHYTHMICITY_PERIODICITY",
+            "S07_EARLIEST_VISIBLE_SET",
+            "S08_SPATIAL_FIELD_REFERENCE_STABILITY",
+            "S09_CHANGE_POINTS_EVOLUTION",
+            "S10_LATER_INVOLVEMENT",
+            "S11_TERMINATION_POST_EVENT",
+            "S12_COMPARABLE_BACKGROUND_RECOVERY",
+            "R01_RECORD_EVENT_ROSTER_AND_BURDEN"
+          ]
+        },
+        "label_zh": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "output_type": {
+          "enum": [
+            "interval",
+            "interval_set",
+            "categorical",
+            "field_set",
+            "quantity",
+            "distribution"
+          ]
+        },
+        "scope_id": {
+          "enum": [
+            "candidate_emergence_interval",
+            "event_course_interval",
+            "post_event_context",
+            "full_record_modeled_opportunity"
+          ]
+        },
+        "eeg_only_definition": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1200
+        },
+        "derived_from_query_ids": {
+          "$ref": "#/$defs/idArray"
+        },
+        "required_receipt_kinds": {
+          "$ref": "#/$defs/idArray"
+        },
+        "assertion_level_domain": {
+          "const": [
+            "measured",
+            "model_candidate",
+            "report_eligible_automated"
+          ]
+        },
+        "status_domain": {
+          "const": [
+            "present",
+            "absent_with_opportunity",
+            "uncertain",
+            "not_evaluable"
+          ]
+        },
+        "evidence_role_ceiling": {
+          "enum": [
+            "onset_time_support",
+            "course_or_spread_support",
+            "counterevidence_or_limitation",
+            "record_aggregation_only"
+          ]
+        },
+        "negative_semantics": {
+          "enum": [
+            "no_automatic_absence",
+            "absence_requires_complete_opportunity_and_sensitivity"
+          ]
+        },
+        "implementation_status": {
+          "const": "unimplemented_not_evaluable"
+        },
+        "report_promotion_authorized": {
+          "const": false
+        },
+        "forbidden_interpretations": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 400
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "closurePolicy": {
+      "type": "object",
+      "required": [
+        "expected_extension_query_count",
+        "expected_event_query_count",
+        "expected_recording_query_count",
+        "all_extension_queries_mapped_exactly_once",
+        "event_queries_must_map_to_twelve_slot_card",
+        "recording_queries_must_not_be_copied_into_event_cards",
+        "dependencies_must_resolve_to_base_or_extension_queries",
+        "dependency_graph_must_be_acyclic",
+        "all_queries_must_preserve_four_state_missingness",
+        "unimplemented_queries_must_be_retained",
+        "candidate_or_findings_payload_may_change_registry"
+      ],
+      "properties": {
+        "expected_extension_query_count": {"const": 17},
+        "expected_event_query_count": {"const": 14},
+        "expected_recording_query_count": {"const": 3},
+        "all_extension_queries_mapped_exactly_once": {"const": true},
+        "event_queries_must_map_to_twelve_slot_card": {"const": true},
+        "recording_queries_must_not_be_copied_into_event_cards": {"const": true},
+        "dependencies_must_resolve_to_base_or_extension_queries": {"const": true},
+        "dependency_graph_must_be_acyclic": {"const": true},
+        "all_queries_must_preserve_four_state_missingness": {"const": true},
+        "unimplemented_queries_must_be_retained": {"const": true},
+        "candidate_or_findings_payload_may_change_registry": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "authorization": {
+      "type": "object",
+      "required": [
+        "registry_is_structural_only",
+        "status_or_assertion_mutation_authorized",
+        "clinical_absence_authorized",
+        "report_promotion_authorized",
+        "clinical_correctness_claimed",
+        "cortical_propagation_velocity_claim_authorized",
+        "soz_or_ez_claim_authorized"
+      ],
+      "properties": {
+        "registry_is_structural_only": {"const": true},
+        "status_or_assertion_mutation_authorized": {"const": false},
+        "clinical_absence_authorized": {"const": false},
+        "report_promotion_authorized": {"const": false},
+        "clinical_correctness_claimed": {"const": false},
+        "cortical_propagation_velocity_claim_authorized": {"const": false},
+        "soz_or_ez_claim_authorized": {"const": false}
+      },
+      "additionalProperties": false
+    }
+  }
+}

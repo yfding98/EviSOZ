@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evisoz_v29_public_cache_materialization_receipt_v2.schema.json",
+  "title": "EviSOZ frozen canonical v29 public cache materialization receipt v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "materializer_version",
+    "adapter_materializer_version",
+    "status",
+    "route",
+    "unit_kind",
+    "cache_id",
+    "patient_count",
+    "unit_count",
+    "canonical_patient_order_source",
+    "identity_namespace",
+    "p0_c18_tensor_sha256",
+    "resource_config_sha256",
+    "resource_registry_projection_sha256",
+    "public_roster_authority_sha256",
+    "public_metric_receipt_sha256",
+    "source",
+    "independently_recomputed_from_targets",
+    "target_tensor_values_deserialized",
+    "targets_or_target_mask_get_tensor_calls",
+    "event_payloads_present",
+    "montage_payloads_present",
+    "alpha_zero_hard_bypass_replayed",
+    "files",
+    "receipt_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "evisoz_v29_public_cache_materialization_receipt_v2"
+    },
+    "materializer_version": {
+      "const": "evisoz_v29_public_cache_disk_materializer_v2"
+    },
+    "adapter_materializer_version": {
+      "const": "evisoz_v29_wrapper_cache_adapter_v1"
+    },
+    "status": {"const": "PASS"},
+    "route": {"const": "historical_public_oof_held_fold"},
+    "unit_kind": {"const": "patient"},
+    "cache_id": {
+      "type": "string",
+      "pattern": "^EVISOZ-V29-[0-9a-f]{24}$"
+    },
+    "patient_count": {"const": 102},
+    "unit_count": {"const": 102},
+    "canonical_patient_order_source": {"const": "public_index.patient_ids"},
+    "identity_namespace": {"const": "deepsoz_tusz_public_v29"},
+    "p0_c18_tensor_sha256": {
+      "const": "6aae67212390f4037be896d6d020468a33d7210289a0d22a590819f740a470ea"
+    },
+    "resource_config_sha256": {"$ref": "#/$defs/sha256"},
+    "resource_registry_projection_sha256": {"$ref": "#/$defs/sha256"},
+    "public_roster_authority_sha256": {"$ref": "#/$defs/sha256"},
+    "public_metric_receipt_sha256": {"$ref": "#/$defs/sha256"},
+    "source": {"const": "sha_frozen_public_manifest"},
+    "independently_recomputed_from_targets": {"const": false},
+    "target_tensor_values_deserialized": {"const": false},
+    "targets_or_target_mask_get_tensor_calls": {"const": 0},
+    "event_payloads_present": {"const": false},
+    "montage_payloads_present": {"const": false},
+    "alpha_zero_hard_bypass_replayed": {"const": true},
+    "files": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 116,
+      "maxProperties": 116,
+      "required": [
+        "cache.json",
+        "tensors/p_h_c18.tensor",
+        "tensors/p_d_c18.tensor",
+        "tensors/p0_c18.tensor",
+        "tensors/p0_node.tensor",
+        "tensors/z0_c18.tensor",
+        "tensors/candidate_mask.tensor",
+        "tensors/route_fold_mask.tensor",
+        "tensors/unit_to_patient_index.tensor",
+        "sidecars/patient_identity_roster.json",
+        "sidecars/route_receipt_roster.json",
+        "sidecars/evisoz_v29_frozen_resources_v1.json",
+        "audit/frozen_public_manifest.json",
+        "audit/public_metric_receipt.json"
+      ],
+      "properties": {
+        "cache.json": {"$ref": "#/$defs/fileReceipt"},
+        "tensors/p_h_c18.tensor": {"$ref": "#/$defs/fileReceipt"},
+        "tensors/p_d_c18.tensor": {"$ref": "#/$defs/fileReceipt"},
+        "tensors/p0_c18.tensor": {"$ref": "#/$defs/fileReceipt"},
+        "tensors/p0_node.tensor": {"$ref": "#/$defs/fileReceipt"},
+        "tensors/z0_c18.tensor": {"$ref": "#/$defs/fileReceipt"},
+        "tensors/candidate_mask.tensor": {"$ref": "#/$defs/fileReceipt"},
+        "tensors/route_fold_mask.tensor": {"$ref": "#/$defs/fileReceipt"},
+        "tensors/unit_to_patient_index.tensor": {"$ref": "#/$defs/fileReceipt"},
+        "sidecars/patient_identity_roster.json": {
+          "$ref": "#/$defs/fileReceipt"
+        },
+        "sidecars/route_receipt_roster.json": {
+          "$ref": "#/$defs/fileReceipt"
+        },
+        "sidecars/evisoz_v29_frozen_resources_v1.json": {
+          "$ref": "#/$defs/fileReceipt"
+        },
+        "audit/frozen_public_manifest.json": {"$ref": "#/$defs/fileReceipt"},
+        "audit/public_metric_receipt.json": {"$ref": "#/$defs/fileReceipt"}
+      },
+      "patternProperties": {
+        "^sidecars/route_receipts/(?:0[0-9]{2}|10[01])\\.json$": {
+          "$ref": "#/$defs/fileReceipt"
+        }
+      }
+    },
+    "receipt_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "fileReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sha256", "size_bytes"],
+      "properties": {
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "size_bytes": {"type": "integer", "minimum": 1}
+      }
+    }
+  }
+}

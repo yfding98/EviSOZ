@@ -1,0 +1,179 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evisoz_montage_derivation_receipt_v1.schema.json",
+  "title": "EviSOZ CAR19/TCP22 sibling-view derivation receipt v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "receipt_id",
+    "parent_signal_ref",
+    "channel_registry_ref",
+    "event_identity_ref",
+    "reference_observability",
+    "clock",
+    "input_profile",
+    "views",
+    "edge_support",
+    "permissions",
+    "receipt_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "evisoz_montage_derivation_receipt_v1"},
+    "receipt_id": {
+      "type": "string",
+      "pattern": "^EVISOZ-MONTAGE-[0-9a-f]{24}$"
+    },
+    "parent_signal_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+    "channel_registry_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+    "event_identity_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+    "reference_observability": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["artifact_ref", "receipt"],
+          "properties": {
+            "artifact_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+            "receipt": {
+              "$ref": "clinical_eeg_montage_reference_observability_v1.schema.json"
+            }
+          }
+        }
+      ]
+    },
+    "clock": {
+      "const": {
+        "sampling_rate_numerator": 200,
+        "sampling_rate_denominator": 1,
+        "sample_count": 12000,
+        "anchor_sample_index": 2400,
+        "analysis_interval_seconds": [-12.0, 48.0]
+      }
+    },
+    "input_profile": {
+      "enum": ["dual_native", "standard19_native", "tcp22_native", "partial_masked"]
+    },
+    "views": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["v29_reference", "tcp22_context", "tcp22_onset"],
+      "properties": {
+        "v29_reference": {"$ref": "#/$defs/view"},
+        "tcp22_context": {"$ref": "#/$defs/view"},
+        "tcp22_onset": {"$ref": "#/$defs/view"}
+      }
+    },
+    "edge_support": {
+      "type": "array",
+      "minItems": 22,
+      "maxItems": 22,
+      "items": {"$ref": "#/$defs/edgeSupport"}
+    },
+    "permissions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "v29_reference_available",
+        "residual_main_analysis_eligible",
+        "tcp22_standalone_evidence_available",
+        "interpolated_transport_is_direct_evidence",
+        "edge_to_endpoint_expansion_authorized",
+        "onset_source_isolated_from_context_artifact"
+      ],
+      "properties": {
+        "v29_reference_available": {"type": "boolean"},
+        "residual_main_analysis_eligible": {"type": "boolean"},
+        "tcp22_standalone_evidence_available": {"type": "boolean"},
+        "interpolated_transport_is_direct_evidence": {"const": false},
+        "edge_to_endpoint_expansion_authorized": {"const": false},
+        "onset_source_isolated_from_context_artifact": {"const": true}
+      }
+    },
+    "receipt_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "$defs": {
+    "view": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_ref",
+        "coordinate",
+        "shape",
+        "sample_interval",
+        "time_interval_seconds",
+        "source_parent_artifact_id",
+        "preprocessing_scope",
+        "context_artifact_dependency",
+        "unit_observed_mask"
+      ],
+      "properties": {
+        "artifact_ref": {
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "evisoz_artifact_ref_v1.schema.json"}
+          ]
+        },
+        "coordinate": {
+          "enum": ["standard19_electrode_node", "signed_tcp22_bipolar_edge"]
+        },
+        "shape": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {"type": "integer", "minimum": 1}
+        },
+        "sample_interval": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {"type": "integer", "minimum": 0}
+        },
+        "time_interval_seconds": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {"type": "number"}
+        },
+        "source_parent_artifact_id": {"type": "string", "minLength": 1},
+        "preprocessing_scope": {"type": "string", "minLength": 1},
+        "context_artifact_dependency": {"type": "null"},
+        "unit_observed_mask": {
+          "type": "array",
+          "minItems": 19,
+          "maxItems": 22,
+          "items": {"type": "boolean"}
+        }
+      }
+    },
+    "edgeSupport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "edge_unit_id",
+        "support_state",
+        "orientation_ok",
+        "transport_available",
+        "direct_evidence_eligible"
+      ],
+      "properties": {
+        "edge_unit_id": {"type": "string", "minLength": 1},
+        "support_state": {
+          "enum": [
+            "native_bipolar",
+            "exact_derived_from_common_reference",
+            "interpolated_transport",
+            "unobserved"
+          ]
+        },
+        "orientation_ok": {"type": "boolean"},
+        "transport_available": {"type": "boolean"},
+        "direct_evidence_eligible": {"type": "boolean"}
+      }
+    }
+  }
+}

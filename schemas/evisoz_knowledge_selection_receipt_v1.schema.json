@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evisoz_knowledge_selection_receipt_v1.schema.json",
+  "title": "EviSOZ knowledge/eeg selection wrapper v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "selection_id", "graph_ref", "knowledge_manifest_sha256", "knowledge_version", "profile_id", "query_claim_ids", "selected_cards", "selected_source_ids", "selection_reasons", "patient_fact_creation_allowed", "can_add_patient_fact", "receipt_sha256"],
+  "properties": {
+    "schema_version": {"const": "evisoz_knowledge_selection_receipt_v1"},
+    "selection_id": {"type": "string", "pattern": "^EVISOZ-KNOWSEL-[0-9a-f]{24}$"},
+    "graph_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+    "knowledge_manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "knowledge_version": {"type": "string", "minLength": 1},
+    "profile_id": {"type": "string", "minLength": 1},
+    "query_claim_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "selected_cards": {"type": "array", "minItems": 1},
+    "selected_source_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+    "selection_reasons": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "patient_fact_creation_allowed": {"const": false},
+    "can_add_patient_fact": {"const": false},
+    "receipt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

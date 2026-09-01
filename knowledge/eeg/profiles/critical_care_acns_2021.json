@@ -1,0 +1,40 @@
+{
+  "schema_version": "eeg_knowledge_profile_v2",
+  "profile_id": "critical_care_acns_2021",
+  "standard": {
+    "name": "ACNS Standardized Critical Care EEG Terminology",
+    "version": "2021",
+    "source_id": "acns-2021-esz"
+  },
+  "definite_evolution": {
+    "minimum_sequential_changes": 2,
+    "changes_must_be_within_same_category": true,
+    "frequency_change_same_direction_min_hz_each": 0.5,
+    "minimum_cycles_per_frequency_morphology_or_location": 3,
+    "location_rule": "sequential_spread_into_or_out_of_at_least_two_standard_electrode_locations",
+    "unchanged_interval_must_be_less_than_minutes": 5,
+    "unchanged_interval_five_or_more_minutes_excludes_evolution": true,
+    "amplitude_change_alone_is_sufficient": false
+  },
+  "electrographic_seizure": {
+    "path_a": "epileptiform_discharges_average_frequency_gt_2_5_hz_for_at_least_10_seconds",
+    "path_b": "any_pattern_with_definite_evolution_for_at_least_10_seconds",
+    "shorter_pattern": "does_not_meet_electrographic_seizure_duration_and_requires_separate_BIRDs_or_electroclinical_assessment"
+  },
+  "electrographic_status_epilepticus": {
+    "path_a": "electrographic_seizure_continuous_for_at_least_10_minutes",
+    "path_b": "electrographic_seizure_burden_at_least_20_percent_of_any_60_minute_period"
+  },
+  "iic": {
+    "is_diagnosis": false,
+    "pattern_must_not_already_qualify_as_electrographic_seizure_or_electrographic_status_epilepticus": true,
+    "qualifying_patterns": [
+      "PD_or_SW_gt_1_to_le_2_5_Hz_averaged_over_10_seconds",
+      "PD_or_SW_ge_0_5_to_le_1_Hz_averaged_over_10_seconds_with_plus_modifier_or_fluctuation",
+      "lateralized_RDA_gt_1_Hz_for_at_least_10_seconds_with_plus_modifier_or_fluctuation"
+    ],
+    "GRDA_is_included": false,
+    "nonstandard_levels_forbidden": ["possible_iic", "definite_iic"]
+  },
+  "clinical_scope_warning": "This critical-care terminology profile does not by itself define a routine epilepsy-monitoring SOZ gold standard."
+}

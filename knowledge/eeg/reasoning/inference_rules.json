@@ -1,0 +1,98 @@
+{
+  "schema_version": "eeg_inference_rules_v2",
+  "principle": "describe_then_interpret_then_localize_then_clinically_synthesize",
+  "clinical_objects_are_not_a_linear_upgrade_chain": true,
+  "transitions": [
+    {
+      "from": "OBS",
+      "to": "PAT",
+      "requires": [
+        "patient_evidence_ids",
+        "assessability_state",
+        "applicable_profile",
+        "criterion_card_ids",
+        "major_differentials_checked",
+        "contradictory_or_limiting_evidence_recorded"
+      ],
+      "knowledge_alone_is_sufficient": false
+    },
+    {
+      "from": "PAT",
+      "to": "LOC",
+      "requires": [
+        "target_level",
+        "timing_with_uncertainty",
+        "actual_channel_coverage",
+        "montage_and_reference_provenance",
+        "field_or_explicit_field_not_assessable",
+        "artifact_and_censoring_status",
+        "regional_granularity"
+      ],
+      "single_bipolar_derivation_resolves_one_endpoint": false,
+      "phase_reversal_proves_cortical_source": false
+    },
+    {
+      "from": "LOC",
+      "to": "CLIN.noninvasive_soz_hypothesis",
+      "requires": [
+        "multiple_analyzable_habitual_events_for_project_automated_eligibility",
+        "cross_event_concordance_and_discordance",
+        "independent_multimodal_clinical_evidence",
+        "authorized_clinical_review"
+      ],
+      "single_scalp_event_is_sufficient_for_project_automated_eligibility": false,
+      "expert_low_certainty_working_hypothesis_may_be_recorded_with_explicit_limitations": true,
+      "automated_knowledge_or_language_model_may_perform_transition": false
+    },
+    {
+      "from": "INVASIVE_RECORDING_EVIDENCE",
+      "to": "CLIN.invasive_eeg_onset_zone",
+      "requires": [
+        "invasive_recording_evidence",
+        "implant_coverage",
+        "unsampled_region_limitations",
+        "event_count",
+        "expert_review"
+      ],
+      "independent_of_noninvasive_soz_hypothesis": true,
+      "automatic_transition": false
+    },
+    {
+      "from": "MULTIDISCIPLINARY_ZONE_EVIDENCE",
+      "to": "CLIN.preoperative_epileptogenic_zone_hypothesis",
+      "requires": [
+        "multidisciplinary_synthesis",
+        "typed_zone_and_lesion_evidence",
+        "functional_risk_context",
+        "alternative_network_explanations"
+      ],
+      "invasive_onset_zone_is_required_in_all_cases": false,
+      "single_test_is_sufficient": false
+    },
+    {
+      "from": "CLIN.preoperative_epileptogenic_zone_hypothesis",
+      "to": "CLIN.outcome_anchored_ez_assessment",
+      "requires": [
+        "actual_treatment_extent",
+        "outcome_and_follow_up",
+        "residual_or_alternative_network_explanations",
+        "multidisciplinary_review"
+      ],
+      "seizure_freedom_alone_proves_complete_EZ": false
+    }
+  ],
+  "forbidden_jumps": [
+    "derivation_to_single_electrode_source",
+    "phase_reversal_to_cortical_source",
+    "IED_to_SOZ_or_EZ",
+    "focal_slowing_to_SOZ_or_EZ",
+    "late_high_amplitude_region_to_onset_core",
+    "earliest_scalp_visible_change_to_biological_onset",
+    "no_scalp_correlate_to_no_seizure",
+    "bilateral_synchronous_to_generalized_epilepsy_without_context",
+    "model_probability_to_clinical_certainty",
+    "knowledge_source_to_patient_fact",
+    "report_model_agreement_to_external_validation"
+  ],
+  "fail_closed_result": "retain_the_highest_supported_semantic_layer_and_record_why_upgrade_was_not_authorized"
+}

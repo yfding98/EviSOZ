@@ -1,0 +1,871 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/schemas/clinical_eeg_experiment_freeze_v1.schema.json",
+  "title": "Clinical EEG detached experiment-freeze manifest v1",
+  "description": "A detached, fail-closed research manifest. A draft instance records known facts and unresolved freeze fields but cannot authorize production.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "manifest_id",
+    "state",
+    "purpose",
+    "freeze_identity",
+    "cohorts_and_lockbox",
+    "detector_operating_point",
+    "adaptive_fixed_compute_budget",
+    "term_qualification",
+    "endpoint_hierarchy",
+    "promotion_gates",
+    "production_authorization"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "clinical_eeg_experiment_freeze_v1"
+    },
+    "manifest_id": {
+      "$ref": "#/$defs/id"
+    },
+    "state": {
+      "$ref": "#/$defs/manifestState"
+    },
+    "purpose": {
+      "const": "detached_research_experiment_freeze_manifest_not_a_clinical_or_production_authorization"
+    },
+    "freeze_identity": {
+      "$ref": "#/$defs/freezeIdentity"
+    },
+    "cohorts_and_lockbox": {
+      "$ref": "#/$defs/cohortsAndLockbox"
+    },
+    "detector_operating_point": {
+      "$ref": "#/$defs/detectorOperatingPoint"
+    },
+    "adaptive_fixed_compute_budget": {
+      "$ref": "#/$defs/adaptiveFixedComputeBudget"
+    },
+    "term_qualification": {
+      "$ref": "#/$defs/termQualification"
+    },
+    "endpoint_hierarchy": {
+      "$ref": "#/$defs/endpointHierarchy"
+    },
+    "promotion_gates": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/promotionGate"
+      }
+    },
+    "production_authorization": {
+      "$ref": "#/$defs/productionAuthorization"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "sha256OrNull": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "gitCommitOrNull": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40,64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "dateTimeOrNull": {
+      "oneOf": [
+        {
+          "type": "string",
+          "format": "date-time"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "nonnegativeIntegerOrNull": {
+      "oneOf": [
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "positiveNumberOrNull": {
+      "oneOf": [
+        {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "numberOrNull": {
+      "oneOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "stringOrNull": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "manifestState": {
+      "enum": [
+        "draft",
+        "frozen",
+        "invalidated"
+      ]
+    },
+    "artifactBinding": {
+      "type": "object",
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256OrNull"
+        }
+      },
+      "additionalProperties": false
+    },
+    "freezeIdentity": {
+      "type": "object",
+      "required": [
+        "state",
+        "document_snapshot_date",
+        "frozen_at",
+        "git_commit",
+        "policy_binding",
+        "schema_binding",
+        "environment_lock_sha256",
+        "random_seed_set",
+        "notes"
+      ],
+      "properties": {
+        "state": {
+          "$ref": "#/$defs/manifestState"
+        },
+        "document_snapshot_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "frozen_at": {
+          "$ref": "#/$defs/dateTimeOrNull"
+        },
+        "git_commit": {
+          "$ref": "#/$defs/gitCommitOrNull"
+        },
+        "policy_binding": {
+          "$ref": "#/$defs/artifactBinding"
+        },
+        "schema_binding": {
+          "$ref": "#/$defs/artifactBinding"
+        },
+        "environment_lock_sha256": {
+          "$ref": "#/$defs/sha256OrNull"
+        },
+        "random_seed_set": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4294967295
+          }
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "cohort": {
+      "type": "object",
+      "required": [
+        "role",
+        "status",
+        "roster_path",
+        "roster_sha256",
+        "patient_count",
+        "recording_count",
+        "event_count",
+        "seizure_free_recording_count",
+        "reference_scopes"
+      ],
+      "properties": {
+        "role": {
+          "enum": [
+            "source_train",
+            "source_dev",
+            "calibration",
+            "locked_source_eval",
+            "external_test",
+            "private_post_freeze_eval"
+          ]
+        },
+        "status": {
+          "enum": [
+            "not_materialized",
+            "draft_roster",
+            "locked"
+          ]
+        },
+        "roster_path": {
+          "$ref": "#/$defs/stringOrNull"
+        },
+        "roster_sha256": {
+          "$ref": "#/$defs/sha256OrNull"
+        },
+        "patient_count": {
+          "$ref": "#/$defs/nonnegativeIntegerOrNull"
+        },
+        "recording_count": {
+          "$ref": "#/$defs/nonnegativeIntegerOrNull"
+        },
+        "event_count": {
+          "$ref": "#/$defs/nonnegativeIntegerOrNull"
+        },
+        "seizure_free_recording_count": {
+          "$ref": "#/$defs/nonnegativeIntegerOrNull"
+        },
+        "reference_scopes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "seizure_interval",
+              "expert_atomic_findings",
+              "expert_scalp_onset_topography",
+              "excel_onset_summary",
+              "physician_hard_significant_channels",
+              "physician_soft_spread_channels",
+              "paired_complete_physician_report"
+            ]
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "lockboxAccess": {
+      "type": "object",
+      "required": [
+        "access_id",
+        "cohort_role",
+        "access_type",
+        "purpose",
+        "patient_reference",
+        "recording_reference",
+        "accessed_at",
+        "used_for_training",
+        "used_for_threshold_selection",
+        "used_for_model_selection",
+        "source_receipt_ids",
+        "disposition"
+      ],
+      "properties": {
+        "access_id": {
+          "$ref": "#/$defs/id"
+        },
+        "cohort_role": {
+          "const": "locked_source_eval"
+        },
+        "access_type": {
+          "enum": [
+            "engineering_smoke",
+            "training",
+            "threshold_selection",
+            "model_selection",
+            "frozen_evaluation"
+          ]
+        },
+        "purpose": {
+          "type": "string",
+          "minLength": 1
+        },
+        "patient_reference": {
+          "$ref": "#/$defs/stringOrNull"
+        },
+        "recording_reference": {
+          "$ref": "#/$defs/stringOrNull"
+        },
+        "accessed_at": {
+          "$ref": "#/$defs/dateTimeOrNull"
+        },
+        "used_for_training": {
+          "type": "boolean"
+        },
+        "used_for_threshold_selection": {
+          "type": "boolean"
+        },
+        "used_for_model_selection": {
+          "type": "boolean"
+        },
+        "source_receipt_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "disposition": {
+          "enum": [
+            "exclude_from_final_untouched_lockbox_unless_predeclared_exception",
+            "predeclared_engineering_exception",
+            "included_in_frozen_evaluation",
+            "invalidates_lockbox"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "cohortsAndLockbox": {
+      "type": "object",
+      "required": [
+        "cohorts",
+        "source_eval_accessed",
+        "pristine_untouched_lockbox_claim_authorized",
+        "final_untouched_source_eval_roster_sha256",
+        "access_ledger"
+      ],
+      "properties": {
+        "cohorts": {
+          "type": "array",
+          "minItems": 6,
+          "maxItems": 6,
+          "items": {
+            "$ref": "#/$defs/cohort"
+          }
+        },
+        "source_eval_accessed": {
+          "type": "boolean"
+        },
+        "pristine_untouched_lockbox_claim_authorized": {
+          "type": "boolean"
+        },
+        "final_untouched_source_eval_roster_sha256": {
+          "$ref": "#/$defs/sha256OrNull"
+        },
+        "access_ledger": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/lockboxAccess"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "detectorOperatingPoint": {
+      "type": "object",
+      "required": [
+        "state",
+        "candidate_provider_ids",
+        "selected_provider_id",
+        "observed_candidate_receipt_ids",
+        "candidate_false_alarm_budgets_per_24h",
+        "primary_false_alarms_per_24h",
+        "minimum_pooled_event_sensitivity",
+        "minimum_patient_macro_event_sensitivity",
+        "selected_decoder_policy_id",
+        "selected_threshold",
+        "source_eval_prediction_artifact_sha256",
+        "source_eval_opened_for_selection",
+        "source_eval_accessed_for_engineering_smoke",
+        "promotion_eligible"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "not_selected",
+            "frozen",
+            "invalidated"
+          ]
+        },
+        "candidate_provider_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "selected_provider_id": {
+          "$ref": "#/$defs/stringOrNull"
+        },
+        "observed_candidate_receipt_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "candidate_false_alarm_budgets_per_24h": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
+        },
+        "primary_false_alarms_per_24h": {
+          "$ref": "#/$defs/positiveNumberOrNull"
+        },
+        "minimum_pooled_event_sensitivity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "minimum_patient_macro_event_sensitivity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "selected_decoder_policy_id": {
+          "$ref": "#/$defs/stringOrNull"
+        },
+        "selected_threshold": {
+          "$ref": "#/$defs/numberOrNull"
+        },
+        "source_eval_prediction_artifact_sha256": {
+          "$ref": "#/$defs/sha256OrNull"
+        },
+        "source_eval_opened_for_selection": {
+          "type": "boolean"
+        },
+        "source_eval_accessed_for_engineering_smoke": {
+          "type": "boolean"
+        },
+        "promotion_eligible": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "adaptiveFixedComputeBudget": {
+      "type": "object",
+      "required": [
+        "state",
+        "scope",
+        "whole_record_navigation_cost_reported_separately",
+        "compute_match_required",
+        "selected_fine_eeg_seconds_per_event",
+        "selected_tokens_per_event",
+        "selected_incremental_gpu_seconds_per_eeg_hour",
+        "selected_action_delta_seconds",
+        "selected_max_left_seconds",
+        "selected_max_right_seconds",
+        "budget_profile_id",
+        "budget_receipt_id",
+        "baseline_profile_ids",
+        "promotion_eligible"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "draft_unfrozen",
+            "frozen",
+            "invalidated"
+          ]
+        },
+        "scope": {
+          "const": "incremental_fine_analysis_after_mandatory_whole_record_navigation"
+        },
+        "whole_record_navigation_cost_reported_separately": {
+          "type": "boolean"
+        },
+        "compute_match_required": {
+          "type": "boolean"
+        },
+        "selected_fine_eeg_seconds_per_event": {
+          "$ref": "#/$defs/positiveNumberOrNull"
+        },
+        "selected_tokens_per_event": {
+          "$ref": "#/$defs/positiveNumberOrNull"
+        },
+        "selected_incremental_gpu_seconds_per_eeg_hour": {
+          "$ref": "#/$defs/positiveNumberOrNull"
+        },
+        "selected_action_delta_seconds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
+        },
+        "selected_max_left_seconds": {
+          "$ref": "#/$defs/positiveNumberOrNull"
+        },
+        "selected_max_right_seconds": {
+          "$ref": "#/$defs/positiveNumberOrNull"
+        },
+        "budget_profile_id": {
+          "$ref": "#/$defs/stringOrNull"
+        },
+        "budget_receipt_id": {
+          "$ref": "#/$defs/stringOrNull"
+        },
+        "baseline_profile_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "promotion_eligible": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "termQualification": {
+      "type": "object",
+      "required": [
+        "state",
+        "ontology_registry_path",
+        "ontology_registry_sha256",
+        "report_eligible_term_allowlist",
+        "candidate_only_term_allowlist",
+        "forbidden_surface_terms",
+        "term_qualification_receipt_ids",
+        "report_eligible_event_outcome_allowlist",
+        "candidate_or_limitation_event_outcomes",
+        "promotion_eligible"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "no_terms_qualified",
+            "qualified",
+            "invalidated"
+          ]
+        },
+        "ontology_registry_path": {
+          "$ref": "#/$defs/stringOrNull"
+        },
+        "ontology_registry_sha256": {
+          "$ref": "#/$defs/sha256OrNull"
+        },
+        "report_eligible_term_allowlist": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "candidate_only_term_allowlist": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "forbidden_surface_terms": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "term_qualification_receipt_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "report_eligible_event_outcome_allowlist": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "candidate_or_limitation_event_outcomes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "promotion_eligible": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "endpoint": {
+      "type": "object",
+      "required": [
+        "endpoint_id",
+        "role",
+        "title",
+        "direction",
+        "reference_tier",
+        "formula_version",
+        "analysis_profile_id",
+        "status",
+        "estimable",
+        "requires_complete_opportunity_gold"
+      ],
+      "properties": {
+        "endpoint_id": {
+          "$ref": "#/$defs/id"
+        },
+        "role": {
+          "enum": [
+            "safety_gate",
+            "primary",
+            "key_secondary",
+            "exploratory"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "direction": {
+          "enum": [
+            "maximize",
+            "minimize",
+            "equal_exactly"
+          ]
+        },
+        "reference_tier": {
+          "enum": [
+            "machine_contract",
+            "public_reference_seizure_intervals",
+            "independent_eeg_expert_atomic_reference",
+            "independent_eeg_expert_reader_study",
+            "post_freeze_physician_label_agreement",
+            "paired_complete_physician_report",
+            "not_applicable"
+          ]
+        },
+        "formula_version": {
+          "$ref": "#/$defs/stringOrNull"
+        },
+        "analysis_profile_id": {
+          "$ref": "#/$defs/stringOrNull"
+        },
+        "status": {
+          "enum": [
+            "draft_not_estimable",
+            "frozen_estimable",
+            "not_estimable"
+          ]
+        },
+        "estimable": {
+          "type": "boolean"
+        },
+        "requires_complete_opportunity_gold": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "multiplicity": {
+      "type": "object",
+      "required": [
+        "method",
+        "familywise_alpha",
+        "analysis_plan_sha256"
+      ],
+      "properties": {
+        "method": {
+          "$ref": "#/$defs/stringOrNull"
+        },
+        "familywise_alpha": {
+          "oneOf": [
+            {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "analysis_plan_sha256": {
+          "$ref": "#/$defs/sha256OrNull"
+        }
+      },
+      "additionalProperties": false
+    },
+    "endpointHierarchy": {
+      "type": "object",
+      "required": [
+        "state",
+        "independent_unit",
+        "safety_gates",
+        "primary",
+        "key_secondary",
+        "exploratory",
+        "multiplicity"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "draft_unfrozen",
+            "frozen",
+            "invalidated"
+          ]
+        },
+        "independent_unit": {
+          "const": "patient"
+        },
+        "safety_gates": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/endpoint"
+          }
+        },
+        "primary": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
+          "items": {
+            "$ref": "#/$defs/endpoint"
+          }
+        },
+        "key_secondary": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/endpoint"
+          }
+        },
+        "exploratory": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/endpoint"
+          }
+        },
+        "multiplicity": {
+          "$ref": "#/$defs/multiplicity"
+        }
+      },
+      "additionalProperties": false
+    },
+    "promotionGate": {
+      "type": "object",
+      "required": [
+        "gate_id",
+        "status",
+        "passed",
+        "required_receipt_kinds",
+        "evidence_receipt_ids",
+        "evaluated_against_manifest_id",
+        "evaluator_code_sha256",
+        "evaluated_at"
+      ],
+      "properties": {
+        "gate_id": {
+          "$ref": "#/$defs/id"
+        },
+        "status": {
+          "enum": [
+            "not_evaluated",
+            "failed",
+            "passed"
+          ]
+        },
+        "passed": {
+          "type": "boolean"
+        },
+        "required_receipt_kinds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "evidence_receipt_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "evaluated_against_manifest_id": {
+          "$ref": "#/$defs/stringOrNull"
+        },
+        "evaluator_code_sha256": {
+          "$ref": "#/$defs/sha256OrNull"
+        },
+        "evaluated_at": {
+          "$ref": "#/$defs/dateTimeOrNull"
+        }
+      },
+      "additionalProperties": false
+    },
+    "productionAuthorization": {
+      "type": "object",
+      "required": [
+        "requested",
+        "authorized",
+        "production_route_connected",
+        "authorization_receipt_id"
+      ],
+      "properties": {
+        "requested": {
+          "type": "boolean"
+        },
+        "authorized": {
+          "type": "boolean"
+        },
+        "production_route_connected": {
+          "type": "boolean"
+        },
+        "authorization_receipt_id": {
+          "$ref": "#/$defs/stringOrNull"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "schema_version": "eeg_scalp_region_hierarchy_v2",
+  "laterality": ["left", "right", "bilateral", "midline", "indeterminate", "not_assessable"],
+  "distribution": [
+    "focal",
+    "regional",
+    "hemispheric",
+    "multifocal",
+    "bilateral_independent",
+    "generalized",
+    "focal_to_bilateral",
+    "scalp_negative_or_no_clear_correlate",
+    "indeterminate"
+  ],
+  "regions": [
+    {"id": "frontal", "parent": null},
+    {"id": "frontopolar", "parent": "frontal"},
+    {"id": "anterior_frontal", "parent": "frontal"},
+    {"id": "frontocentral", "parent": "frontal"},
+    {"id": "frontotemporal", "parent": null},
+    {"id": "temporal", "parent": null},
+    {"id": "anterior_temporal", "parent": "temporal"},
+    {"id": "mid_temporal", "parent": "temporal"},
+    {"id": "posterior_temporal", "parent": "temporal"},
+    {"id": "inferior_temporal", "parent": "temporal"},
+    {"id": "central", "parent": null},
+    {"id": "centrotemporal", "parent": null},
+    {"id": "parietal", "parent": null},
+    {"id": "occipital", "parent": null},
+    {"id": "posterior_quadrant", "parent": null},
+    {"id": "parasagittal", "parent": null},
+    {"id": "hemispheric", "parent": null},
+    {"id": "multilobar", "parent": null},
+    {"id": "indeterminate", "parent": null}
+  ],
+  "spatial_granularity": ["derivation", "electrode_set", "scalp_region", "hemisphere", "clinical_zone"],
+  "rules": [
+    "generalized_is_a_distribution_not_a_region_or_laterality",
+    "bilateral_does_not_imply_generalized",
+    "a_bipolar_derivation_must_not_be_serialized_as_a_single_electrode",
+    "region_output_requires_laterality_distribution_and_granularity",
+    "missing_coverage_must_be_not_assessable_not_negative"
+  ]
+}

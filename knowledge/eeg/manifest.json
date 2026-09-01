@@ -1,0 +1,93 @@
+{
+  "schema_version": "eeg_external_knowledge_manifest_v2",
+  "knowledge_version": "2.0.0-draft",
+  "created_on": "2026-08-29",
+  "status": "research_review_required",
+  "language": ["zh-CN", "en"],
+  "scope": {
+    "included": [
+      "general_eeg_terminology",
+      "scalp_eeg_pattern_interpretation",
+      "scalp_visible_ictal_onset_localization_boundaries",
+      "soz_ez_conceptual_boundaries",
+      "differential_diagnosis_rules",
+      "evidence_grounded_reporting_language",
+      "source_provenance"
+    ],
+    "excluded": [
+      "patient_specific_facts",
+      "patient_labels_or_ground_truth",
+      "model_architecture_or_loss_functions",
+      "training_or_calibration_parameters",
+      "project_paths_or_checkpoint_identifiers",
+      "dataset_specific_target_conversion",
+      "free_form_system_prompts",
+      "treatment_or_surgical_recommendations"
+    ]
+  },
+  "layers": {
+    "domain": ["ontology", "terminology", "annotation", "profiles"],
+    "knowledge_units": ["cards"],
+    "safety_policy": ["reasoning", "reporting"],
+    "provenance": ["provenance", "knowledge_base.jsonl"],
+    "contracts": ["schemas"]
+  },
+  "active_entrypoints": {
+    "semantic_layers": "ontology/semantic_layers.json",
+    "region_hierarchy": "ontology/region_hierarchy.json",
+    "clinical_zones": "ontology/clinical_zones.json",
+    "relations": "ontology/relations.json",
+    "electrode_aliases": "terminology/electrode_aliases.json",
+    "legacy_terms": "terminology/legacy_terms.json",
+    "epistemic_states": "annotation/epistemic_states.json",
+    "provenance_sources": "annotation/provenance_sources.json",
+    "routine_profile": "profiles/routine_long_term_monitoring.json",
+    "critical_care_profile": "profiles/critical_care_acns_2021.json",
+    "pediatric_profile": "profiles/pediatric.json",
+    "neonatal_profile": "profiles/neonatal.json",
+    "knowledge_cards": "cards/core_safety_cards.jsonl",
+    "inference_rules": "reasoning/inference_rules.json",
+    "evidence_roles": "reasoning/evidence_roles.json",
+    "grounding_rules": "reasoning/grounding_rules.json",
+    "claim_policy": "reporting/claim_policy.json",
+    "source_registry": "provenance/source_registry.json",
+    "source_passages": "knowledge_base.jsonl"
+  },
+  "schemas": {
+    "knowledge_card": "schemas/knowledge_card.schema.json",
+    "source_passage": "schemas/source_passage.schema.json",
+    "knowledge_selection_receipt": "schemas/knowledge_selection_receipt.schema.json"
+  },
+  "content_sha256": {
+    "ontology/semantic_layers.json": "b3a572ce237dfae7c3242e6263bc886d4cf0df477d46637c44b2ee6719b9e909",
+    "ontology/region_hierarchy.json": "5179e428c4b4ede5b3a13487ea90e8d497b922868ef8ba3cd406f5032947642d",
+    "ontology/clinical_zones.json": "d02939e4873c864d1f6702aa5dc258f0e8ce20249bebce64bfdbbbe601f954a9",
+    "ontology/relations.json": "68f88887b59dee637f9f1cf3d34e8f623963f217890fec87ace9511292fb9fcb",
+    "terminology/electrode_aliases.json": "716972ce3cc3d202ceca4782bdb29e596a3f680e54292dcd6c192c3b88a2f9f0",
+    "terminology/legacy_terms.json": "17b7c0bb4ddbd5988a34751c6f2b29d89bb226db5b386ede386111113b7af8a6",
+    "annotation/epistemic_states.json": "64763a8a911e819540adc588e357a29dd36e577939b331f57592dde54f5cb762",
+    "annotation/provenance_sources.json": "e27233f0fcd576ac3fb8e68966f29b8674ed9f07fc2b75b59ea1ed5027613a69",
+    "profiles/routine_long_term_monitoring.json": "fb8cc8fbb67812250f2986d7dd22b0818c507953fb6fa0ec90bd25615eaca5b2",
+    "profiles/critical_care_acns_2021.json": "3d35e9a6b98568f834e61a36d419cf9f642fbcdb1364af38035498a3701c427e",
+    "profiles/pediatric.json": "47c7bf4d704fbdfcb3e5c8036fa43e1adab2f2a364265068c663ae8aa35bbfc6",
+    "profiles/neonatal.json": "0105d9ba187844e6d6d0492f3b12384d6aebee16a3507d6c9d637880d3d25fcc",
+    "cards/core_safety_cards.jsonl": "7e65fc366c4ee79ff7dc00cf56fc21ef24a672fd1167760c89e320db1c459d16",
+    "reasoning/inference_rules.json": "b6d5b198749aec19cb2bbc86170557cb702e5e4129f0aa2103c89ef86f991dfd",
+    "reasoning/evidence_roles.json": "82a9391ba2cc0219e386290e3b557529dcb130bd543cea9c1196dc2fe98722c4",
+    "reasoning/grounding_rules.json": "9e8220920daf13a4bd10bfb83828969a4d471fa6738582403e172093ab67e79b",
+    "reporting/claim_policy.json": "d5e51b386d4a575d70c5c7dfa4a3be260ae5eb24786d7c80b10c99e072c66712",
+    "provenance/source_registry.json": "85814307fd59ea9e161cdd13e5e21f465b35eeff4077019ab936535dafcd0d1e",
+    "knowledge_base.jsonl": "f788ef331af20954f9468ba63094bcaea6b582964f10ae08fa5910e9e618184d",
+    "schemas/knowledge_card.schema.json": "56f476af9e966954490ad086c8a738b865e7e4c1d4b0c3c5d5e597231a398972",
+    "schemas/source_passage.schema.json": "7d0e920fd60ee397b8fcc5cadb1dbd5ddf59ee8549029e422b4ea31c43fe35a6",
+    "schemas/knowledge_selection_receipt.schema.json": "3fa31303dfcae40692e01dcda4170e95da344893ad6385bb3b8042fe638a5189"
+  },
+  "active_bundle_sha256": "cb593b0a6813aeea50bc0f80ad7da4b7e6d4dce5c6d68bde25d0acf6325532c2",
+  "compatibility": {
+    "legacy_runtime_passage_path": "knowledge_base.jsonl",
+    "legacy_design_document": "LearningEEG_ScalpEEG_SOZ_External_Knowledge_Base_v1.0.md",
+    "legacy_design_document_is_active_knowledge": false
+  },
+  "non_patient_fact_invariant": true,
+  "clinical_deployment_allowed": false
+}

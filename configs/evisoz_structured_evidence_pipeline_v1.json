@@ -1,0 +1,37 @@
+{
+  "schema_version": "evisoz_structured_evidence_pipeline_config_v1",
+  "status": "implementation_only_stage0_training_blocked",
+  "baseline": {
+    "model": "canonical_v29_H_D",
+    "route": "standard19_car_exact_reference",
+    "frozen": true,
+    "residual_default_enabled": false,
+    "residual_requires_stage0_status": "GO"
+  },
+  "input_contract": {
+    "node_token_shape": ["B", 19, "T", 128],
+    "edge_token_shape": ["B", 22, "T", 128],
+    "node_mask_required": true,
+    "edge_mask_required_when_edge_tokens_present": true,
+    "missing_channel_policy": "explicit_mask_only",
+    "interpolation": "independent_ablation_only"
+  },
+  "query_names": ["quality", "morphology", "onset", "spread", "evolution", "localizability"],
+  "motif_names": ["attenuation", "LVFA", "rhythmic_theta", "rhythmic_delta", "rhythmic_alpha_beta", "spike_or_sharp_like", "evolving_rhythm", "artifact", "uncertain"],
+  "qwen_connector": {
+    "model_family": "Qwen3.8-27B",
+    "hidden_size": 5120,
+    "evidence_token_count": 32,
+    "base_model_frozen": true,
+    "visual_tower_frozen": true,
+    "lora_enabled": false,
+    "requires_stage0_go_for_training": true
+  },
+  "safety": {
+    "edge_to_node_endpoint_expansion": false,
+    "text_directly_supervises_localization": false,
+    "knowledge_creates_patient_facts": false,
+    "teacher_runtime_required": false,
+    "negative_residual_allowed": false
+  }
+}

@@ -1,0 +1,443 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/schemas/clinical_eeg_event_findings_eeg_only_v2.schema.json",
+  "title": "Uniform EEG-only event Findings clinical-profile v2 overlay",
+  "description": "Additive event-level observation profile. It does not replace event_eeg_findings_v2; it projects replayable measurements, explicitly qualified research inferences and typed non-evaluability into one uniform row contract.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "event_id",
+    "record_id",
+    "registry_id",
+    "signal_contract",
+    "analysis_window",
+    "provenance",
+    "category_coverage",
+    "observations",
+    "waveform_evidence",
+    "evaluation_binding",
+    "limitations"
+  ],
+  "properties": {
+    "schema_version": {"const": "clinical_eeg_event_findings_eeg_only_v2"},
+    "event_id": {"$ref": "#/$defs/id"},
+    "record_id": {"$ref": "#/$defs/id"},
+    "registry_id": {"const": "CLINICAL-EEG-EVENT-FINDINGS-EEG-ONLY-V2-REGISTRY"},
+    "signal_contract": {"$ref": "#/$defs/signalContract"},
+    "analysis_window": {"$ref": "#/$defs/analysisWindow"},
+    "provenance": {"$ref": "#/$defs/provenance"},
+    "category_coverage": {
+      "type": "array",
+      "minItems": 11,
+      "maxItems": 11,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/category"}
+    },
+    "observations": {
+      "type": "array",
+      "minItems": 11,
+      "items": {"$ref": "#/$defs/observation"}
+    },
+    "waveform_evidence": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/waveformEvidence"}
+    },
+    "evaluation_binding": {"$ref": "#/$defs/evaluationBinding"},
+    "limitations": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/limitation"}
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "unitInterval": {"type": "number", "minimum": 0, "maximum": 1},
+    "interval": {
+      "type": "array",
+      "prefixItems": [
+        {"type": "number"},
+        {"type": "number"}
+      ],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "nullableInterval": {
+      "anyOf": [
+        {"$ref": "#/$defs/interval"},
+        {"type": "null"}
+      ]
+    },
+    "nullableNumber": {
+      "anyOf": [{"type": "number"}, {"type": "null"}]
+    },
+    "nullableId": {
+      "anyOf": [{"$ref": "#/$defs/id"}, {"type": "null"}]
+    },
+    "category": {
+      "enum": [
+        "background_baseline",
+        "waveform_morphology",
+        "spectrum",
+        "rhythm",
+        "temporal_evolution",
+        "spatial_onset_propagation",
+        "amplitude",
+        "synchrony_connectivity",
+        "recovery",
+        "artifact_quality",
+        "reference_stability"
+      ]
+    },
+    "electrode": {
+      "enum": [
+        "FP1", "FP2", "F7", "F3", "FZ", "F4", "F8",
+        "T7", "C3", "CZ", "C4", "T8",
+        "P7", "P3", "PZ", "P4", "P8", "O1", "O2"
+      ]
+    },
+    "region": {
+      "enum": [
+        "left_frontal", "right_frontal", "bifrontal",
+        "left_temporal", "right_temporal", "bitemporal",
+        "left_central", "right_central", "bicentral",
+        "left_parietal", "right_parietal", "biparietal",
+        "left_occipital", "right_occipital", "bioccipital",
+        "left_hemisphere", "right_hemisphere", "bilateral_diffuse",
+        "midline", "multiregional", "indeterminate"
+      ]
+    },
+    "unit": {
+      "enum": [
+        "uV", "uV_per_s", "uV_per_s2", "Hz", "Hz_per_s", "s",
+        "ratio", "normalized_ratio", "relative_power", "count", "score",
+        "not_applicable"
+      ]
+    },
+    "derivedLead": {
+      "type": "object",
+      "required": ["lead_id", "anode", "cathode"],
+      "properties": {
+        "lead_id": {"$ref": "#/$defs/id"},
+        "anode": {"$ref": "#/$defs/electrode"},
+        "cathode": {"$ref": "#/$defs/electrode"}
+      },
+      "additionalProperties": false
+    },
+    "signalContract": {
+      "type": "object",
+      "required": [
+        "electrode_space", "observed_electrodes", "derived_leads",
+        "sampling_rate_hz", "physical_unit", "analysis_references",
+        "missing_electrodes", "imputed_electrodes"
+      ],
+      "properties": {
+        "electrode_space": {"enum": ["common17", "standard19"]},
+        "observed_electrodes": {
+          "type": "array",
+          "minItems": 17,
+          "maxItems": 19,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/electrode"}
+        },
+        "derived_leads": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/derivedLead"}
+        },
+        "sampling_rate_hz": {"type": "number", "exclusiveMinimum": 0},
+        "physical_unit": {"const": "uV"},
+        "analysis_references": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"enum": ["native_referential", "common_average", "tcp_bipolar", "laplacian"]}
+        },
+        "highpass_hz": {"$ref": "#/$defs/nullableNumber"},
+        "lowpass_hz": {"$ref": "#/$defs/nullableNumber"},
+        "line_frequency_hz": {"anyOf": [{"enum": [50, 60]}, {"type": "null"}]},
+        "missing_electrodes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/electrode"}
+        },
+        "imputed_electrodes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/electrode"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "analysisWindow": {
+      "type": "object",
+      "required": [
+        "recording_duration_seconds", "navigation_anchor_seconds",
+        "query_interval_seconds", "left_censored", "right_censored",
+        "anchor_semantics"
+      ],
+      "properties": {
+        "recording_duration_seconds": {"type": "number", "exclusiveMinimum": 0},
+        "navigation_anchor_seconds": {"type": "number", "minimum": 0},
+        "query_interval_seconds": {"$ref": "#/$defs/interval"},
+        "left_censored": {"type": "boolean"},
+        "right_censored": {"type": "boolean"},
+        "anchor_semantics": {
+          "enum": [
+            "detector_navigation_only",
+            "oracle_onset_evaluation_only",
+            "signal_reestimated_candidate",
+            "technical_support_midpoint_navigation_only"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "inferenceFirewall": {
+      "type": "object",
+      "required": [
+        "eeg_samples_used", "edf_annotations_used", "spreadsheet_used",
+        "doctor_text_used", "clinical_metadata_used", "video_or_behavior_used",
+        "sleep_stage_used", "provocation_used", "ecg_emg_eog_used", "llm_used"
+      ],
+      "properties": {
+        "eeg_samples_used": {"const": true},
+        "edf_annotations_used": {"const": false},
+        "spreadsheet_used": {"const": false},
+        "doctor_text_used": {"const": false},
+        "clinical_metadata_used": {"const": false},
+        "video_or_behavior_used": {"const": false},
+        "sleep_stage_used": {"const": false},
+        "provocation_used": {"const": false},
+        "ecg_emg_eog_used": {"const": false},
+        "llm_used": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "producer": {
+      "type": "object",
+      "required": ["producer_id", "version", "artifact_sha256"],
+      "properties": {
+        "producer_id": {"$ref": "#/$defs/id"},
+        "version": {"$ref": "#/$defs/id"},
+        "artifact_sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "additionalProperties": false
+    },
+    "provenance": {
+      "type": "object",
+      "required": [
+        "canonical_signal_sha256", "preprocess_receipt_id", "producers",
+        "inference_firewall", "prediction_frozen_before_reference_join"
+      ],
+      "properties": {
+        "canonical_signal_sha256": {"$ref": "#/$defs/sha256"},
+        "preprocess_receipt_id": {"$ref": "#/$defs/id"},
+        "producers": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/producer"}
+        },
+        "inference_firewall": {"$ref": "#/$defs/inferenceFirewall"},
+        "prediction_frozen_before_reference_join": {"const": true},
+        "source_event_findings_v2_id": {"$ref": "#/$defs/nullableId"}
+      },
+      "additionalProperties": false
+    },
+    "temporalSupport": {
+      "type": "object",
+      "required": ["query_interval_seconds", "evidence_interval_seconds", "resolution_seconds"],
+      "properties": {
+        "query_interval_seconds": {"$ref": "#/$defs/interval"},
+        "evidence_interval_seconds": {"$ref": "#/$defs/nullableInterval"},
+        "resolution_seconds": {"type": "number", "exclusiveMinimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "spatialSupport": {
+      "type": "object",
+      "required": ["electrodes", "derived_lead_ids", "regions", "laterality", "spatial_scope"],
+      "properties": {
+        "electrodes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/electrode"}
+        },
+        "derived_lead_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/id"}
+        },
+        "regions": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/region"}
+        },
+        "laterality": {"enum": ["left", "right", "bilateral", "midline", "indeterminate", "not_applicable"]},
+        "spatial_scope": {"enum": ["electrode", "whole_bipolar_lead", "region", "global", "none"]}
+      },
+      "additionalProperties": false
+    },
+    "measurement": {
+      "type": "object",
+      "required": [
+        "value_type", "value", "unit_id", "dimension_labels",
+        "baseline_relation", "baseline_interval_seconds"
+      ],
+      "properties": {
+        "value_type": {"enum": ["scalar", "range", "vector", "categorical", "none"]},
+        "value": {
+          "anyOf": [
+            {"type": "number"},
+            {"type": "string", "minLength": 1, "maxLength": 128},
+            {"type": "array", "minItems": 1, "items": {"type": "number"}},
+            {"type": "null"}
+          ]
+        },
+        "unit_id": {"$ref": "#/$defs/unit"},
+        "dimension_labels": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/id"}
+        },
+        "baseline_relation": {"enum": ["absolute", "relative_to_local_baseline", "delta_from_baseline", "not_applicable"]},
+        "baseline_interval_seconds": {"$ref": "#/$defs/nullableInterval"}
+      },
+      "additionalProperties": false
+    },
+    "quality": {
+      "type": "object",
+      "required": ["status", "usable_fraction", "artifact_overlap_fraction", "reason_codes"],
+      "properties": {
+        "status": {"enum": ["passed", "limited", "failed", "not_evaluable"]},
+        "usable_fraction": {"$ref": "#/$defs/unitInterval"},
+        "artifact_overlap_fraction": {"$ref": "#/$defs/unitInterval"},
+        "reason_codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/id"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "confidence": {
+      "type": "object",
+      "required": ["score", "semantics", "calibration_receipt_id"],
+      "properties": {
+        "score": {"anyOf": [{"$ref": "#/$defs/unitInterval"}, {"type": "null"}]},
+        "semantics": {"enum": ["measurement_repeatability", "uncalibrated_score", "calibrated_probability", "not_available"]},
+        "calibration_receipt_id": {"$ref": "#/$defs/nullableId"}
+      },
+      "additionalProperties": false
+    },
+    "sourceBinding": {
+      "type": "object",
+      "required": ["producer_id", "maturity", "source_evidence_ids", "sensitivity_receipt_id"],
+      "properties": {
+        "producer_id": {"$ref": "#/$defs/id"},
+        "maturity": {"enum": ["replayable_measurement", "research_proxy", "unavailable_unqualified"]},
+        "source_evidence_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/id"}
+        },
+        "sensitivity_receipt_id": {"$ref": "#/$defs/nullableId"}
+      },
+      "additionalProperties": false
+    },
+    "observation": {
+      "type": "object",
+      "required": [
+        "observation_id", "category", "metric_id", "evidence_level",
+        "assertion_status", "temporal_support", "spatial_support", "measurement",
+        "quality", "confidence", "source_binding", "waveform_evidence_ids",
+        "surface_policy", "reason_codes"
+      ],
+      "properties": {
+        "observation_id": {"$ref": "#/$defs/id"},
+        "category": {"$ref": "#/$defs/category"},
+        "metric_id": {"$ref": "#/$defs/id"},
+        "evidence_level": {"enum": ["direct_measurement", "algorithmic_inference", "not_evaluable"]},
+        "assertion_status": {"enum": ["observed", "candidate_present", "candidate_absent_with_opportunity", "uncertain", "not_evaluable"]},
+        "temporal_support": {"$ref": "#/$defs/temporalSupport"},
+        "spatial_support": {"$ref": "#/$defs/spatialSupport"},
+        "measurement": {"$ref": "#/$defs/measurement"},
+        "quality": {"$ref": "#/$defs/quality"},
+        "confidence": {"$ref": "#/$defs/confidence"},
+        "source_binding": {"$ref": "#/$defs/sourceBinding"},
+        "waveform_evidence_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/id"}
+        },
+        "surface_policy": {"enum": ["numeric_measurement_only", "research_candidate_only", "technical_limitation_only", "withhold"]},
+        "reason_codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/id"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "waveformEvidence": {
+      "type": "object",
+      "required": [
+        "waveform_evidence_id", "canonical_signal_sha256", "interval_seconds",
+        "electrodes", "derived_lead_ids", "reference", "sampling_rate_hz",
+        "artifact_uri", "artifact_sha256", "raw_sample_dependency_id"
+      ],
+      "properties": {
+        "waveform_evidence_id": {"$ref": "#/$defs/id"},
+        "canonical_signal_sha256": {"$ref": "#/$defs/sha256"},
+        "interval_seconds": {"$ref": "#/$defs/interval"},
+        "electrodes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/electrode"}
+        },
+        "derived_lead_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/id"}
+        },
+        "reference": {"enum": ["native_referential", "common_average", "tcp_bipolar", "laplacian"]},
+        "sampling_rate_hz": {"type": "number", "exclusiveMinimum": 0},
+        "artifact_uri": {"type": "string", "minLength": 1, "maxLength": 1024},
+        "artifact_sha256": {"$ref": "#/$defs/sha256"},
+        "raw_sample_dependency_id": {"$ref": "#/$defs/id"}
+      },
+      "additionalProperties": false
+    },
+    "evaluationBinding": {
+      "type": "object",
+      "required": [
+        "reference_join_status", "join_stage", "reference_used_for_inference",
+        "prediction_payload_sha256", "reference_artifact_sha256",
+        "szcore_event_match_id"
+      ],
+      "properties": {
+        "reference_join_status": {"enum": ["not_joined", "postfreeze_joined"]},
+        "join_stage": {"enum": ["none", "post_prediction_freeze"]},
+        "reference_used_for_inference": {"const": false},
+        "prediction_payload_sha256": {"$ref": "#/$defs/sha256"},
+        "reference_artifact_sha256": {"anyOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]},
+        "szcore_event_match_id": {"$ref": "#/$defs/nullableId"}
+      },
+      "additionalProperties": false
+    },
+    "limitation": {
+      "type": "object",
+      "required": ["code", "scope", "text_zh"],
+      "properties": {
+        "code": {"$ref": "#/$defs/id"},
+        "scope": {"enum": ["signal", "window", "quality", "finding", "spatial", "clinical_claim", "evaluation"]},
+        "text_zh": {"type": "string", "minLength": 1, "maxLength": 500}
+      },
+      "additionalProperties": false
+    }
+  }
+}

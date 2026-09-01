@@ -1,0 +1,480 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/schemas/clinical_eeg_event_findings_denominator_receipt_v1.schema.json",
+  "title": "Independent per-event EEG Findings opportunity-denominator receipt",
+  "description": "A candidate-blind, host-trusted, exact-replay receipt over the closed 28-core plus 12-child Findings roster. Cells are either event-global sentinels or explicitly typed physical EEG units, and evaluable time is a gap-preserving union of half-open recording-relative intervals. This receipt proves denominator accounting only; it does not prove clinical correctness or authorize a report claim by itself.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "receipt_id",
+    "method_id",
+    "event_id",
+    "record_id",
+    "canonical_signal_sha256",
+    "policy_id",
+    "policy_sha256",
+    "atom_roster_policy_sha256",
+    "source_inventory_id",
+    "source_inventory_sha256",
+    "expected_unit_inventory_sha256",
+    "typed_expected_units",
+    "replay_binding",
+    "cells",
+    "summary",
+    "source_firewall",
+    "receipt_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "clinical_eeg_event_findings_denominator_receipt_v1"
+    },
+    "receipt_id": {
+      "$ref": "#/$defs/id"
+    },
+    "method_id": {
+      "const": "EEG-ONLY-INDEPENDENT-EVENT-FINDINGS-DENOMINATOR-V1"
+    },
+    "event_id": {
+      "$ref": "#/$defs/id"
+    },
+    "record_id": {
+      "$ref": "#/$defs/id"
+    },
+    "canonical_signal_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "policy_id": {
+      "const": "CLINICAL-EEG-EVENT-FINDINGS-DENOMINATOR-POLICY-V1"
+    },
+    "policy_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "atom_roster_policy_sha256": {
+      "const": "65fb378cae956a9c1f96630dc5f90ae9eb4313bfa3f0b89da13f872d0bd47a0d"
+    },
+    "source_inventory_id": {
+      "$ref": "#/$defs/id"
+    },
+    "source_inventory_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "expected_unit_inventory_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "typed_expected_units": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/physicalUnit"
+      }
+    },
+    "replay_binding": {
+      "$ref": "#/$defs/replayBinding"
+    },
+    "cells": {
+      "type": "array",
+      "minItems": 40,
+      "items": {
+        "$ref": "#/$defs/denominatorCell"
+      }
+    },
+    "summary": {
+      "$ref": "#/$defs/summary"
+    },
+    "source_firewall": {
+      "$ref": "#/$defs/sourceFirewall"
+    },
+    "receipt_sha256": {
+      "$ref": "#/$defs/sha256"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "nullableId": {
+      "anyOf": [
+        {"$ref": "#/$defs/id"},
+        {"type": "null"}
+      ]
+    },
+    "nullableSha256": {
+      "anyOf": [
+        {"$ref": "#/$defs/sha256"},
+        {"type": "null"}
+      ]
+    },
+    "scopeId": {
+      "enum": [
+        "event_analysis_window",
+        "background_context",
+        "candidate_emergence_interval",
+        "event_course_interval",
+        "post_event_context",
+        "quality_evaluable_interval"
+      ]
+    },
+    "halfOpenInterval": {
+      "type": "object",
+      "description": "Half-open recording-relative interval [start, stop). Semantic validation must require finite start < stop and canonical ordering/non-overlap within each union.",
+      "required": ["start", "stop"],
+      "properties": {
+        "start": {"type": "number", "minimum": 0},
+        "stop": {"type": "number", "exclusiveMinimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "intervalUnion": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/halfOpenInterval"
+      }
+    },
+    "physicalUnit": {
+      "type": "object",
+      "required": ["unit_type", "unit_id", "unit_key"],
+      "properties": {
+        "unit_type": {
+          "enum": ["electrode", "lead"]
+        },
+        "unit_id": {
+          "$ref": "#/$defs/id"
+        },
+        "unit_key": {
+          "$ref": "#/$defs/id"
+        }
+      },
+      "additionalProperties": false
+    },
+    "eventGlobalUnit": {
+      "type": "object",
+      "required": ["unit_type", "unit_id", "unit_key"],
+      "properties": {
+        "unit_type": {"const": "event"},
+        "unit_id": {"const": "GLOBAL"},
+        "unit_key": {"const": "event:GLOBAL"}
+      },
+      "additionalProperties": false
+    },
+    "cellUnit": {
+      "oneOf": [
+        {"$ref": "#/$defs/physicalUnit"},
+        {"$ref": "#/$defs/eventGlobalUnit"}
+      ]
+    },
+    "replayBinding": {
+      "type": "object",
+      "required": [
+        "enumerator_code_sha256",
+        "trusted_input_manifest_sha256",
+        "event_scope_receipt_id",
+        "event_scope_receipt_sha256",
+        "unit_inventory_receipt_id",
+        "unit_inventory_receipt_sha256",
+        "technical_failure_ledger_receipt_id",
+        "technical_failure_ledger_receipt_sha256",
+        "host_trust_required",
+        "exact_replay_required",
+        "event_findings_payload_excluded"
+      ],
+      "properties": {
+        "enumerator_code_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "trusted_input_manifest_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "event_scope_receipt_id": {
+          "$ref": "#/$defs/id"
+        },
+        "event_scope_receipt_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "unit_inventory_receipt_id": {
+          "$ref": "#/$defs/id"
+        },
+        "unit_inventory_receipt_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "technical_failure_ledger_receipt_id": {
+          "$ref": "#/$defs/nullableId"
+        },
+        "technical_failure_ledger_receipt_sha256": {
+          "$ref": "#/$defs/nullableSha256"
+        },
+        "host_trust_required": {"const": true},
+        "exact_replay_required": {"const": true},
+        "event_findings_payload_excluded": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "denominatorCell": {
+      "type": "object",
+      "required": [
+        "cell_key",
+        "roster_item_kind",
+        "roster_item_id",
+        "scope_id",
+        "unit",
+        "required_interval_union",
+        "evaluable_interval_union",
+        "required_seconds",
+        "evaluable_seconds",
+        "coverage_fraction",
+        "opportunity_status",
+        "processing_disposition",
+        "capability_receipt_ids",
+        "sensitivity_receipt_ids",
+        "source_receipt_ids",
+        "technical_failure_receipt_ids",
+        "absence_authorized",
+        "reason_codes",
+        "cell_sha256"
+      ],
+      "properties": {
+        "cell_key": {
+          "$ref": "#/$defs/id"
+        },
+        "roster_item_kind": {
+          "enum": ["core_atom", "child_roster"]
+        },
+        "roster_item_id": {
+          "$ref": "#/$defs/id"
+        },
+        "scope_id": {
+          "$ref": "#/$defs/scopeId"
+        },
+        "unit": {
+          "$ref": "#/$defs/cellUnit"
+        },
+        "required_interval_union": {
+          "$ref": "#/$defs/intervalUnion"
+        },
+        "evaluable_interval_union": {
+          "$ref": "#/$defs/intervalUnion"
+        },
+        "required_seconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "evaluable_seconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "coverage_fraction": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "opportunity_status": {
+          "enum": ["sufficient", "limited", "not_evaluable"]
+        },
+        "processing_disposition": {
+          "enum": ["completed", "technical_failure"]
+        },
+        "capability_receipt_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/id"}
+        },
+        "sensitivity_receipt_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/id"}
+        },
+        "source_receipt_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/id"}
+        },
+        "technical_failure_receipt_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/id"}
+        },
+        "absence_authorized": {
+          "type": "boolean"
+        },
+        "reason_codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/id"}
+        },
+        "cell_sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "opportunity_status": {"const": "sufficient"}
+            },
+            "required": ["opportunity_status"]
+          },
+          "then": {
+            "properties": {
+              "processing_disposition": {"const": "completed"},
+              "evaluable_interval_union": {"minItems": 1},
+              "evaluable_seconds": {"exclusiveMinimum": 0},
+              "coverage_fraction": {"exclusiveMinimum": 0}
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "opportunity_status": {"const": "not_evaluable"}
+            },
+            "required": ["opportunity_status"]
+          },
+          "then": {
+            "properties": {
+              "evaluable_interval_union": {"maxItems": 0},
+              "evaluable_seconds": {"const": 0},
+              "coverage_fraction": {"const": 0},
+              "absence_authorized": {"const": false}
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "processing_disposition": {"const": "technical_failure"}
+            },
+            "required": ["processing_disposition"]
+          },
+          "then": {
+            "properties": {
+              "opportunity_status": {"const": "not_evaluable"},
+              "technical_failure_receipt_ids": {"minItems": 1},
+              "absence_authorized": {"const": false},
+              "reason_codes": {"minItems": 1}
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "absence_authorized": {"const": true}
+            },
+            "required": ["absence_authorized"]
+          },
+          "then": {
+            "properties": {
+              "opportunity_status": {"const": "sufficient"},
+              "processing_disposition": {"const": "completed"},
+              "technical_failure_receipt_ids": {"maxItems": 0}
+            }
+          }
+        }
+      ]
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "expected_roster_item_count",
+        "materialized_roster_item_count",
+        "expected_cell_count",
+        "materialized_cell_count",
+        "expected_event_global_cell_count",
+        "materialized_event_global_cell_count",
+        "expected_typed_unit_cell_count",
+        "materialized_typed_unit_cell_count",
+        "expected_unit_count",
+        "sufficient_count",
+        "limited_count",
+        "not_evaluable_count",
+        "technical_failure_count",
+        "absence_authorized_count",
+        "expected_roster_item_keys_sha256",
+        "materialized_roster_item_keys_sha256",
+        "expected_cell_keys_sha256",
+        "materialized_cell_keys_sha256",
+        "all_expected_roster_items_materialized",
+        "all_expected_cells_materialized",
+        "gap_preserving",
+        "double_counting_allowed",
+        "structural_completeness_only",
+        "item_scope_denominator_only",
+        "term_query_denominator_materialized",
+        "clinical_term_absence_authorized",
+        "clinical_correctness_claimed",
+        "full_report_factuality_claimed"
+      ],
+      "properties": {
+        "expected_roster_item_count": {"const": 40},
+        "materialized_roster_item_count": {"const": 40},
+        "expected_cell_count": {"type": "integer", "minimum": 40},
+        "materialized_cell_count": {"type": "integer", "minimum": 40},
+        "expected_event_global_cell_count": {"type": "integer", "minimum": 1},
+        "materialized_event_global_cell_count": {"type": "integer", "minimum": 1},
+        "expected_typed_unit_cell_count": {"type": "integer", "minimum": 1},
+        "materialized_typed_unit_cell_count": {"type": "integer", "minimum": 1},
+        "expected_unit_count": {"type": "integer", "minimum": 1},
+        "sufficient_count": {"type": "integer", "minimum": 0},
+        "limited_count": {"type": "integer", "minimum": 0},
+        "not_evaluable_count": {"type": "integer", "minimum": 0},
+        "technical_failure_count": {"type": "integer", "minimum": 0},
+        "absence_authorized_count": {"type": "integer", "minimum": 0},
+        "expected_roster_item_keys_sha256": {"$ref": "#/$defs/sha256"},
+        "materialized_roster_item_keys_sha256": {"$ref": "#/$defs/sha256"},
+        "expected_cell_keys_sha256": {"$ref": "#/$defs/sha256"},
+        "materialized_cell_keys_sha256": {"$ref": "#/$defs/sha256"},
+        "all_expected_roster_items_materialized": {"const": true},
+        "all_expected_cells_materialized": {"const": true},
+        "gap_preserving": {"const": true},
+        "double_counting_allowed": {"const": false},
+        "structural_completeness_only": {"const": true},
+        "item_scope_denominator_only": {"const": true},
+        "term_query_denominator_materialized": {"const": false},
+        "clinical_term_absence_authorized": {"const": false},
+        "clinical_correctness_claimed": {"const": false},
+        "full_report_factuality_claimed": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "sourceFirewall": {
+      "type": "object",
+      "required": [
+        "event_findings_payload_used",
+        "findings_candidates_used",
+        "edf_annotations_used",
+        "spreadsheet_used",
+        "doctor_labels_used",
+        "clinical_text_used",
+        "patient_metadata_used",
+        "video_used",
+        "sleep_staging_used",
+        "provocation_used",
+        "ecg_emg_eog_used"
+      ],
+      "properties": {
+        "event_findings_payload_used": {"const": false},
+        "findings_candidates_used": {"const": false},
+        "edf_annotations_used": {"const": false},
+        "spreadsheet_used": {"const": false},
+        "doctor_labels_used": {"const": false},
+        "clinical_text_used": {"const": false},
+        "patient_metadata_used": {"const": false},
+        "video_used": {"const": false},
+        "sleep_staging_used": {"const": false},
+        "provocation_used": {"const": false},
+        "ecg_emg_eog_used": {"const": false}
+      },
+      "additionalProperties": false
+    }
+  }
+}

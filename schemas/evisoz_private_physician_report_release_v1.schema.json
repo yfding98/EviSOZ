@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evisoz_private_physician_report_release_v1.schema.json",
+  "title": "EviSOZ independently released physician-authored report text v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "release_id",
+    "candidate_bundle_ref",
+    "authorization",
+    "rows",
+    "counts",
+    "permissions",
+    "receipt_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "evisoz_private_physician_report_release_v1"},
+    "release_id": {"type": "string", "pattern": "^EVISOZ-PRREL-[0-9a-f]{24}$"},
+    "candidate_bundle_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+    "authorization": {"$ref": "#/$defs/authorization"},
+    "rows": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/releaseRow"}
+    },
+    "counts": {"$ref": "#/$defs/counts"},
+    "permissions": {
+      "const": {
+        "physician_authored_text_released": true,
+        "qwen_text_training_allowed": true,
+        "locked_language_evaluation_allowed": true,
+        "report_text_can_supervise_localization": false,
+        "generated_text_is_not_physician_authored": true,
+        "raw_patient_identifiers_stored": false
+      }
+    },
+    "receipt_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "artifactRef": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+    "authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorization_ref",
+        "patient_roster_sha256",
+        "allowed_evisoz_roles",
+        "approved_purposes",
+        "manual_review_required",
+        "report_text_release_authorized",
+        "training_authorized",
+        "raw_patient_identifiers_stored",
+        "report_text_can_supervise_localization"
+      ],
+      "properties": {
+        "authorization_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+        "patient_roster_sha256": {"$ref": "#/$defs/sha256"},
+        "allowed_evisoz_roles": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"enum": ["development_cv", "locked_test"]}
+        },
+        "approved_purposes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"enum": ["qwen_text_training", "language_evaluation"]}
+        },
+        "manual_review_required": {"const": true},
+        "report_text_release_authorized": {"const": true},
+        "training_authorized": {"type": "boolean"},
+        "raw_patient_identifiers_stored": {"const": false},
+        "report_text_can_supervise_localization": {"const": false}
+      }
+    },
+    "manualReview": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "phi_scan_replayed",
+        "clinical_scope_confirmed",
+        "release_decision",
+        "review_receipt_ref"
+      ],
+      "properties": {
+        "status": {"const": "passed"},
+        "phi_scan_replayed": {"const": true},
+        "clinical_scope_confirmed": {"const": true},
+        "release_decision": {"const": "approved"},
+        "review_receipt_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"}
+      }
+    },
+    "releaseRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_id",
+        "report_id",
+        "linkage_group_id",
+        "evisoz_role",
+        "outer_holdout_fold",
+        "purpose",
+        "text_ref",
+        "relative_text_path",
+        "manual_review"
+      ],
+      "properties": {
+        "candidate_id": {"type": "string", "pattern": "^EVISOZ-DEID-[0-9a-f]{24}$"},
+        "report_id": {"type": "string", "pattern": "^EVISOZ-PRPT-[0-9a-f]{24}$"},
+        "linkage_group_id": {"type": "string", "pattern": "^EVISOZ-PAT-[A-Za-z0-9._:-]+$"},
+        "evisoz_role": {"enum": ["development_cv", "locked_test"]},
+        "outer_holdout_fold": {"type": ["integer", "null"], "minimum": 0},
+        "purpose": {"enum": ["qwen_text_training", "language_evaluation"]},
+        "text_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+        "relative_text_path": {"type": "string", "pattern": "^candidates/EVISOZ-DEID-[0-9a-f]{24}\\.txt$"},
+        "manual_review": {"$ref": "#/$defs/manualReview"}
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "released_row_count",
+        "development_qwen_training_count",
+        "development_language_evaluation_count",
+        "locked_language_evaluation_count"
+      ],
+      "properties": {
+        "released_row_count": {"type": "integer", "minimum": 1},
+        "development_qwen_training_count": {"type": "integer", "minimum": 0},
+        "development_language_evaluation_count": {"type": "integer", "minimum": 0},
+        "locked_language_evaluation_count": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}

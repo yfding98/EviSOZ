@@ -1,0 +1,368 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/schemas/clinical_eeg_record_event_aggregate_v1_1.schema.json",
+  "title": "EEG-only record event aggregate v1.1",
+  "description": "One content-bound recording sibling for qualified-event count, qualified ictal-pattern burden bounds and inter-event interval distribution. It consumes validated EEG-only event_eeg_findings_v3 graphs and never embeds external labels or report text.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "aggregate_id",
+    "aggregate_status",
+    "owner",
+    "registry_binding",
+    "source_event_roster_sha256",
+    "source_event_bindings",
+    "event_roster",
+    "modeled_opportunity",
+    "qualified_ictal_pattern_burden",
+    "inter_event_intervals",
+    "query_results",
+    "source_firewall",
+    "authorization",
+    "aggregate_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "clinical_eeg_record_event_aggregate_v1_1"},
+    "aggregate_id": {"type": "string", "pattern": "^RECEVTAGG-[a-f0-9]{24}$"},
+    "aggregate_status": {"enum": ["available", "limited", "not_evaluable"]},
+    "owner": {"$ref": "#/$defs/owner"},
+    "registry_binding": {"$ref": "#/$defs/registryBinding"},
+    "source_event_roster_sha256": {"$ref": "#/$defs/sha256"},
+    "source_event_bindings": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/sourceEventBinding"}
+    },
+    "event_roster": {"$ref": "#/$defs/eventRoster"},
+    "modeled_opportunity": {"$ref": "#/$defs/modeledOpportunity"},
+    "qualified_ictal_pattern_burden": {"$ref": "#/$defs/burden"},
+    "inter_event_intervals": {"$ref": "#/$defs/interEventIntervals"},
+    "query_results": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {"$ref": "#/$defs/queryResult"}
+    },
+    "source_firewall": {"$ref": "#/$defs/sourceFirewall"},
+    "authorization": {"$ref": "#/$defs/authorization"},
+    "aggregate_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "closedInterval": {
+      "type": "array",
+      "prefixItems": [{"type": "number"}, {"type": "number"}],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "owner": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owner_kind",
+        "record_id",
+        "canonical_signal_sha256",
+        "recording_duration_seconds",
+        "event_scoped",
+        "copied_into_event_cards"
+      ],
+      "properties": {
+        "owner_kind": {"const": "recording"},
+        "record_id": {"$ref": "#/$defs/identifier"},
+        "canonical_signal_sha256": {"$ref": "#/$defs/sha256"},
+        "recording_duration_seconds": {"type": "number", "exclusiveMinimum": 0},
+        "event_scoped": {"const": false},
+        "copied_into_event_cards": {"const": false}
+      }
+    },
+    "registryBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "base_registry_id",
+        "base_registry_sha256",
+        "extension_registry_id",
+        "extension_registry_sha256",
+        "record_destination_id",
+        "query_ids"
+      ],
+      "properties": {
+        "base_registry_id": {"$ref": "#/$defs/identifier"},
+        "base_registry_sha256": {"$ref": "#/$defs/sha256"},
+        "extension_registry_id": {"$ref": "#/$defs/identifier"},
+        "extension_registry_sha256": {"$ref": "#/$defs/sha256"},
+        "record_destination_id": {"const": "R01_RECORD_EVENT_ROSTER_AND_BURDEN"},
+        "query_ids": {
+          "type": "array",
+          "prefixItems": [
+            {"const": "MEC11-RECORD-DETECTED-QUALIFIED-EVENT-COUNT"},
+            {"const": "MEC11-RECORD-INTER-EVENT-INTERVAL-DISTRIBUTION"},
+            {"const": "MEC11-RECORD-QUALIFIED-ICTAL-PATTERN-BURDEN"}
+          ],
+          "minItems": 3,
+          "maxItems": 3
+        }
+      }
+    },
+    "sourceEventBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_id",
+        "source_event_findings_v3_sha256",
+        "normalized_event_outcome",
+        "event_qualification_status",
+        "final_interval",
+        "merge_split_status",
+        "qualified_for_record_aggregate",
+        "complete_uncensored_boundary_support"
+      ],
+      "properties": {
+        "event_id": {"$ref": "#/$defs/identifier"},
+        "source_event_findings_v3_sha256": {"$ref": "#/$defs/sha256"},
+        "normalized_event_outcome": {
+          "enum": [
+            "qualified_electrographic_seizure",
+            "qualified_electrographic_event",
+            "candidate_only",
+            "obscured_by_artifact",
+            "not_possible_to_determine"
+          ]
+        },
+        "event_qualification_status": {
+          "enum": [
+            "unqualified_candidate",
+            "qualified_electrographic_event",
+            "qualified_electrographic_seizure",
+            "not_evaluable"
+          ]
+        },
+        "final_interval": {"$ref": "#/$defs/closedInterval"},
+        "merge_split_status": {
+          "enum": [
+            "single_event",
+            "merged",
+            "split",
+            "clustered",
+            "merge_split_uncertain"
+          ]
+        },
+        "qualified_for_record_aggregate": {"type": "boolean"},
+        "complete_uncensored_boundary_support": {"type": "boolean"}
+      }
+    },
+    "eventRoster": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "detector_candidate_count",
+        "raw_qualified_event_count",
+        "candidate_only_count",
+        "uncertain_event_count",
+        "not_evaluable_event_count",
+        "deduplicated_qualified_count_lower",
+        "deduplicated_qualified_count_upper",
+        "deduplication_status",
+        "deduplication_policy_id",
+        "deduplication_sha256",
+        "qualified_event_ids",
+        "boundary_complete_qualified_event_ids",
+        "boundary_incomplete_qualified_event_ids"
+      ],
+      "properties": {
+        "detector_candidate_count": {"type": "integer", "minimum": 0},
+        "raw_qualified_event_count": {"type": "integer", "minimum": 0},
+        "candidate_only_count": {"type": "integer", "minimum": 0},
+        "uncertain_event_count": {"type": "integer", "minimum": 0},
+        "not_evaluable_event_count": {"type": "integer", "minimum": 0},
+        "deduplicated_qualified_count_lower": {"type": "integer", "minimum": 0},
+        "deduplicated_qualified_count_upper": {"type": "integer", "minimum": 0},
+        "deduplication_status": {"enum": ["resolved", "unresolved", "not_applicable"]},
+        "deduplication_policy_id": {"$ref": "#/$defs/identifier"},
+        "deduplication_sha256": {"$ref": "#/$defs/sha256"},
+        "qualified_event_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/identifier"}
+        },
+        "boundary_complete_qualified_event_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/identifier"}
+        },
+        "boundary_incomplete_qualified_event_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/identifier"}
+        }
+      }
+    },
+    "modeledOpportunity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["queried_interval_union", "queried_seconds", "recording_fraction"],
+      "properties": {
+        "queried_interval_union": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/closedInterval"}
+        },
+        "queried_seconds": {"type": "number", "minimum": 0},
+        "recording_fraction": {"type": "number", "minimum": 0, "maximum": 1}
+      }
+    },
+    "burden": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "lower_interval_union",
+        "upper_interval_union",
+        "lower_seconds",
+        "upper_seconds",
+        "lower_recording_fraction",
+        "upper_recording_fraction",
+        "source_event_ids",
+        "incomplete_event_ids",
+        "reason_codes"
+      ],
+      "properties": {
+        "status": {"enum": ["measured", "limited", "not_evaluable"]},
+        "lower_interval_union": {"type": "array", "items": {"$ref": "#/$defs/closedInterval"}},
+        "upper_interval_union": {"type": "array", "items": {"$ref": "#/$defs/closedInterval"}},
+        "lower_seconds": {"type": ["number", "null"], "minimum": 0},
+        "upper_seconds": {"type": ["number", "null"], "minimum": 0},
+        "lower_recording_fraction": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+        "upper_recording_fraction": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+        "source_event_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/identifier"}},
+        "incomplete_event_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/identifier"}},
+        "reason_codes": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/identifier"}}
+      }
+    },
+    "interEventInterval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "from_event_id",
+        "to_event_id",
+        "lower_seconds",
+        "upper_seconds",
+        "relation_status"
+      ],
+      "properties": {
+        "from_event_id": {"$ref": "#/$defs/identifier"},
+        "to_event_id": {"$ref": "#/$defs/identifier"},
+        "lower_seconds": {"type": "number", "minimum": 0},
+        "upper_seconds": {"type": "number", "minimum": 0},
+        "relation_status": {"enum": ["separated", "overlap_possible", "overlap_certain"]}
+      }
+    },
+    "intervalSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["count", "minimum_lower_seconds", "median_lower_seconds", "median_upper_seconds", "maximum_upper_seconds"],
+      "properties": {
+        "count": {"type": "integer", "minimum": 0},
+        "minimum_lower_seconds": {"type": ["number", "null"], "minimum": 0},
+        "median_lower_seconds": {"type": ["number", "null"], "minimum": 0},
+        "median_upper_seconds": {"type": ["number", "null"], "minimum": 0},
+        "maximum_upper_seconds": {"type": ["number", "null"], "minimum": 0}
+      }
+    },
+    "interEventIntervals": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "intervals", "summary", "source_event_ids", "reason_codes"],
+      "properties": {
+        "status": {"enum": ["measured", "limited", "not_evaluable"]},
+        "intervals": {"type": "array", "items": {"$ref": "#/$defs/interEventInterval"}},
+        "summary": {"$ref": "#/$defs/intervalSummary"},
+        "source_event_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/identifier"}},
+        "reason_codes": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/identifier"}}
+      }
+    },
+    "queryResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "query_id",
+        "analysis_unit",
+        "status",
+        "assertion_level",
+        "value_pointer",
+        "source_event_ids",
+        "source_event_findings_v3_sha256s",
+        "evidence_role_ceiling",
+        "reason_codes",
+        "report_promotion_authorized"
+      ],
+      "properties": {
+        "query_id": {"$ref": "#/$defs/identifier"},
+        "analysis_unit": {"const": "recording"},
+        "status": {"enum": ["present", "absent_with_opportunity", "uncertain", "not_evaluable"]},
+        "assertion_level": {"const": "measured"},
+        "value_pointer": {"enum": ["/event_roster", "/inter_event_intervals", "/qualified_ictal_pattern_burden"]},
+        "source_event_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/identifier"}},
+        "source_event_findings_v3_sha256s": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/sha256"}},
+        "evidence_role_ceiling": {"const": "record_aggregation_only"},
+        "reason_codes": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/identifier"}},
+        "report_promotion_authorized": {"const": false}
+      }
+    },
+    "sourceFirewall": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "edf_annotations_used",
+        "spreadsheet_used",
+        "doctor_labels_used",
+        "clinical_reports_used",
+        "patient_metadata_used",
+        "video_or_behavior_used",
+        "sleep_staging_used",
+        "provocation_used",
+        "ecg_emg_eog_used",
+        "qwen_used"
+      ],
+      "properties": {
+        "edf_annotations_used": {"const": false},
+        "spreadsheet_used": {"const": false},
+        "doctor_labels_used": {"const": false},
+        "clinical_reports_used": {"const": false},
+        "patient_metadata_used": {"const": false},
+        "video_or_behavior_used": {"const": false},
+        "sleep_staging_used": {"const": false},
+        "provocation_used": {"const": false},
+        "ecg_emg_eog_used": {"const": false},
+        "qwen_used": {"const": false}
+      }
+    },
+    "authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clinical_correctness_claimed",
+        "cortical_soz_or_ez_claim_authorized",
+        "detector_alarm_count_may_masquerade_as_event_count",
+        "record_aggregate_may_create_onset_support",
+        "late_spread_may_create_onset_support",
+        "qwen_authorized",
+        "report_promotion_authorized"
+      ],
+      "properties": {
+        "clinical_correctness_claimed": {"const": false},
+        "cortical_soz_or_ez_claim_authorized": {"const": false},
+        "detector_alarm_count_may_masquerade_as_event_count": {"const": false},
+        "record_aggregate_may_create_onset_support": {"const": false},
+        "late_spread_may_create_onset_support": {"const": false},
+        "qwen_authorized": {"const": false},
+        "report_promotion_authorized": {"const": false}
+      }
+    }
+  }
+}

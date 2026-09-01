@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/schemas/clinical_eeg_research_soz_selective_calibration_v2.schema.json",
+  "title": "Research scalp-SOZ selective calibration v2 CLI requests",
+  "description": "Strict request schemas for EEG-only prediction freezing, source-dev weak-label import, and externally authorized one-shot source-eval release. Runtime output artifacts are additionally validated by the Python content-hash contracts.",
+  "oneOf": [
+    {"$ref": "#/$defs/freeze_request"},
+    {"$ref": "#/$defs/source_dev_label_request"},
+    {"$ref": "#/$defs/source_eval_release_receipt"}
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "safe_relative_json_path": {
+      "type": "string",
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._:-]+(?:/[A-Za-z0-9._:-]+)*\\.json$"
+    },
+    "c18_electrode": {
+      "enum": [
+        "FP1", "FP2", "F7", "F3", "FZ", "F4", "F8", "T7", "C3",
+        "CZ", "C4", "T8", "P7", "P3", "P4", "P8", "O1", "O2"
+      ]
+    },
+    "freeze_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "dataset_id", "partition", "records"],
+      "properties": {
+        "schema_version": {"const": "research_soz_selective_freeze_request_v2"},
+        "dataset_id": {"$ref": "#/$defs/identifier"},
+        "partition": {
+          "enum": ["source_dev", "source_eval", "deployment_eeg_only"]
+        },
+        "records": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "patient_id",
+              "recording_id",
+              "prediction_relative_path",
+              "strength_relative_path"
+            ],
+            "properties": {
+              "patient_id": {"$ref": "#/$defs/identifier"},
+              "recording_id": {"$ref": "#/$defs/identifier"},
+              "prediction_relative_path": {
+                "$ref": "#/$defs/safe_relative_json_path"
+              },
+              "strength_relative_path": {
+                "$ref": "#/$defs/safe_relative_json_path"
+              }
+            }
+          }
+        }
+      }
+    },
+    "source_dev_label_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "records"],
+      "properties": {
+        "schema_version": {
+          "const": "research_soz_selective_source_dev_weak_label_request_v2"
+        },
+        "records": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "patient_id",
+              "recording_id",
+              "hard_positive_electrodes"
+            ],
+            "properties": {
+              "patient_id": {"$ref": "#/$defs/identifier"},
+              "recording_id": {"$ref": "#/$defs/identifier"},
+              "hard_positive_electrodes": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {"$ref": "#/$defs/c18_electrode"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "source_eval_release_receipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "release_id",
+        "calibrator_content_sha256",
+        "source_eval_prediction_cohort_sha256",
+        "source_eval_label_cohort_sha256",
+        "external_ledger_entry_sha256",
+        "prior_formal_release_count",
+        "one_shot_authorized",
+        "model_and_threshold_selection_complete",
+        "content_sha256"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "research_soz_selective_source_eval_one_shot_release_v2"
+        },
+        "release_id": {"$ref": "#/$defs/identifier"},
+        "calibrator_content_sha256": {"$ref": "#/$defs/sha256"},
+        "source_eval_prediction_cohort_sha256": {"$ref": "#/$defs/sha256"},
+        "source_eval_label_cohort_sha256": {"$ref": "#/$defs/sha256"},
+        "external_ledger_entry_sha256": {"$ref": "#/$defs/sha256"},
+        "prior_formal_release_count": {"const": 0},
+        "one_shot_authorized": {"const": true},
+        "model_and_threshold_selection_complete": {"const": true},
+        "content_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evisoz_dual_montage_cache_materialization_receipt_v1.schema.json",
+  "title": "EviSOZ synthetic Stage0 dual montage cache materialization receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "materializer_version", "status", "cache_id",
+    "parent_signal_ref", "event_identity_ref", "montage_receipt_ref",
+    "files", "receipt_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "evisoz_dual_montage_cache_materialization_receipt_v1"},
+    "materializer_version": {"const": "evisoz_stage0_dual_montage_disk_materializer_v1"},
+    "status": {"const": "complete"},
+    "cache_id": {"type": "string", "pattern": "^EVISOZ-STAGE0-[0-9a-f]{24}$"},
+    "parent_signal_ref": {"$ref": "#/$defs/artifact_ref"},
+    "event_identity_ref": {"$ref": "#/$defs/artifact_ref"},
+    "montage_receipt_ref": {"$ref": "#/$defs/artifact_ref"},
+    "files": {
+      "type": "object",
+      "minProperties": 3,
+      "additionalProperties": {
+        "$ref": "#/$defs/file_descriptor"
+      },
+      "propertyNames": {
+        "pattern": "^(tensors/(v29_reference|tcp22_context|tcp22_onset)\\.tensor|sidecars/(parent_signal\\.tensor|event_identity\\.json|montage_receipt\\.json))$"
+      }
+    },
+    "receipt_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "artifact_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "artifact_id", "artifact_kind", "media_type", "content_hash", "payload_schema_version", "ref_sha256"],
+      "properties": {
+        "schema_version": {"const": "evisoz_artifact_ref_v1"},
+        "artifact_id": {"type": "string"},
+        "artifact_kind": {"type": "string"},
+        "media_type": {"type": "string"},
+        "content_hash": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["domain", "sha256", "size_bytes"],
+          "properties": {
+            "domain": {"enum": ["raw_bytes_v1", "canonical_json_v1"]},
+            "sha256": {"$ref": "#/$defs/sha256"},
+            "size_bytes": {"type": "integer", "minimum": 0}
+          }
+        },
+        "payload_schema_version": {"type": ["string", "null"]},
+        "ref_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "file_descriptor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sha256", "size_bytes"],
+      "properties": {
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "size_bytes": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}

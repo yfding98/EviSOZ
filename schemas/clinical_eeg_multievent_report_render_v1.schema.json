@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/schemas/clinical_eeg_multievent_report_render_v1.schema.json",
+  "title": "Deterministically rendered multievent clinical EEG research report",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "record_id",
+    "language",
+    "render_mode",
+    "lexicalizer_id",
+    "source_claim_graph_sha256",
+    "sections",
+    "report_text_zh",
+    "sentence_ledger",
+    "source_firewall",
+    "report_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "clinical_eeg_multievent_report_render_v1"},
+    "record_id": {"$ref": "#/$defs/id"},
+    "language": {"const": "zh-CN"},
+    "render_mode": {"const": "deterministic_claim_lexicalizer"},
+    "lexicalizer_id": {"const": "deterministic_claim_lexicalizer_v1"},
+    "source_claim_graph_sha256": {"$ref": "#/$defs/sha256"},
+    "sections": {
+      "type": "object",
+      "minProperties": 1,
+      "properties": {
+        "technical_quality": {"$ref": "#/$defs/text"},
+        "eeg_findings": {"$ref": "#/$defs/text"},
+        "ictal_findings": {"$ref": "#/$defs/text"},
+        "cross_event_summary": {"$ref": "#/$defs/text"},
+        "impression": {"$ref": "#/$defs/text"},
+        "limitations": {"$ref": "#/$defs/text"},
+        "waveform_index": {"$ref": "#/$defs/text"}
+      },
+      "additionalProperties": false
+    },
+    "report_text_zh": {"$ref": "#/$defs/text"},
+    "sentence_ledger": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/sentenceLedger"}
+    },
+    "source_firewall": {"$ref": "#/$defs/firewall"},
+    "report_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "text": {"type": "string", "minLength": 1, "maxLength": 500000},
+    "idArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/id"}
+    },
+    "sectionId": {
+      "enum": [
+        "technical_quality",
+        "eeg_findings",
+        "ictal_findings",
+        "cross_event_summary",
+        "impression",
+        "limitations",
+        "waveform_index"
+      ]
+    },
+    "sentenceLedger": {
+      "type": "object",
+      "required": [
+        "sentence_id",
+        "section_id",
+        "template_id",
+        "text_zh",
+        "claim_ids",
+        "evidence_ids",
+        "waveform_evidence_ids"
+      ],
+      "properties": {
+        "sentence_id": {"$ref": "#/$defs/id"},
+        "section_id": {"$ref": "#/$defs/sectionId"},
+        "template_id": {"$ref": "#/$defs/id"},
+        "text_zh": {"$ref": "#/$defs/text"},
+        "claim_ids": {"$ref": "#/$defs/idArray"},
+        "evidence_ids": {"$ref": "#/$defs/idArray"},
+        "waveform_evidence_ids": {"$ref": "#/$defs/idArray"}
+      },
+      "additionalProperties": false
+    },
+    "firewall": {
+      "type": "object",
+      "required": [
+        "edf_annotations_used",
+        "excel_used",
+        "doctor_labels_used",
+        "clinical_text_used",
+        "patient_metadata_used",
+        "video_used",
+        "ecg_emg_eog_used",
+        "sleep_staging_used",
+        "provocation_used"
+      ],
+      "properties": {
+        "edf_annotations_used": {"const": false},
+        "excel_used": {"const": false},
+        "doctor_labels_used": {"const": false},
+        "clinical_text_used": {"const": false},
+        "patient_metadata_used": {"const": false},
+        "video_used": {"const": false},
+        "ecg_emg_eog_used": {"const": false},
+        "sleep_staging_used": {"const": false},
+        "provocation_used": {"const": false}
+      },
+      "additionalProperties": false
+    }
+  }
+}

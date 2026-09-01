@@ -1,0 +1,491 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/schemas/clinical_eeg_event_findings_term_query_denominator_policy_v2.schema.json",
+  "title": "Independent EEG Finding term-query denominator policy v2",
+  "description": "A candidate-blind public/synthetic-only policy that freezes exactly 41 operational queries, typed physical-unit domains, contexts, views, bandwidth profiles, and one primary atom-roster item per query.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "policy_id",
+    "policy_status",
+    "source_scope",
+    "term_manifest_id",
+    "term_manifest_version",
+    "term_manifest_sha256",
+    "atom_roster_policy_sha256",
+    "v1_denominator_policy_id",
+    "v1_denominator_policy_sha256",
+    "source_firewall",
+    "scope_ids",
+    "view_profile_ids",
+    "reference_profile_ids",
+    "bandwidth_profile_ids",
+    "acquisition_sensitive_qualification_gates",
+    "query_specs",
+    "cell_enumeration_policy",
+    "qualification_matching_policy",
+    "negative_decision_policy",
+    "interval_union_policy",
+    "policy_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "clinical_eeg_event_findings_term_query_denominator_policy_v2"
+    },
+    "policy_id": {
+      "const": "CLINICAL-EEG-EVENT-FINDINGS-TERM-QUERY-DENOMINATOR-POLICY-V2"
+    },
+    "policy_status": {
+      "const": "draft_public_synthetic_only"
+    },
+    "source_scope": {
+      "const": "public_or_synthetic_eeg_only"
+    },
+    "term_manifest_id": {
+      "const": "CLINICAL-EEG-FINDING-TERM-MANIFEST-V2"
+    },
+    "term_manifest_version": {
+      "const": "2.0.0"
+    },
+    "term_manifest_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "atom_roster_policy_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "v1_denominator_policy_id": {
+      "const": "CLINICAL-EEG-EVENT-FINDINGS-DENOMINATOR-POLICY-V1"
+    },
+    "v1_denominator_policy_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "source_firewall": {
+      "$ref": "#/$defs/sourceFirewall"
+    },
+    "scope_ids": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/scopeId"
+      }
+    },
+    "view_profile_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/id"
+      }
+    },
+    "reference_profile_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/id"
+      }
+    },
+    "bandwidth_profile_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/id"
+      }
+    },
+    "acquisition_sensitive_qualification_gates": {
+      "$ref": "#/$defs/acquisitionSensitiveQualificationGates"
+    },
+    "query_specs": {
+      "type": "array",
+      "minItems": 41,
+      "maxItems": 41,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/querySpec"
+      }
+    },
+    "cell_enumeration_policy": {
+      "type": "object",
+      "required": [
+        "base_query_count",
+        "enumeration_policy",
+        "event_global_unit_key",
+        "allowed_physical_unit_types",
+        "region_units_allowed",
+        "laterality_units_allowed",
+        "missing_query_or_unit_may_be_deleted"
+      ],
+      "properties": {
+        "base_query_count": {"const": 41},
+        "enumeration_policy": {"const": "all_frozen_queries_even_when_unimplemented_or_not_emitted"},
+        "event_global_unit_key": {"const": "event:GLOBAL"},
+        "allowed_physical_unit_types": {"const": ["electrode", "lead"]},
+        "region_units_allowed": {"const": false},
+        "laterality_units_allowed": {"const": false},
+        "missing_query_or_unit_may_be_deleted": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "qualification_matching_policy": {
+      "type": "object",
+      "required": [
+        "positive_capability_exact_match_keys",
+        "negative_sensitivity_exact_match_keys",
+        "patient_disjoint_required",
+        "frozen_before_inference_required",
+        "term_query_opportunity_must_be_primary_item_opportunity_subset",
+        "secondary_item_may_activate_query",
+        "secondary_item_may_authorize_negative"
+      ],
+      "properties": {
+        "positive_capability_exact_match_keys": {
+          "const": [
+            "term_query_id",
+            "term_id",
+            "query_cell_key",
+            "unit_key",
+            "claim_kind",
+            "family",
+            "temporal_context",
+            "scope_id",
+            "view_profile_id",
+            "reference_profile_id",
+            "bandwidth_profile_id",
+            "effective_bandwidth_hz",
+            "policy_sha256",
+            "term_manifest_sha256"
+          ]
+        },
+        "negative_sensitivity_exact_match_keys": {
+          "const": [
+            "term_query_id",
+            "term_id",
+            "query_cell_key",
+            "unit_key",
+            "claim_kind",
+            "family",
+            "temporal_context",
+            "scope_id",
+            "view_profile_id",
+            "reference_profile_id",
+            "bandwidth_profile_id",
+            "effective_bandwidth_hz",
+            "opportunity_policy_sha256",
+            "policy_sha256",
+            "term_manifest_sha256"
+          ]
+        },
+        "patient_disjoint_required": {"const": true},
+        "frozen_before_inference_required": {"const": true},
+        "term_query_opportunity_must_be_primary_item_opportunity_subset": {"const": true},
+        "secondary_item_may_activate_query": {"const": false},
+        "secondary_item_may_authorize_negative": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "negative_decision_policy": {
+      "type": "object",
+      "required": [
+        "denominator_authorizes_clinical_absence",
+        "matching_sensitivity_required",
+        "complete_opportunity_required",
+        "completed_processing_required",
+        "explicit_downstream_absence_decision_required",
+        "technical_failure_is_negative",
+        "not_evaluable_is_negative"
+      ],
+      "properties": {
+        "denominator_authorizes_clinical_absence": {"const": false},
+        "matching_sensitivity_required": {"const": true},
+        "complete_opportunity_required": {"const": true},
+        "completed_processing_required": {"const": true},
+        "explicit_downstream_absence_decision_required": {"const": true},
+        "technical_failure_is_negative": {"const": false},
+        "not_evaluable_is_negative": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "interval_union_policy": {
+      "type": "object",
+      "required": [
+        "policy_id",
+        "timebase",
+        "interval_semantics",
+        "merge_overlapping_intervals",
+        "merge_touching_intervals",
+        "preserve_genuine_gaps",
+        "comparison_tolerance_seconds",
+        "double_counting_allowed"
+      ],
+      "properties": {
+        "policy_id": {"const": "PHYSICAL-TIME-INTERVAL-UNION-V1"},
+        "timebase": {"const": "recording_relative_seconds"},
+        "interval_semantics": {"const": "half_open_start_stop"},
+        "merge_overlapping_intervals": {"const": true},
+        "merge_touching_intervals": {"const": true},
+        "preserve_genuine_gaps": {"const": true},
+        "comparison_tolerance_seconds": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.000001
+        },
+        "double_counting_allowed": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "policy_sha256": {
+      "$ref": "#/$defs/sha256"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "family": {
+      "enum": [
+        "quality",
+        "spectral",
+        "rhythm",
+        "morphology",
+        "evolution",
+        "spatial_field",
+        "spatial_recruitment",
+        "termination_recovery",
+        "high_frequency"
+      ]
+    },
+    "scopeId": {
+      "enum": [
+        "event_analysis_window",
+        "background_context",
+        "candidate_emergence_interval",
+        "event_course_interval",
+        "post_event_context",
+        "quality_evaluable_interval"
+      ]
+    },
+    "temporalContext": {
+      "enum": [
+        "quality_evaluable",
+        "non_event_background",
+        "event_analysis",
+        "candidate_emergence",
+        "event_course",
+        "post_event_context",
+        "record_non_event_context",
+        "acquisition_sensitive_event"
+      ]
+    },
+    "rosterItem": {
+      "type": "object",
+      "required": ["roster_item_kind", "roster_item_id"],
+      "properties": {
+        "roster_item_kind": {"enum": ["core_atom", "child_roster"]},
+        "roster_item_id": {"$ref": "#/$defs/id"}
+      },
+      "additionalProperties": false
+    },
+    "bandwidth": {
+      "type": "array",
+      "prefixItems": [
+        {"type": "number", "minimum": 0},
+        {"type": "number", "exclusiveMinimum": 0}
+      ],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "querySpec": {
+      "type": "object",
+      "required": [
+        "term_query_id",
+        "term_id",
+        "claim_kind",
+        "family",
+        "temporal_context",
+        "intrinsic_evidence_role",
+        "scope_id",
+        "unit_domain",
+        "view_profile_id",
+        "reference_profile_id",
+        "bandwidth_profile_id",
+        "required_bandwidth_hz",
+        "minimum_sample_rate_hz",
+        "required_coupling",
+        "primary_roster_item",
+        "primary_binding_status",
+        "allowed_secondary_roster_items",
+        "implementation_status",
+        "negative_semantics",
+        "onset_support_permission",
+        "report_promotion_authorized"
+      ],
+      "properties": {
+        "term_query_id": {"$ref": "#/$defs/id"},
+        "term_id": {"$ref": "#/$defs/id"},
+        "claim_kind": {
+          "enum": ["technical_assessment", "measurement", "instance", "event_summary", "relation", "hypothesis"]
+        },
+        "family": {"$ref": "#/$defs/family"},
+        "temporal_context": {"$ref": "#/$defs/temporalContext"},
+        "intrinsic_evidence_role": {
+          "enum": ["onset_eligible", "early_context", "later_involvement", "non_event_context", "limitation"]
+        },
+        "scope_id": {"$ref": "#/$defs/scopeId"},
+        "unit_domain": {"enum": ["event_global", "all_physical_units"]},
+        "view_profile_id": {"$ref": "#/$defs/id"},
+        "reference_profile_id": {"$ref": "#/$defs/id"},
+        "bandwidth_profile_id": {"$ref": "#/$defs/id"},
+        "required_bandwidth_hz": {
+          "anyOf": [
+            {"$ref": "#/$defs/bandwidth"},
+            {"type": "null"}
+          ]
+        },
+        "minimum_sample_rate_hz": {
+          "anyOf": [
+            {"type": "number", "exclusiveMinimum": 0},
+            {"type": "null"}
+          ]
+        },
+        "required_coupling": {"enum": ["dc", "ac_or_dc", "not_applicable"]},
+        "primary_roster_item": {"$ref": "#/$defs/rosterItem"},
+        "primary_binding_status": {"enum": ["registered", "structural_derivation", "requires_roster_extension"]},
+        "allowed_secondary_roster_items": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/rosterItem"}
+        },
+        "implementation_status": {
+          "enum": [
+            "implemented_measurement_shadow",
+            "implemented_candidate_shadow",
+            "implemented_structural_shadow",
+            "unimplemented_not_evaluable"
+          ]
+        },
+        "negative_semantics": {
+          "enum": ["not_applicable", "instance_absence", "summary_absence", "unit_noninvolvement", "criterion_not_met"]
+        },
+        "onset_support_permission": {
+          "enum": ["required_future_free_causal_if_positive", "forbidden", "not_applicable"]
+        },
+        "report_promotion_authorized": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "acquisitionSensitiveQualificationGate": {
+      "type": "object",
+      "required": [
+        "gate_id",
+        "primary_roster_item_id",
+        "term_query_id",
+        "term_id",
+        "required_positive_receipt_kinds",
+        "required_negative_receipt_kinds",
+        "default_status",
+        "report_promotion_authorized"
+      ],
+      "properties": {
+        "gate_id": {"$ref": "#/$defs/id"},
+        "primary_roster_item_id": {"$ref": "#/$defs/id"},
+        "term_query_id": {"$ref": "#/$defs/id"},
+        "term_id": {"$ref": "#/$defs/id"},
+        "required_positive_receipt_kinds": {
+          "const": [
+            "term_query_capability_receipt",
+            "term_specific_artifact_qualification_receipt",
+            "term_decision_receipt"
+          ]
+        },
+        "required_negative_receipt_kinds": {
+          "const": [
+            "complete_term_specific_opportunity_receipt",
+            "term_query_sensitivity_receipt"
+          ]
+        },
+        "default_status": {"const": "not_evaluable"},
+        "report_promotion_authorized": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "acquisitionSensitiveQualificationGates": {
+      "type": "object",
+      "required": [
+        "shared_generic_roster_or_receipt_allowed",
+        "one_gate_status_may_satisfy_another",
+        "all_gates_default_fail_closed",
+        "gates"
+      ],
+      "properties": {
+        "shared_generic_roster_or_receipt_allowed": {"const": false},
+        "one_gate_status_may_satisfy_another": {"const": false},
+        "all_gates_default_fail_closed": {"const": true},
+        "gates": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/acquisitionSensitiveQualificationGate"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "sourceFirewall": {
+      "type": "object",
+      "required": [
+        "private_data_used",
+        "event_findings_payload_used",
+        "findings_candidates_used",
+        "payload_evaluation_opportunities_used",
+        "pattern_candidates_used",
+        "event_outcome_used",
+        "scalp_onset_hypothesis_used",
+        "edf_annotations_used",
+        "spreadsheet_used",
+        "doctor_labels_used",
+        "clinical_text_used",
+        "patient_metadata_used",
+        "video_used",
+        "sleep_staging_used",
+        "provocation_used",
+        "ecg_emg_eog_used",
+        "qwen_used",
+        "production_route_used"
+      ],
+      "properties": {
+        "private_data_used": {"const": false},
+        "event_findings_payload_used": {"const": false},
+        "findings_candidates_used": {"const": false},
+        "payload_evaluation_opportunities_used": {"const": false},
+        "pattern_candidates_used": {"const": false},
+        "event_outcome_used": {"const": false},
+        "scalp_onset_hypothesis_used": {"const": false},
+        "edf_annotations_used": {"const": false},
+        "spreadsheet_used": {"const": false},
+        "doctor_labels_used": {"const": false},
+        "clinical_text_used": {"const": false},
+        "patient_metadata_used": {"const": false},
+        "video_used": {"const": false},
+        "sleep_staging_used": {"const": false},
+        "provocation_used": {"const": false},
+        "ecg_emg_eog_used": {"const": false},
+        "qwen_used": {"const": false},
+        "production_route_used": {"const": false}
+      },
+      "additionalProperties": false
+    }
+  }
+}

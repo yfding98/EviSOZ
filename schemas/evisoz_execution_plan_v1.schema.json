@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evisoz_execution_plan_v1.schema.json",
+  "title": "EviSOZ-LM fail-closed execution plan v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "plan_id", "status", "stage0_gate_id",
+    "stage0_gate_receipt_sha256", "baseline", "stage0_check_statuses",
+    "blocking_check_ids", "authorized_next_actions", "prohibited_actions",
+    "stages", "experiments", "report_controls", "entrypoints",
+    "permissions", "pipeline_config", "receipt_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "evisoz_execution_plan_v1"},
+    "plan_id": {"type": "string", "pattern": "^EVISOZ-PLAN-[0-9a-f]{24}$"},
+    "status": {"enum": ["STAGE0_NO_GO", "STAGE0_GO_DOWNSTREAM_NOT_RUN"]},
+    "stage0_gate_id": {"type": "string", "pattern": "^EVISOZ-STAGE0-[0-9a-f]{24}$"},
+    "stage0_gate_receipt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "baseline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model", "route", "frozen", "tcp22_role", "missing_channel_policy", "interpolation"],
+      "properties": {
+        "model": {"const": "canonical_v29_H_D"},
+        "route": {"const": "standard19_car_exact_reference"},
+        "frozen": {"const": true},
+        "tcp22_role": {"const": "signed_bipolar_edge_evidence_only"},
+        "missing_channel_policy": {"const": "explicit_mask_only"},
+        "interpolation": {"const": "independent_ablation_only"}
+      }
+    },
+    "stage0_check_statuses": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {"enum": ["GO", "QUALIFIED_GO", "EVALUATOR_ONLY_GO", "PARTIAL", "NO_GO"]}
+    },
+    "blocking_check_ids": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "authorized_next_actions": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "prohibited_actions": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "stages": {
+      "type": "array",
+      "minItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["stage_id", "title", "status", "required_stage0_checks", "missing_or_non_go_checks", "formal_training_allowed"],
+        "properties": {
+          "stage_id": {"type": "string", "minLength": 1},
+          "title": {"type": "string", "minLength": 1},
+          "status": {"enum": ["GO", "NO_GO", "BLOCKED_BY_STAGE0", "READY_FOR_AUTHORIZED_RUN"]},
+          "required_stage0_checks": {"type": "array", "items": {"type": "string", "minLength": 1}},
+          "missing_or_non_go_checks": {"type": "array", "items": {"type": "string", "minLength": 1}},
+          "formal_training_allowed": {"type": "boolean"}
+        }
+      }
+    },
+    "experiments": {
+      "type": "array",
+      "minItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "description", "family", "status", "uses_private_training_or_report_eval"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[A-J]$"},
+          "description": {"type": "string", "minLength": 1},
+          "family": {"type": "string", "minLength": 1},
+          "status": {"enum": ["BLOCKED_BY_STAGE0", "PLANNED_NOT_RUN"]},
+          "uses_private_training_or_report_eval": {"type": "boolean"}
+        }
+      }
+    },
+    "report_controls": {
+      "type": "array",
+      "minItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["control_id", "status"],
+        "properties": {
+          "control_id": {"type": "string", "minLength": 1},
+          "status": {"enum": ["BLOCKED_BY_STAGE0", "PLANNED_NOT_RUN"]}
+        }
+      }
+    },
+    "entrypoints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stage0_gate", "real_cohort_validation", "loader_replay", "structured_smoke", "patient_qwen_shadow"],
+      "properties": {
+        "stage0_gate": {"type": "string", "minLength": 1},
+        "real_cohort_validation": {"type": "string", "minLength": 1},
+        "loader_replay": {"type": "string", "minLength": 1},
+        "structured_smoke": {"type": "string", "minLength": 1},
+        "patient_qwen_shadow": {"type": "string", "minLength": 1}
+      }
+    },
+    "permissions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["training_authorized", "qwen_generation_authorized", "private_report_language_evaluation_authorized", "clinical_deployment_authorized", "knowledge_creates_patient_facts"],
+      "properties": {
+        "training_authorized": {"type": "boolean"},
+        "qwen_generation_authorized": {"const": false},
+        "private_report_language_evaluation_authorized": {"const": false},
+        "clinical_deployment_authorized": {"const": false},
+        "knowledge_creates_patient_facts": {"const": false}
+      }
+    },
+    "pipeline_config": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["schema_version", "status"],
+      "properties": {
+        "schema_version": {"const": "evisoz_structured_evidence_pipeline_config_v1"},
+        "status": {"type": "string", "minLength": 1}
+      }
+    },
+    "receipt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

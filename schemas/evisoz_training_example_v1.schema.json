@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evisoz_training_example_v1.schema.json",
+  "title": "EviSOZ Stage-0 training example envelope v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "example_id",
+    "sample_id",
+    "event_id",
+    "dataset_id",
+    "linkage_group_id",
+    "anchor",
+    "split_assignment",
+    "report_scope",
+    "artifact_refs",
+    "field_state_counts",
+    "unavailable_field_ids",
+    "enabled_loss_ports",
+    "safety_contract",
+    "receipt_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "evisoz_training_example_v1"},
+    "example_id": {"type": "string", "pattern": "^EVISOZ-EX-[0-9a-f]{24}$"},
+    "sample_id": {"type": "string", "minLength": 1},
+    "event_id": {"type": "string", "minLength": 1},
+    "dataset_id": {"type": "string", "minLength": 1},
+    "linkage_group_id": {"type": "string", "minLength": 1},
+    "anchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["condition", "quality", "t0_seconds", "analysis_interval_seconds"],
+      "properties": {
+        "condition": {"const": "known_seizure_segment"},
+        "quality": {"enum": ["exact", "approximate", "provided_interval"]},
+        "t0_seconds": {"const": 0.0},
+        "analysis_interval_seconds": {"const": [-12.0, 48.0]}
+      }
+    },
+    "split_assignment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evisoz_role", "outer_holdout_fold", "locked"],
+      "properties": {
+        "evisoz_role": {"enum": ["development_cv", "locked_test", "external_evaluation"]},
+        "outer_holdout_fold": {"type": ["integer", "null"], "minimum": 0},
+        "locked": {"type": "boolean"}
+      }
+    },
+    "report_scope": {
+      "enum": ["atomic_event", "ictal_findings", "soz_localization", "full_soz", "nonlocalizing"]
+    },
+    "artifact_refs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["event_identity", "split_roster", "montage_derivation", "field_release"],
+      "properties": {
+        "event_identity": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+        "split_roster": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+        "montage_derivation": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+        "field_release": {"$ref": "evisoz_artifact_ref_v1.schema.json"}
+      }
+    },
+    "field_state_counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provided", "not_provided", "not_evaluable", "technical_failure"],
+      "properties": {
+        "provided": {"type": "integer", "minimum": 0},
+        "not_provided": {"type": "integer", "minimum": 0},
+        "not_evaluable": {"type": "integer", "minimum": 0},
+        "technical_failure": {"type": "integer", "minimum": 0}
+      }
+    },
+    "unavailable_field_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "enabled_loss_ports": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"enum": ["typed_slot_loss", "node_localization_loss", "report_text_loss"]}
+    },
+    "safety_contract": {
+      "const": {
+        "generated_text_can_supervise_localization": false,
+        "knowledge_can_create_patient_facts": false,
+        "teacher_runtime_required_at_deployment": false,
+        "node_and_edge_coordinates_interchangeable": false
+      }
+    },
+    "receipt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

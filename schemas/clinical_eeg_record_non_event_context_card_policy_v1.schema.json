@@ -1,0 +1,227 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/clinical_eeg_record_non_event_context_card_policy_v1.schema.json",
+  "title": "Clinical EEG record non-event context card policy v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "policy_id",
+    "policy_version",
+    "policy_status",
+    "source_scope",
+    "eeg_signal_domain_policy",
+    "source_firewall",
+    "status_vocabulary",
+    "assertion_vocabulary",
+    "cardinality_policy",
+    "slot_order",
+    "slots",
+    "evidence_kind_registry",
+    "absence_policy",
+    "closure_policy",
+    "authorization",
+    "authority_references",
+    "policy_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "clinical_eeg_record_non_event_context_card_policy_v1"},
+    "policy_id": {"const": "CLINICAL-EEG-RECORD-NON-EVENT-CONTEXT-CARD-POLICY-V1"},
+    "policy_version": {"const": "1.1.0"},
+    "policy_status": {"const": "draft_eeg_signal_domain_shadow"},
+    "source_scope": {"const": "eeg_signal_only"},
+    "eeg_signal_domain_policy": {"$ref": "#/$defs/eegSignalDomainPolicy"},
+    "source_firewall": {"$ref": "#/$defs/sourceFirewall"},
+    "status_vocabulary": {
+      "const": ["present", "absent_with_opportunity", "uncertain", "not_evaluable"]
+    },
+    "assertion_vocabulary": {
+      "const": ["measured", "model_candidate", "report_eligible_automated"]
+    },
+    "cardinality_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owner_kind",
+        "expected_cards_per_recording",
+        "cardinality_key_fields",
+        "event_id_field_authorized",
+        "event_scoped_materialization_authorized",
+        "copy_into_event_card_authorized",
+        "event_cards_may_reference_card_id_only",
+        "duplicate_recording_cards_fail_closed"
+      ],
+      "properties": {
+        "owner_kind": {"const": "recording"},
+        "expected_cards_per_recording": {"const": 1},
+        "cardinality_key_fields": {
+          "const": ["policy_sha256", "recording_id", "source_signal_sha256"]
+        },
+        "event_id_field_authorized": {"const": false},
+        "event_scoped_materialization_authorized": {"const": false},
+        "copy_into_event_card_authorized": {"const": false},
+        "event_cards_may_reference_card_id_only": {"const": true},
+        "duplicate_recording_cards_fail_closed": {"const": true}
+      }
+    },
+    "slot_order": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/identifier"}
+    },
+    "slots": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": {"$ref": "#/$defs/slotPolicy"}
+    },
+    "evidence_kind_registry": {
+      "type": "array",
+      "minItems": 14,
+      "maxItems": 14,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["evidence_kind", "semantic_ceiling"],
+        "properties": {
+          "evidence_kind": {"$ref": "#/$defs/identifier"},
+          "semantic_ceiling": {"$ref": "#/$defs/identifier"}
+        }
+      }
+    },
+    "absence_policy": {"$ref": "#/$defs/booleanPolicy"},
+    "closure_policy": {"$ref": "#/$defs/mixedPolicy"},
+    "authorization": {"$ref": "#/$defs/booleanPolicy"},
+    "authority_references": {
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["authority_id", "doi", "publication_status", "use_boundary"],
+        "properties": {
+          "authority_id": {"$ref": "#/$defs/identifier"},
+          "doi": {"type": "string", "minLength": 8, "maxLength": 160},
+          "publication_status": {"const": "peer_reviewed_journal"},
+          "use_boundary": {"$ref": "#/$defs/identifier"}
+        }
+      }
+    },
+    "policy_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,255}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "sourceFirewall": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "private_auxiliary_data_used",
+        "private_labels_used",
+        "private_annotations_used",
+        "edf_annotations_used",
+        "spreadsheet_used",
+        "doctor_labels_used",
+        "clinical_text_used",
+        "clinical_reports_used",
+        "patient_metadata_used",
+        "video_or_behavior_used",
+        "sleep_staging_used",
+        "provocation_used",
+        "ecg_emg_eog_used",
+        "qwen_used",
+        "production_route_used"
+      ],
+      "properties": {
+        "private_auxiliary_data_used": {"const": false},
+        "private_labels_used": {"const": false},
+        "private_annotations_used": {"const": false},
+        "edf_annotations_used": {"const": false},
+        "spreadsheet_used": {"const": false},
+        "doctor_labels_used": {"const": false},
+        "clinical_text_used": {"const": false},
+        "clinical_reports_used": {"const": false},
+        "patient_metadata_used": {"const": false},
+        "video_or_behavior_used": {"const": false},
+        "sleep_staging_used": {"const": false},
+        "provocation_used": {"const": false},
+        "ecg_emg_eog_used": {"const": false},
+        "qwen_used": {"const": false},
+        "production_route_used": {"const": false}
+      }
+    },
+    "eegSignalDomainPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "allowed_domains",
+        "domain_declaration_required",
+        "private_eeg_signal_authorized",
+        "private_labels_annotations_clinical_text_authorized"
+      ],
+      "properties": {
+        "allowed_domains": {"const": ["private", "public", "synthetic"]},
+        "domain_declaration_required": {"const": true},
+        "private_eeg_signal_authorized": {"const": true},
+        "private_labels_annotations_clinical_text_authorized": {"const": false}
+      }
+    },
+    "slotPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "slot_index",
+        "slot_id",
+        "label_zh",
+        "scope_id",
+        "allowed_assertion_levels",
+        "allowed_evidence_kinds",
+        "onset_support_permission",
+        "report_promotion_authorized"
+      ],
+      "properties": {
+        "slot_index": {"type": "integer", "minimum": 1, "maximum": 6},
+        "slot_id": {"$ref": "#/$defs/identifier"},
+        "label_zh": {"type": "string", "minLength": 1, "maxLength": 200},
+        "scope_id": {"const": "record_non_event_context"},
+        "allowed_assertion_levels": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"enum": ["measured", "model_candidate"]}
+        },
+        "allowed_evidence_kinds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/identifier"}
+        },
+        "onset_support_permission": {"const": "forbidden"},
+        "report_promotion_authorized": {"const": false}
+      }
+    },
+    "booleanPolicy": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {"type": "boolean"}
+    },
+    "mixedPolicy": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "oneOf": [
+          {"type": "boolean"},
+          {"type": "integer", "minimum": 0}
+        ]
+      }
+    }
+  }
+}

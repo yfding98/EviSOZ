@@ -1,0 +1,12 @@
+{
+  "schema_version": "eeg_knowledge_profile_v2",
+  "profile_id": "neonatal",
+  "requires": ["postmenstrual_age_weeks", "behavioral_state", "neonatal_montage", "background_continuity_context"],
+  "rules": [
+    "adult_continuity_and_synchrony_rules_do_not_apply",
+    "physiologic_discontinuity_is_age_and_state_dependent",
+    "electrographic_only_seizures_are_possible",
+    "reduced_electrode_coverage_limits_spatial_localization",
+    "neonatal_aEEG_trends_require_raw_EEG_confirmation"
+  ]
+}

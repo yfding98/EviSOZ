@@ -1,0 +1,66 @@
+"""Independent, fact-constrained clinical EEG report pipeline."""
+
+from .evidence import (
+    EVIDENCE_MANIFEST_SCHEMA_VERSION,
+    WAVEFORM_SELECTION_POLICY,
+    ValidatedWaveformAttachment,
+    ValidatedWaveformManifest,
+    load_waveform_manifest,
+    validate_waveform_manifest_payload,
+)
+
+from .schema import (
+    CANONICAL_ELECTRODES,
+    ELECTRODE_ALIASES,
+    FACT_TYPE_LABEL_ZH,
+    FACT_TYPE_TO_SECTION,
+    SCHEMA_VERSION,
+    AtomicFact,
+    ClinicalEEGReport,
+    FactProvenance,
+    FactSection,
+    FactState,
+    FactVerification,
+    ProvenanceSource,
+    VerificationStatus,
+    canonicalize_derivation,
+    canonicalize_electrode,
+    fact_observation_text_zh,
+    validate_report_payload,
+)
+from .language_quality import (
+    CANDIDATE_SCHEMA as LANGUAGE_QUALITY_CANDIDATE_SCHEMA,
+    OUTPUT_SCHEMA as LANGUAGE_QUALITY_OUTPUT_SCHEMA,
+    REFERENCE_SCHEMA as LANGUAGE_QUALITY_REFERENCE_SCHEMA,
+    evaluate_language_quality,
+)
+
+__all__ = [
+    "SCHEMA_VERSION",
+    "CANONICAL_ELECTRODES",
+    "ELECTRODE_ALIASES",
+    "FACT_TYPE_LABEL_ZH",
+    "FACT_TYPE_TO_SECTION",
+    "FactState",
+    "FactSection",
+    "VerificationStatus",
+    "ProvenanceSource",
+    "FactProvenance",
+    "FactVerification",
+    "AtomicFact",
+    "ClinicalEEGReport",
+    "canonicalize_electrode",
+    "canonicalize_derivation",
+    "fact_observation_text_zh",
+    "validate_report_payload",
+    "EVIDENCE_MANIFEST_SCHEMA_VERSION",
+    "WAVEFORM_SELECTION_POLICY",
+    "ValidatedWaveformAttachment",
+    "ValidatedWaveformManifest",
+    "validate_waveform_manifest_payload",
+    "load_waveform_manifest",
+    "LANGUAGE_QUALITY_CANDIDATE_SCHEMA",
+    "LANGUAGE_QUALITY_REFERENCE_SCHEMA",
+    "LANGUAGE_QUALITY_OUTPUT_SCHEMA",
+    "evaluate_language_quality",
+]

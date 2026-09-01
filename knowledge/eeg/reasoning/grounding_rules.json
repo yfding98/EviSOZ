@@ -1,0 +1,28 @@
+{
+  "schema_version": "eeg_claim_grounding_v2",
+  "required_claim_links": {
+    "patient_evidence_ids": "what_was_observed_in_this_record_or_patient",
+    "knowledge_card_ids": "which_general_rule_was_applied",
+    "source_ids": "which_external_sources_support_the_general_rule"
+  },
+  "invariants": [
+    "knowledge_card_or_source_ids_without_patient_evidence_ids_cannot_support_a_patient_specific_claim",
+    "patient_evidence_ids_without_an_authorized_interpretation_rule_cannot_be_silently_upgraded",
+    "each_evidence_id_must_resolve_to_the_current_record_and_an_exact_time_or_scope",
+    "each_knowledge_card_source_id_must_resolve_to_the_frozen_knowledge_bundle",
+    "missing_or_not_assessable_evidence_cannot_be_rendered_as_absent",
+    "template_text_cannot_create_a_claim",
+    "retrieval_score_is_not_evidence_strength",
+    "rule_source_authority_is_not_patient_confidence"
+  ],
+  "claim_checks": [
+    {"claim": "earliest", "requires": ["onset_or_involvement_interval", "comparison_opportunity", "censoring_status"]},
+    {"claim": "field", "requires": ["electrode_or_derivation_roster", "reference_or_montage", "spatial_gradient_observations"]},
+    {"claim": "phase_reversal", "requires": ["two_adjacent_bipolar_derivations", "shared_electrode", "polarity_convention"]},
+    {"claim": "cross_montage_consistency", "requires": ["at_least_two_actual_montages", "same_raw_epoch", "evidence_ids_per_montage"]},
+    {"claim": "artifact_excluded", "requires": ["declared_modalities", "artifact_specific_tests", "residual_limitations"]},
+    {"claim": "multi_event_concordance", "requires": ["analyzable_event_denominator", "event_level_results", "discordant_events"]},
+    {"claim": "noninvasive_soz_hypothesis", "requires": ["multi_event_evidence", "multimodal_evidence", "authorized_reviewer"]}
+  ],
+  "failure_action": "reject_or_downgrade_claim_never_fill_missing_patient_fact_from_knowledge"
+}

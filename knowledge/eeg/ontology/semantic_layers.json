@@ -1,0 +1,43 @@
+{
+  "schema_version": "eeg_semantic_layers_v2",
+  "layers": [
+    {
+      "id": "OBS",
+      "name_en": "observation",
+      "name_zh": "可观察信号事实",
+      "definition": "可由本次记录、采集元数据或同步辅助证据直接复核的技术、波形、时间、空间和质量事实。",
+      "examples": ["frequency_hz", "amplitude_uv", "derivation", "field", "artifact_interval", "channel_coverage"],
+      "forbidden_content": ["pattern_diagnosis", "clinical_soz", "epileptogenic_zone"]
+    },
+    {
+      "id": "PAT",
+      "name_en": "pattern_interpretation",
+      "name_zh": "EEG 模式解释",
+      "definition": "在已记录观察和明确判据基础上形成的 EEG 模式解释。",
+      "examples": ["interictal_epileptiform_discharge_candidate", "rhythmic_delta_activity", "evolving_ictal_pattern"],
+      "requires": ["patient_observation_ids", "knowledge_card_ids", "assessability_state"],
+      "forbidden_content": ["clinical_soz_confirmed", "epileptogenic_zone_confirmed"]
+    },
+    {
+      "id": "LOC",
+      "name_en": "scalp_localization",
+      "name_zh": "头皮 EEG 空间定位",
+      "definition": "基于可评价头皮信号的电极、派生导联、电场、时间和区域级空间描述。",
+      "examples": ["earliest_scalp_visible_derivation_set", "earliest_scalp_visible_electrode_set", "scalp_visible_onset_topography"],
+      "requires": ["patient_observation_ids", "target_level", "spatial_granularity", "uncertainty", "limitations"],
+      "forbidden_content": ["biological_onset_equivalence", "cortical_source_certainty"]
+    },
+    {
+      "id": "CLIN",
+      "name_en": "clinical_synthesis",
+      "name_zh": "临床综合推断",
+      "definition": "由有授权的临床流程综合多发作、多模态和必要时侵入性证据形成的患者级假设或结论。",
+      "examples": ["multidisciplinary_soz_hypothesis", "invasive_eeg_onset_zone", "epileptogenic_zone_hypothesis"],
+      "requires": ["authorized_clinical_evidence", "provenance", "review_status", "discordance_review"],
+      "knowledge_base_may_create": false
+    }
+  ],
+  "upgrade_order": ["OBS", "PAT", "LOC", "CLIN"],
+  "no_layer_skipping": true,
+  "knowledge_is_patient_evidence": false
+}

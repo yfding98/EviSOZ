@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evisoz_signal_candidate_claim_graph_v1.schema.json",
+  "title": "EviSOZ signal-derived candidate claim graph v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "graph_id", "graph_role", "linkage_group_id", "event_findings_refs", "claims", "patient_summary", "permissions", "receipt_sha256"],
+  "properties": {
+    "schema_version": {"const": "evisoz_signal_candidate_claim_graph_v1"},
+    "graph_id": {"type": "string", "pattern": "^EVISOZ-SIGGRAPH-[0-9a-f]{24}$"},
+    "graph_role": {"const": "signal_derived_shadow"},
+    "linkage_group_id": {"type": "string", "pattern": "^EVISOZ-PAT-[0-9a-f]{24}$"},
+    "event_findings_refs": {"type": "array", "minItems": 1},
+    "claims": {"type": "array"},
+    "patient_summary": {"type": "object"},
+    "permissions": {"type": "object"},
+    "receipt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

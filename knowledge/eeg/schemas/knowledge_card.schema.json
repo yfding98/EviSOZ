@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/eeg/knowledge-card-v2.schema.json",
+  "title": "EEG external knowledge card",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "card_id",
+    "concept_id",
+    "claim_type",
+    "preferred_terms",
+    "aliases",
+    "namespace",
+    "semantic_layer",
+    "statement_zh",
+    "applicability",
+    "logic",
+    "allowed_inferences",
+    "forbidden_inferences",
+    "report_language",
+    "source_refs",
+    "review"
+  ],
+  "properties": {
+    "schema_version": {"const": "eeg_knowledge_card_v2"},
+    "card_id": {"type": "string", "pattern": "^CARD\\.[A-Z0-9_.-]+$"},
+    "concept_id": {"type": "string", "pattern": "^[A-Z][A-Z0-9_.-]+$"},
+    "claim_type": {"enum": ["definition", "criterion", "differential", "safety_boundary"]},
+    "preferred_terms": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["en", "zh"],
+      "properties": {"en": {"type": "string", "minLength": 1}, "zh": {"type": "string", "minLength": 1}}
+    },
+    "aliases": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "namespace": {"enum": ["TECH", "ELEC", "WAVE", "CTX", "BG", "ART", "VAR", "ABN", "IED", "RPP", "ICTAL", "LOC", "CLIN", "REP"]},
+    "semantic_layer": {"enum": ["OBS", "PAT", "LOC", "CLIN"]},
+    "statement_zh": {"type": "string", "minLength": 10},
+    "applicability": {"$ref": "#/$defs/stringArrayObject"},
+    "logic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required", "supporting", "exclusions", "differentials"],
+      "properties": {
+        "required": {"$ref": "#/$defs/stringArray"},
+        "supporting": {"$ref": "#/$defs/stringArray"},
+        "exclusions": {"$ref": "#/$defs/stringArray"},
+        "differentials": {"$ref": "#/$defs/stringArray"}
+      }
+    },
+    "allowed_inferences": {"$ref": "#/$defs/nonEmptyStringArray"},
+    "forbidden_inferences": {"$ref": "#/$defs/nonEmptyStringArray"},
+    "report_language": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["preferred", "prohibited"],
+      "properties": {
+        "preferred": {"$ref": "#/$defs/nonEmptyStringArray"},
+        "prohibited": {"$ref": "#/$defs/nonEmptyStringArray"}
+      }
+    },
+    "source_refs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["source_id", "locator", "support_type", "verification_status"],
+        "properties": {
+          "source_id": {"type": "string", "minLength": 1},
+          "locator": {"type": ["string", "null"]},
+          "support_type": {"enum": ["direct", "paraphrase"]},
+          "verification_status": {"enum": ["verified", "locator_pending", "disputed"]}
+        }
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "reviewers", "reviewed_at"],
+      "properties": {
+        "status": {"enum": ["draft_clinical_review_required", "clinically_reviewed", "retired", "disputed"]},
+        "reviewers": {"type": "array", "items": {"type": "string"}},
+        "reviewed_at": {"type": ["string", "null"], "format": "date"}
+      }
+    }
+  },
+  "$defs": {
+    "stringArray": {"type": "array", "items": {"type": "string"}},
+    "nonEmptyStringArray": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "stringArrayObject": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {"type": "array", "items": {"type": "string"}}
+    }
+  }
+}

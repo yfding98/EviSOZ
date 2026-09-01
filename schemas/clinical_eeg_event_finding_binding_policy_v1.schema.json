@@ -1,0 +1,270 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/clinical_eeg_event_finding_binding_policy_v1.schema.json",
+  "title": "Clinical EEG event Finding binding policy v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "policy_id",
+    "policy_status",
+    "method_id",
+    "exact_cover",
+    "status_assertion_policy",
+    "secondary_relation_types",
+    "primary_dispositions",
+    "promotion_dispositions",
+    "interval_policy",
+    "same_domain_policy",
+    "physical_instance_policy",
+    "onset_policy",
+    "promotion_policy",
+    "source_firewall",
+    "policy_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "clinical_eeg_event_finding_binding_policy_v1"
+    },
+    "policy_id": {
+      "const": "CLINICAL-EEG-EVENT-FINDING-BINDING-POLICY-V1"
+    },
+    "policy_status": {
+      "const": "draft_shadow"
+    },
+    "method_id": {
+      "const": "EEG-ONLY-EVENT-FINDING-PRIMARY-SECONDARY-BINDING-V1"
+    },
+    "exact_cover": {
+      "type": "object",
+      "required": [
+        "all_findings_exactly_once_as_primary_disposition",
+        "all_query_cells_exactly_once",
+        "unemitted_queries_cannot_be_deleted",
+        "technical_failure_cannot_be_absence"
+      ],
+      "properties": {
+        "all_findings_exactly_once_as_primary_disposition": {"const": true},
+        "all_query_cells_exactly_once": {"const": true},
+        "unemitted_queries_cannot_be_deleted": {"const": true},
+        "technical_failure_cannot_be_absence": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "status_assertion_policy": {
+      "type": "object",
+      "required": [
+        "same_primary_finding_only",
+        "cross_finding_max_aggregation_forbidden",
+        "secondary_may_upgrade_status",
+        "secondary_may_upgrade_assertion",
+        "secondary_may_add_votes"
+      ],
+      "properties": {
+        "same_primary_finding_only": {"const": true},
+        "cross_finding_max_aggregation_forbidden": {"const": true},
+        "secondary_may_upgrade_status": {"const": false},
+        "secondary_may_upgrade_assertion": {"const": false},
+        "secondary_may_add_votes": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "secondary_relation_types": {
+      "const": [
+        "alternate_reference_corroboration",
+        "same_instance_component",
+        "derived_projection",
+        "later_context",
+        "competing_interpretation",
+        "counterevidence"
+      ]
+    },
+    "primary_dispositions": {
+      "const": [
+        "bound_primary",
+        "withheld_no_matching_query",
+        "withheld_duplicate",
+        "withheld_multiple_primary",
+        "withheld_opportunity_mismatch",
+        "withheld_domain_mismatch",
+        "withheld_physical_instance_mismatch",
+        "withheld_producer_failure",
+        "not_evaluable"
+      ]
+    },
+    "promotion_dispositions": {
+      "const": [
+        "promoted_present",
+        "promoted_absent",
+        "candidate_present",
+        "candidate_uncertain",
+        "not_evaluable",
+        "withheld_conflict",
+        "withheld_duplicate",
+        "withheld_missing_primary",
+        "withheld_opportunity_mismatch",
+        "withheld_domain_mismatch",
+        "withheld_physical_instance_mismatch",
+        "withheld_term_denominator_unavailable",
+        "technical_failure"
+      ]
+    },
+    "interval_policy": {
+      "type": "object",
+      "required": [
+        "semantics",
+        "comparison_tolerance_seconds",
+        "preserve_quality_gaps",
+        "present_requires_subset_of_evaluable_union",
+        "absence_requires_complete_required_union"
+      ],
+      "properties": {
+        "semantics": {"const": "recording_relative_half_open_interval_union"},
+        "comparison_tolerance_seconds": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.000001
+        },
+        "preserve_quality_gaps": {"const": true},
+        "present_requires_subset_of_evaluable_union": {"const": true},
+        "absence_requires_complete_required_union": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "same_domain_policy": {
+      "type": "object",
+      "required": [
+        "required_fields",
+        "minimum_capability_precision_lower_bound",
+        "minimum_sensitivity_lower_bound",
+        "minimum_qualification_coverage",
+        "unit_type_and_granularity_exact",
+        "opportunity_policy_exact"
+      ],
+      "properties": {
+        "required_fields": {
+          "const": [
+            "producer_id",
+            "target_domain_id",
+            "term_id",
+            "operational_rule_id",
+            "family",
+            "unit_type",
+            "granularity",
+            "view_role",
+            "reference_type",
+            "sample_rate_hz",
+            "effective_bandwidth_hz",
+            "usable_fraction",
+            "opportunity_policy_sha256"
+          ]
+        },
+        "minimum_capability_precision_lower_bound": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "minimum_sensitivity_lower_bound": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "minimum_qualification_coverage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "unit_type_and_granularity_exact": {"const": true},
+        "opportunity_policy_exact": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "physical_instance_policy": {
+      "type": "object",
+      "required": [
+        "candidate_ids_are_untrusted_aliases",
+        "one_primary_physical_instance_per_finding",
+        "semantic_candidates_do_not_increment_physical_count",
+        "duplicate_semantic_candidates_forbidden"
+      ],
+      "properties": {
+        "candidate_ids_are_untrusted_aliases": {"const": true},
+        "one_primary_physical_instance_per_finding": {"const": true},
+        "semantic_candidates_do_not_increment_physical_count": {"const": true},
+        "duplicate_semantic_candidates_forbidden": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "onset_policy": {
+      "type": "object",
+      "required": [
+        "positive_onset_requires_future_free_causal_dependencies",
+        "offline_context_may_be_secondary_only",
+        "later_involvement_may_not_promote_onset"
+      ],
+      "properties": {
+        "positive_onset_requires_future_free_causal_dependencies": {"const": true},
+        "offline_context_may_be_secondary_only": {"const": true},
+        "later_involvement_may_not_promote_onset": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "promotion_policy": {
+      "type": "object",
+      "required": [
+        "report_eligible_assertion_required",
+        "explicit_qualified_term_decision_required",
+        "completed_producer_required",
+        "independent_term_denominator_required",
+        "item_denominator_join_required",
+        "absence_requires_same_domain_sensitivity",
+        "structural_receipts_never_sufficient"
+      ],
+      "properties": {
+        "report_eligible_assertion_required": {"const": true},
+        "explicit_qualified_term_decision_required": {"const": true},
+        "completed_producer_required": {"const": true},
+        "independent_term_denominator_required": {"const": true},
+        "item_denominator_join_required": {"const": true},
+        "absence_requires_same_domain_sensitivity": {"const": true},
+        "structural_receipts_never_sufficient": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "source_firewall": {
+      "type": "object",
+      "required": [
+        "eeg_signal_only",
+        "edf_annotations_used",
+        "spreadsheet_used",
+        "doctor_labels_used",
+        "clinical_text_used",
+        "patient_metadata_used",
+        "video_used",
+        "sleep_staging_used",
+        "provocation_used",
+        "ecg_emg_eog_used"
+      ],
+      "properties": {
+        "eeg_signal_only": {"const": true},
+        "edf_annotations_used": {"const": false},
+        "spreadsheet_used": {"const": false},
+        "doctor_labels_used": {"const": false},
+        "clinical_text_used": {"const": false},
+        "patient_metadata_used": {"const": false},
+        "video_used": {"const": false},
+        "sleep_staging_used": {"const": false},
+        "provocation_used": {"const": false},
+        "ecg_emg_eog_used": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "policy_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  }
+}

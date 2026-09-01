@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evisoz_teacher_candidate_cache_v1.schema.json",
+  "title": "EviSOZ offline teacher candidate cache v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "cache_id", "teacher_id", "status", "event_id", "linkage_group_id", "evisoz_role", "outer_holdout_fold", "event_identity_ref", "source_dual_montage_cache_ref", "teacher_model_ref", "input_view", "input_sampling_rate_hz", "input_window_seconds", "candidate_rows", "authority_policy", "counts", "receipt_sha256"],
+  "properties": {
+    "schema_version": {"const": "evisoz_teacher_candidate_cache_v1"},
+    "cache_id": {"type": "string", "pattern": "^EVISOZ-TEACHER-CACHE-[0-9a-f]{24}$"},
+    "teacher_id": {"enum": ["cerebragloss", "elm"]},
+    "status": {"const": "complete_uncalibrated_candidate_only"},
+    "event_id": {"type": "string", "minLength": 1},
+    "linkage_group_id": {"type": "string", "minLength": 1},
+    "evisoz_role": {"const": "development_cv"},
+    "outer_holdout_fold": {"type": "integer", "minimum": 0},
+    "event_identity_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+    "source_dual_montage_cache_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+    "teacher_model_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+    "input_view": {"enum": ["tcp22_edge_context", "car19_context", "elm_tcp20_crop"]},
+    "input_sampling_rate_hz": {"type": "integer", "exclusiveMinimum": 0},
+    "input_window_seconds": {"type": "array", "prefixItems": [{"type": "number"}, {"type": "number"}], "minItems": 2, "maxItems": 2},
+    "candidate_rows": {"type": "array", "items": {"$ref": "#/$defs/candidate"}},
+    "authority_policy": {"$ref": "#/$defs/policy"},
+    "counts": {"$ref": "#/$defs/counts"},
+    "receipt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "$defs": {
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate_id", "concept", "support_kind", "support_view", "support_units", "support_interval_seconds", "confidence", "probability_semantics", "authority", "status", "calibration_state", "permitted_uses", "prohibited_uses"],
+      "properties": {
+        "candidate_id": {"type": "string", "pattern": "^EVISOZ-TEACHER-CAND-[0-9a-f]{24}$"},
+        "concept": {"type": "string", "minLength": 1},
+        "support_kind": {"enum": ["edge_interval", "node_interval", "crop", "global"]},
+        "support_view": {"enum": ["tcp22_edge_context", "car19_context", "elm_tcp20_crop"]},
+        "support_units": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "support_interval_seconds": {"type": ["array", "null"], "prefixItems": [{"type": "number"}, {"type": "number"}], "minItems": 2, "maxItems": 2},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "probability_semantics": {"type": "string", "minLength": 1},
+        "authority": {"const": "offline_teacher"},
+        "status": {"const": "candidate_only"},
+        "calibration_state": {"const": "uncalibrated"},
+        "permitted_uses": {"const": ["soft_auxiliary"]},
+        "prohibited_uses": {"const": ["clinical_label", "measured_fact", "node_localization_supervision", "endpoint_expansion_from_edge"]}
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authority", "status", "calibration_state", "soft_auxiliary_only", "may_create_clinical_label", "may_be_treated_as_measured_fact", "may_supervise_node_localization", "teacher_runtime_required_at_deployment"],
+      "properties": {
+        "authority": {"const": "offline_teacher"},
+        "status": {"const": "candidate_only"},
+        "calibration_state": {"const": "uncalibrated"},
+        "soft_auxiliary_only": {"const": true},
+        "may_create_clinical_label": {"const": false},
+        "may_be_treated_as_measured_fact": {"const": false},
+        "may_supervise_node_localization": {"const": false},
+        "teacher_runtime_required_at_deployment": {"const": false}
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate_count", "candidate_concept_counts"],
+      "properties": {
+        "candidate_count": {"type": "integer", "minimum": 0},
+        "candidate_concept_counts": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0}}
+      }
+    }
+  }
+}

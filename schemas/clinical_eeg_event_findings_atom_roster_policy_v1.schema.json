@@ -1,0 +1,450 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/schemas/clinical_eeg_event_findings_atom_roster_policy_v1.schema.json",
+  "title": "Closed per-event EEG Findings atom-roster policy",
+  "description": "A versioned EEG-only policy that closes the denominator of mandatory event Findings. Core slots are accounted for on every detected event; repeatable child atoms are closed only within an explicit evaluation opportunity. This policy defines research/reporting permissions, not clinical truth or an automatic diagnostic guideline.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "roster_id",
+    "policy_status",
+    "claim_boundary",
+    "scope_firewall",
+    "status_vocabulary",
+    "assertion_vocabulary",
+    "sharp_context_partition_policy",
+    "core_atom_specs",
+    "child_roster_specs",
+    "policy_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "clinical_eeg_event_findings_atom_roster_policy_v1"
+    },
+    "roster_id": {
+      "$ref": "#/$defs/id"
+    },
+    "policy_status": {
+      "enum": [
+        "draft_shadow",
+        "research_frozen",
+        "clinically_qualified"
+      ]
+    },
+    "claim_boundary": {
+      "const": "research_scalp_electrographic_onset_topography_not_cortical_soz_ez_or_treatment_target"
+    },
+    "scope_firewall": {
+      "$ref": "#/$defs/scopeFirewall"
+    },
+    "status_vocabulary": {
+      "const": [
+        "present",
+        "absent_with_opportunity",
+        "uncertain",
+        "not_evaluable"
+      ]
+    },
+    "assertion_vocabulary": {
+      "const": [
+        "measured",
+        "model_candidate",
+        "report_eligible_automated"
+      ]
+    },
+    "sharp_context_partition_policy": {
+      "$ref": "#/$defs/sharpContextPartitionPolicy"
+    },
+    "core_atom_specs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/coreAtomSpec"
+      }
+    },
+    "child_roster_specs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/childRosterSpec"
+      }
+    },
+    "policy_sha256": {
+      "$ref": "#/$defs/sha256"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "group": {
+      "enum": [
+        "C1_phenomenology",
+        "C2_spatiotemporal_onset",
+        "C3_course",
+        "Q_evaluability"
+      ]
+    },
+    "family": {
+      "enum": [
+        "quality",
+        "spectral",
+        "rhythm",
+        "morphology",
+        "evolution",
+        "spatial_field",
+        "spatial_recruitment",
+        "termination_recovery",
+        "high_frequency"
+      ]
+    },
+    "assertionLevel": {
+      "enum": [
+        "measured",
+        "model_candidate",
+        "report_eligible_automated"
+      ]
+    },
+    "intrinsicRole": {
+      "enum": [
+        "onset_eligible",
+        "early_context",
+        "later_involvement",
+        "non_event_context",
+        "limitation"
+      ]
+    },
+    "sharpContextPartitionPolicy": {
+      "type": "object",
+      "required": [
+        "policy_id",
+        "retired_ambiguous_term_ids",
+        "interictal_term_ids",
+        "interictal_intrinsic_evidence_role",
+        "interictal_core_atom_id",
+        "interictal_child_roster_id",
+        "ictal_term_ids",
+        "ictal_intrinsic_evidence_role",
+        "ictal_core_atom_id",
+        "ictal_child_roster_id",
+        "cross_context_promotion_allowed",
+        "legacy_term_fallback_allowed"
+      ],
+      "properties": {
+        "policy_id": {
+          "const": "INTERICTAL-ICTAL-SHARP-CONTEXT-PARTITION-V1"
+        },
+        "retired_ambiguous_term_ids": {
+          "const": ["sharp_transient_candidate"]
+        },
+        "interictal_term_ids": {
+          "const": ["interictal_epileptiform_discharge", "sharp_wave", "spike"]
+        },
+        "interictal_intrinsic_evidence_role": {
+          "const": "non_event_context"
+        },
+        "interictal_core_atom_id": {
+          "const": "c1_interictal_ied_morphology_profile"
+        },
+        "interictal_child_roster_id": {
+          "const": "c1_interictal_ied_instances"
+        },
+        "ictal_term_ids": {
+          "const": ["ictal_sharp_contoured_component_candidate"]
+        },
+        "ictal_intrinsic_evidence_role": {
+          "const": "early_context"
+        },
+        "ictal_core_atom_id": {
+          "const": "c1_waveform_morphology_profile"
+        },
+        "ictal_child_roster_id": {
+          "const": "c1_ictal_sharp_component_instances"
+        },
+        "cross_context_promotion_allowed": {
+          "const": false
+        },
+        "legacy_term_fallback_allowed": {
+          "const": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "scopeFirewall": {
+      "type": "object",
+      "required": [
+        "eeg_signal_only",
+        "edf_annotations_used",
+        "spreadsheet_used",
+        "doctor_labels_used",
+        "clinical_text_used",
+        "video_used",
+        "sleep_staging_used",
+        "provocation_used",
+        "ecg_emg_eog_used"
+      ],
+      "properties": {
+        "eeg_signal_only": {
+          "const": true
+        },
+        "edf_annotations_used": {
+          "const": false
+        },
+        "spreadsheet_used": {
+          "const": false
+        },
+        "doctor_labels_used": {
+          "const": false
+        },
+        "clinical_text_used": {
+          "const": false
+        },
+        "video_used": {
+          "const": false
+        },
+        "sleep_staging_used": {
+          "const": false
+        },
+        "provocation_used": {
+          "const": false
+        },
+        "ecg_emg_eog_used": {
+          "const": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "baseSpec": {
+      "type": "object",
+      "required": [
+        "group",
+        "label_zh",
+        "description_zh",
+        "salience_tier",
+        "structural_scopes",
+        "term_semantic_class",
+        "allowed_assertion_levels",
+        "allowed_finding_families",
+        "allowed_term_ids",
+        "allowed_intrinsic_evidence_roles",
+        "allowed_surface_frame_ids",
+        "source_paths",
+        "activation_policy",
+        "absence_requires_complete_opportunity",
+        "absence_requires_sensitivity_receipt",
+        "onset_support_permission",
+        "clinical_source_ids",
+        "current_implementation_status"
+      ],
+      "properties": {
+        "group": {
+          "$ref": "#/$defs/group"
+        },
+        "label_zh": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "description_zh": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 800
+        },
+        "salience_tier": {
+          "enum": [
+            "critical",
+            "major",
+            "supporting"
+          ]
+        },
+        "structural_scopes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "event_mandatory",
+              "unit_mandatory",
+              "instance_dependent",
+              "acquisition_sensitive"
+            ]
+          }
+        },
+        "term_semantic_class": {
+          "enum": [
+            "technical_assessment",
+            "physical_measurement",
+            "research_candidate",
+            "controlled_clinical_pattern",
+            "research_onset_hypothesis",
+            "limitation"
+          ]
+        },
+        "allowed_assertion_levels": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/assertionLevel"
+          }
+        },
+        "allowed_finding_families": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/family"
+          }
+        },
+        "allowed_term_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "allowed_intrinsic_evidence_roles": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/intrinsicRole"
+          }
+        },
+        "allowed_surface_frame_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "source_paths": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^/([A-Za-z0-9_.:-]+)(/[A-Za-z0-9_.:-]+)*$"
+          }
+        },
+        "activation_policy": {
+          "enum": [
+            "always_accounted",
+            "opportunity_conditioned",
+            "acquisition_sensitive",
+            "boundary_conditioned"
+          ]
+        },
+        "absence_requires_complete_opportunity": {
+          "type": "boolean"
+        },
+        "absence_requires_sensitivity_receipt": {
+          "type": "boolean"
+        },
+        "onset_support_permission": {
+          "enum": [
+            "required_future_free_causal_if_positive",
+            "forbidden",
+            "not_applicable"
+          ]
+        },
+        "clinical_source_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "current_implementation_status": {
+          "enum": [
+            "implemented_measurement",
+            "implemented_candidate",
+            "implemented_structural",
+            "unimplemented_not_evaluable"
+          ]
+        }
+      }
+    },
+    "coreAtomSpec": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/baseSpec"
+        },
+        {
+          "type": "object",
+          "required": [
+            "atom_id",
+            "required_every_event"
+          ],
+          "properties": {
+            "atom_id": {
+              "$ref": "#/$defs/id"
+            },
+            "required_every_event": {
+              "const": true
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "childRosterSpec": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/baseSpec"
+        },
+        {
+          "type": "object",
+          "required": [
+            "child_roster_id",
+            "instance_semantics",
+            "enumeration_scope",
+            "deduplication_required",
+            "opportunity_denominator_source"
+          ],
+          "properties": {
+            "child_roster_id": {
+              "$ref": "#/$defs/id"
+            },
+            "instance_semantics": {
+              "enum": [
+                "interictal_ied_candidate",
+                "ictal_sharp_component_candidate",
+                "rhythmic_run_candidate",
+                "periodic_element_candidate",
+                "composite_pattern_candidate",
+                "evolution_transition_candidate",
+                "spatial_involvement_candidate",
+                "artifact_interval_candidate",
+                "acquisition_sensitive_pattern_candidate"
+              ]
+            },
+            "enumeration_scope": {
+              "enum": [
+                "event_analysis_window",
+                "candidate_emergence_interval",
+                "event_course_interval",
+                "post_event_context",
+                "record_non_event_context",
+                "quality_evaluable_interval"
+              ]
+            },
+            "deduplication_required": {
+              "const": true
+            },
+            "opportunity_denominator_source": {
+              "const": "independent_policy_enumerator_required_for_absence_or_recall"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    }
+  }
+}

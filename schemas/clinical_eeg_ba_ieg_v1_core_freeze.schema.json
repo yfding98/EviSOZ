@@ -1,0 +1,1224 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/schemas/clinical_eeg_ba_ieg_v1_core_freeze.schema.json",
+  "title": "Clinical EEG BA-IEG v1 core architecture freeze",
+  "description": "Content-addressed, fail-closed research architecture selection. It does not assert an implemented end-to-end checkpoint, performance, report eligibility, clinical qualification, or production authorization.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "contract_id",
+    "state",
+    "purpose",
+    "schema_binding",
+    "contract_sha256",
+    "scope",
+    "detector_navigation",
+    "core_route",
+    "acquisition",
+    "p0_tokenization",
+    "temporal_backbone",
+    "causal_typed_unit_head",
+    "event_bag_aggregation",
+    "training_only_patient_aggregation",
+    "record_spatial_resolution_projection",
+    "shadow_components",
+    "inference_firewall",
+    "report_interface",
+    "performance_status",
+    "execution_authorization"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "clinical_eeg_ba_ieg_v1_core_freeze_v1"
+    },
+    "contract_id": {
+      "$ref": "#/$defs/id"
+    },
+    "state": {
+      "const": "method_architecture_frozen_performance_not_established"
+    },
+    "purpose": {
+      "const": "freeze_minimal_ba_ieg_v1_model_core_without_claiming_implementation_performance_or_report_quality"
+    },
+    "schema_binding": {
+      "$ref": "#/$defs/schemaBinding"
+    },
+    "contract_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "scope": {
+      "$ref": "#/$defs/scope"
+    },
+    "detector_navigation": {
+      "$ref": "#/$defs/detectorNavigation"
+    },
+    "core_route": {
+      "const": [
+        "external_whole_record_detector_navigation_contract",
+        "rule_based_posterior_tail_acquisition",
+        "deterministic_p0_16_feature_1_4_16_second_tokens",
+        "permission_split_segmental_state_model",
+        "shallow_causal_typed_unit_head",
+        "capped_log_mean_exp_event_bag",
+        "deterministic_conservative_record_spatial_projection"
+      ]
+    },
+    "acquisition": {
+      "$ref": "#/$defs/acquisition"
+    },
+    "p0_tokenization": {
+      "$ref": "#/$defs/p0Tokenization"
+    },
+    "temporal_backbone": {
+      "$ref": "#/$defs/temporalBackbone"
+    },
+    "causal_typed_unit_head": {
+      "$ref": "#/$defs/typedUnitHead"
+    },
+    "event_bag_aggregation": {
+      "$ref": "#/$defs/eventBagAggregation"
+    },
+    "training_only_patient_aggregation": {
+      "$ref": "#/$defs/trainingOnlyPatientAggregation"
+    },
+    "record_spatial_resolution_projection": {
+      "$ref": "#/$defs/recordSpatialResolutionProjection"
+    },
+    "shadow_components": {
+      "$ref": "#/$defs/shadowComponents"
+    },
+    "inference_firewall": {
+      "$ref": "#/$defs/inferenceFirewall"
+    },
+    "report_interface": {
+      "$ref": "#/$defs/reportInterface"
+    },
+    "performance_status": {
+      "$ref": "#/$defs/performanceStatus"
+    },
+    "execution_authorization": {
+      "$ref": "#/$defs/executionAuthorization"
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 192,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "schemaBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {
+          "const": "schemas/clinical_eeg_ba_ieg_v1_core_freeze.schema.json"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task",
+        "input_scope",
+        "output_semantics",
+        "research_only",
+        "clinical_or_production_authorization"
+      ],
+      "properties": {
+        "task": {
+          "const": "thirty_to_sixty_minute_scalp_eeg_multievent_onset_findings_and_channel_ranking"
+        },
+        "input_scope": {
+          "const": "eeg_signal_and_allowlisted_acquisition_metadata_only"
+        },
+        "output_semantics": {
+          "const": "research_scalp_visible_ictal_onset_topography_not_cortical_soz_ez_or_surgical_target"
+        },
+        "research_only": {
+          "const": true
+        },
+        "clinical_or_production_authorization": {
+          "const": false
+        }
+      }
+    },
+    "detectorNavigation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role",
+        "formal_provider_status",
+        "formal_provider_id",
+        "candidate_contract",
+        "admission_scope",
+        "pooled_event_sensitivity_minimum",
+        "patient_macro_event_sensitivity_minimum",
+        "background_only_false_alarms_per_24h_maximum",
+        "warm_end_to_end_rtf_maximum",
+        "operating_point_selection_order",
+        "runtime_measurement_scope",
+        "runtime_hardware_receipt_status",
+        "a0_navigation",
+        "a1_navigation"
+      ],
+      "properties": {
+        "role": {
+          "const": "whole_record_candidate_navigation_only_not_a_finding_or_soz_fact"
+        },
+        "formal_provider_status": {
+          "const": "no_qualified_operating_point"
+        },
+        "formal_provider_id": {
+          "type": "null"
+        },
+        "candidate_contract": {
+          "const": [
+            "dense_or_epoch_posterior",
+            "candidate_event_groups",
+            "onset_offset_posterior_interval",
+            "zero_alarm_partial_and_technical_failure_state",
+            "checkpoint_native_transform_receipt"
+          ]
+        },
+        "admission_scope": {
+          "const": "complete_official_tusz_dev_prediction_first_then_reference_join"
+        },
+        "pooled_event_sensitivity_minimum": {
+          "const": 0.9
+        },
+        "patient_macro_event_sensitivity_minimum": {
+          "const": 0.85
+        },
+        "background_only_false_alarms_per_24h_maximum": {
+          "const": 12.0
+        },
+        "warm_end_to_end_rtf_maximum": {
+          "const": 0.05
+        },
+        "operating_point_selection_order": {
+          "const": [
+            "pass_all_accuracy_false_alarm_and_runtime_gates",
+            "minimize_background_only_false_alarms_per_24h",
+            "minimize_time_in_warning",
+            "minimize_matched_onset_absolute_error",
+            "minimize_warm_end_to_end_rtf"
+          ]
+        },
+        "runtime_measurement_scope": {
+          "const": "same_hardware_edf_io_preprocessing_inference_and_decoder"
+        },
+        "runtime_hardware_receipt_status": {
+          "const": "must_be_frozen_before_benchmark_not_yet_bound"
+        },
+        "a0_navigation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "semantics",
+            "patient_count",
+            "record_count",
+            "event_count",
+            "records_with_events",
+            "zero_event_record_count",
+            "receipt_sha256",
+            "end_to_end_claim_authorized"
+          ],
+          "properties": {
+            "status": {
+              "const": "materialized_for_downstream_development_only"
+            },
+            "semantics": {
+              "const": "conditional_on_seizure_interval_upper_bound"
+            },
+            "patient_count": {
+              "const": 70
+            },
+            "record_count": {
+              "const": 318
+            },
+            "event_count": {
+              "const": 908
+            },
+            "records_with_events": {
+              "const": 316
+            },
+            "zero_event_record_count": {
+              "const": 2
+            },
+            "receipt_sha256": {
+              "const": "5db5680c5bf5515f26b064a19e2737f1fd89153613c166dc2ddf5c53d55475a7"
+            },
+            "end_to_end_claim_authorized": {
+              "const": false
+            }
+          }
+        },
+        "a1_navigation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "reference_onset_used_for_candidate_selection",
+            "required_for_end_to_end_claim",
+            "typed_operating_point_receipt_validator_implemented",
+            "roster_instantiation_authorized",
+            "required_typed_receipt_bindings"
+          ],
+          "properties": {
+            "status": {
+              "const": "blocked_no_qualified_detector_operating_point"
+            },
+            "reference_onset_used_for_candidate_selection": {
+              "const": false
+            },
+            "required_for_end_to_end_claim": {
+              "const": true
+            },
+            "typed_operating_point_receipt_validator_implemented": {
+              "const": false
+            },
+            "roster_instantiation_authorized": {
+              "const": false
+            },
+            "required_typed_receipt_bindings": {
+              "const": [
+                "detector_checkpoint_sha256",
+                "prediction_bundle_sha256",
+                "scorer_matching_contract_sha256",
+                "official_split_receipt_sha256",
+                "operating_point_thresholds",
+                "pooled_event_sensitivity",
+                "patient_macro_event_sensitivity",
+                "background_only_false_alarms_per_24h",
+                "warm_end_to_end_rtf",
+                "runtime_hardware_receipt_sha256"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "acquisition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policy_id",
+        "selection_status",
+        "implementation_status",
+        "learned_policy",
+        "posterior_tail_rule_based",
+        "left_right_asymmetric",
+        "control_loop",
+        "initial_posterior_provider",
+        "refinement_posterior_provider",
+        "posterior_calibration_status",
+        "threshold_receipt_available",
+        "fallback_when_refinement_posterior_unavailable",
+        "budget_comparison_semantics",
+        "candidate_delta_seconds",
+        "allowed_actions",
+        "stop_reasons",
+        "fixed_60_120_300_role",
+        "private_or_doctor_target_used"
+      ],
+      "properties": {
+        "policy_id": {
+          "const": "ba_ieg_rule_based_asymmetric_posterior_tail_acquisition_v1"
+        },
+        "selection_status": {
+          "const": "frozen_for_v1_core"
+        },
+        "implementation_status": {
+          "const": "contract_selected_pipeline_wiring_not_yet_qualified"
+        },
+        "learned_policy": {
+          "const": false
+        },
+        "posterior_tail_rule_based": {
+          "const": true
+        },
+        "left_right_asymmetric": {
+          "const": true
+        },
+        "control_loop": {
+          "const": "initial_support_then_iterative_acquire_p0_segmental_posterior_recompute"
+        },
+        "initial_posterior_provider": {
+          "const": "detector_native_dense_posterior_or_candidate_credible_envelope"
+        },
+        "refinement_posterior_provider": {
+          "const": "permission_split_segmental_state_model_boundary_marginals"
+        },
+        "posterior_calibration_status": {
+          "const": "source_dev_thresholds_not_yet_frozen"
+        },
+        "threshold_receipt_available": {
+          "const": false
+        },
+        "fallback_when_refinement_posterior_unavailable": {
+          "const": "fixed_watchdog_support_and_adaptive_status_not_evaluable"
+        },
+        "budget_comparison_semantics": {
+          "const": "same_candidate_source_and_maximum_eeg_second_token_gpu_caps_pareto_not_identical_support"
+        },
+        "candidate_delta_seconds": {
+          "const": [2.0, 4.0, 8.0, 16.0, 32.0]
+        },
+        "allowed_actions": {
+          "const": [
+            "query_left",
+            "query_right",
+            "retrieve_distant_background",
+            "stop"
+          ]
+        },
+        "stop_reasons": {
+          "const": [
+            "posterior_tail_adequately_covered",
+            "budget_cap",
+            "record_censoring",
+            "neighbor_event_protection",
+            "technical_gap"
+          ]
+        },
+        "fixed_60_120_300_role": {
+          "const": "baseline_and_watchdog_only"
+        },
+        "private_or_doctor_target_used": {
+          "const": false
+        }
+      }
+    },
+    "p0Tokenization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "implementation_id",
+        "view_profile",
+        "implementation_status",
+        "deterministic",
+        "feature_dim",
+        "feature_names",
+        "scale_duration_seconds",
+        "scale_step_seconds",
+        "minimum_fine_samples",
+        "event_time_warp_used",
+        "silent_padding_used",
+        "learned_inner_routing_used"
+      ],
+      "properties": {
+        "implementation_id": {
+          "const": "ba_ieg_p0_deterministic_multiclock_physical_time_measurements_native_12_v1"
+        },
+        "view_profile": {
+          "const": "onset_offline_native_12_v1"
+        },
+        "implementation_status": {
+          "const": "implemented_contract_tested_not_source_performance_qualified"
+        },
+        "deterministic": {
+          "const": true
+        },
+        "feature_dim": {
+          "const": 16
+        },
+        "feature_names": {
+          "type": "array",
+          "minItems": 16,
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "scale_duration_seconds": {
+          "const": {
+            "fine": 1.0,
+            "coarse": 4.0,
+            "context": 16.0
+          }
+        },
+        "scale_step_seconds": {
+          "const": {
+            "fine": 1.0,
+            "coarse": 4.0,
+            "context": 16.0
+          }
+        },
+        "minimum_fine_samples": {
+          "const": 4
+        },
+        "event_time_warp_used": {
+          "const": false
+        },
+        "silent_padding_used": {
+          "const": false
+        },
+        "learned_inner_routing_used": {
+          "const": false
+        }
+      }
+    },
+    "temporalBackbone": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "python_class",
+        "implementation_id",
+        "implementation_status",
+        "feature_dim",
+        "hidden_dim",
+        "maximum_segments",
+        "maximum_paths_for_audit",
+        "dropout",
+        "causal_onset_lane",
+        "offline_course_lane",
+        "causal_to_offline_stop_gradient",
+        "offline_to_positive_onset_path_exists",
+        "heuristic_phase_posterior_enabled",
+        "exact_forward_backward",
+        "left_right_censoring_supported",
+        "trained_checkpoint_available",
+        "outputs_are_clinical_probabilities"
+      ],
+      "properties": {
+        "python_class": {
+          "const": "src.clinical_eeg_long_recording.ba_ieg_permission_split_segmental_state_model_v1.BAIEGPermissionSplitSegmentalStateModel"
+        },
+        "implementation_id": {
+          "const": "ba_ieg_permission_split_censoring_aware_segmental_state_model_v1"
+        },
+        "implementation_status": {
+          "const": "implemented_optimizer_smoke_only"
+        },
+        "feature_dim": {
+          "const": 16
+        },
+        "hidden_dim": {
+          "const": 64
+        },
+        "maximum_segments": {
+          "const": 8
+        },
+        "maximum_paths_for_audit": {
+          "const": 8
+        },
+        "dropout": {
+          "const": 0.0
+        },
+        "causal_onset_lane": {
+          "const": "unidirectional_prefix_gru"
+        },
+        "offline_course_lane": {
+          "const": "bidirectional_gru"
+        },
+        "causal_to_offline_stop_gradient": {
+          "const": true
+        },
+        "offline_to_positive_onset_path_exists": {
+          "const": false
+        },
+        "heuristic_phase_posterior_enabled": {
+          "const": false
+        },
+        "exact_forward_backward": {
+          "const": true
+        },
+        "left_right_censoring_supported": {
+          "const": true
+        },
+        "trained_checkpoint_available": {
+          "const": false
+        },
+        "outputs_are_clinical_probabilities": {
+          "const": false
+        }
+      }
+    },
+    "typedUnitHead": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "head_id",
+        "python_class",
+        "selection_status",
+        "implementation_status",
+        "selected_for_core",
+        "in_memory_causal_trace_seam_implemented",
+        "disk_runner_connected",
+        "trained",
+        "trained_checkpoint_available",
+        "input_permission",
+        "architecture",
+        "output_unit_types",
+        "positive_onset_unit_types",
+        "bipolar_unit_semantics",
+        "bipolar_endpoint_attribution_authorized",
+        "late_spread_can_create_positive_onset",
+        "region_laterality_projection_status",
+        "region_laterality_allowed_future_route",
+        "deepsoz_supervision_semantics"
+      ],
+      "properties": {
+        "head_id": {
+          "const": "ba_ieg_shallow_causal_typed_unit_onset_head_v1"
+        },
+        "python_class": {
+          "const": "src.clinical_eeg_long_recording.ba_ieg_shallow_causal_typed_unit_head_v1.BAIEGShallowCausalTypedUnitOnsetHead"
+        },
+        "selection_status": {
+          "const": "frozen_required_component"
+        },
+        "implementation_status": {
+          "const": "implemented_focused_component_tests_only"
+        },
+        "selected_for_core": {
+          "const": true
+        },
+        "in_memory_causal_trace_seam_implemented": {
+          "const": true
+        },
+        "disk_runner_connected": {
+          "const": false
+        },
+        "trained": {
+          "const": false
+        },
+        "trained_checkpoint_available": {
+          "const": false
+        },
+        "input_permission": {
+          "const": "future_free_onset_causal_hidden_only"
+        },
+        "architecture": {
+          "const": "single_hidden_layer_typed_unit_scoring_and_interval_heads"
+        },
+        "output_unit_types": {
+          "const": ["physical_electrode", "bipolar_lead"]
+        },
+        "positive_onset_unit_types": {
+          "const": ["physical_electrode", "bipolar_lead"]
+        },
+        "bipolar_unit_semantics": {
+          "const": "whole_bipolar_lead_identity_without_endpoint_attribution"
+        },
+        "bipolar_endpoint_attribution_authorized": {
+          "const": false
+        },
+        "late_spread_can_create_positive_onset": {
+          "const": false
+        },
+        "region_laterality_projection_status": {
+          "const": "implemented_as_separate_downstream_component_focused_tests_only"
+        },
+        "region_laterality_allowed_future_route": {
+          "const": "deterministic_conservative_projection_selected"
+        },
+        "deepsoz_supervision_semantics": {
+          "const": "patient_level_incomplete_positive_physical_electrode_set_unlabelled_channels_unknown_training_only_after_complete_record_aggregation"
+        }
+      }
+    },
+    "eventBagAggregation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "aggregator_id",
+        "python_class",
+        "selection_status",
+        "implementation_status",
+        "aggregation_level",
+        "record_local_only",
+        "disk_runner_connected",
+        "trained",
+        "trained_checkpoint_available",
+        "record_level_unit_types",
+        "bipolar_unit_semantics",
+        "bipolar_endpoint_attribution_authorized",
+        "region_laterality_projection_status",
+        "region_laterality_allowed_future_route",
+        "aggregation",
+        "formula",
+        "temperature",
+        "symmetric_event_logit_clip",
+        "exact_duplicate_events_increase_evidence",
+        "event_order_invariant",
+        "patient_level_aggregation_performed",
+        "event_qualification_status_manifest",
+        "learned_mode_mixture_used"
+      ],
+      "properties": {
+        "aggregator_id": {
+          "const": "ba_ieg_capped_log_mean_exp_event_bag_v1"
+        },
+        "python_class": {
+          "const": "src.clinical_eeg_long_recording.ba_ieg_capped_log_mean_exp_event_bag_v1.BAIEGCappedLogMeanExpEventBag"
+        },
+        "selection_status": {
+          "const": "frozen_required_component"
+        },
+        "implementation_status": {
+          "const": "implemented_focused_component_tests_only"
+        },
+        "aggregation_level": {
+          "const": "event_to_record"
+        },
+        "record_local_only": {
+          "const": true
+        },
+        "disk_runner_connected": {
+          "const": false
+        },
+        "trained": {
+          "const": false
+        },
+        "trained_checkpoint_available": {
+          "const": false
+        },
+        "record_level_unit_types": {
+          "const": ["physical_electrode", "bipolar_lead"]
+        },
+        "bipolar_unit_semantics": {
+          "const": "whole_bipolar_lead_identity_without_endpoint_attribution"
+        },
+        "bipolar_endpoint_attribution_authorized": {
+          "const": false
+        },
+        "region_laterality_projection_status": {
+          "const": "implemented_as_separate_downstream_component_focused_tests_only"
+        },
+        "region_laterality_allowed_future_route": {
+          "const": "deterministic_conservative_projection_selected"
+        },
+        "aggregation": {
+          "const": "capped_log_mean_exp"
+        },
+        "formula": {
+          "const": "tau_times_log_mean_exp_of_clip_event_logits_div_tau"
+        },
+        "temperature": {
+          "const": 1.0
+        },
+        "symmetric_event_logit_clip": {
+          "const": 12.0
+        },
+        "exact_duplicate_events_increase_evidence": {
+          "const": false
+        },
+        "event_order_invariant": {
+          "const": true
+        },
+        "patient_level_aggregation_performed": {
+          "const": false
+        },
+        "event_qualification_status_manifest": {
+          "$ref": "#/$defs/eventQualificationStatusManifest"
+        },
+        "learned_mode_mixture_used": {
+          "const": false
+        }
+      }
+    },
+    "trainingOnlyPatientAggregation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "bridge_id",
+        "python_class",
+        "selection_status",
+        "implementation_status",
+        "input_level",
+        "aggregation_level",
+        "aggregation",
+        "same_temperature_and_clip_as_event_bag",
+        "complete_record_roster_required",
+        "zero_candidate_records_retained",
+        "audit_denominator",
+        "numerical_denominator",
+        "zero_or_unqualified_record_logit_imputation",
+        "detection_miss_penalty_in_localization_loss",
+        "a1_typed_operating_point_receipt_validator_implemented",
+        "a1_roster_instantiation_authorized",
+        "exact_container_aliases_increase_weight",
+        "deepsoz_supervision_level",
+        "supervised_unit_types",
+        "bipolar_lead_supervision_authorized",
+        "patient_target_copied_to_record_or_event",
+        "positive_set_loss_count_per_patient_per_step_maximum",
+        "navigation_arms",
+        "a0_a1_mixed_in_one_run",
+        "disk_runner_connected",
+        "trained",
+        "checkpoint_available",
+        "inference_or_report_output_produced"
+      ],
+      "properties": {
+        "bridge_id": {
+          "const": "ba_ieg_complete_record_patient_capped_lme_positive_set_bridge_v1"
+        },
+        "python_class": {
+          "const": "src.clinical_eeg_long_recording.ba_ieg_complete_patient_positive_set_bridge_v1.BAIEGCompletePatientCappedLogMeanExpV1"
+        },
+        "selection_status": {
+          "const": "frozen_training_only_component"
+        },
+        "implementation_status": {
+          "const": "implemented_focused_component_tests_not_connected_to_disk_runner"
+        },
+        "input_level": {
+          "const": "complete_record_physical_electrode_logits_after_record_event_bag"
+        },
+        "aggregation_level": {
+          "const": "record_to_patient_training_only"
+        },
+        "aggregation": {
+          "const": "capped_log_mean_exp"
+        },
+        "same_temperature_and_clip_as_event_bag": {
+          "const": true
+        },
+        "complete_record_roster_required": {
+          "const": true
+        },
+        "zero_candidate_records_retained": {
+          "const": true
+        },
+        "audit_denominator": {
+          "const": "all_unique_complete_roster_records_including_zero_and_unqualified"
+        },
+        "numerical_denominator": {
+          "const": "per_electrode_evaluable_record_mask_only"
+        },
+        "zero_or_unqualified_record_logit_imputation": {
+          "const": "none"
+        },
+        "detection_miss_penalty_in_localization_loss": {
+          "const": false
+        },
+        "a1_typed_operating_point_receipt_validator_implemented": {
+          "const": false
+        },
+        "a1_roster_instantiation_authorized": {
+          "const": false
+        },
+        "exact_container_aliases_increase_weight": {
+          "const": false
+        },
+        "deepsoz_supervision_level": {
+          "const": "patient_level_incomplete_positive_physical_electrode_set_unlabelled_channels_unknown"
+        },
+        "supervised_unit_types": {
+          "const": ["physical_electrode"]
+        },
+        "bipolar_lead_supervision_authorized": {
+          "const": false
+        },
+        "patient_target_copied_to_record_or_event": {
+          "const": false
+        },
+        "positive_set_loss_count_per_patient_per_step_maximum": {
+          "const": 1
+        },
+        "navigation_arms": {
+          "const": [
+            "A0_conditional_on_oracle_navigation",
+            "A1_detector_frozen"
+          ]
+        },
+        "a0_a1_mixed_in_one_run": {
+          "const": false
+        },
+        "disk_runner_connected": {
+          "const": false
+        },
+        "trained": {
+          "const": false
+        },
+        "checkpoint_available": {
+          "const": false
+        },
+        "inference_or_report_output_produced": {
+          "const": false
+        }
+      }
+    },
+    "recordSpatialResolutionProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "projection_id",
+        "python_class",
+        "selection_status",
+        "implementation_status",
+        "input_source",
+        "axes",
+        "ontology_sha256",
+        "physical_electrode_precedence",
+        "whole_bipolar_lead_endpoint_attribution_authorized",
+        "cross_side_lead_projection",
+        "same_side_cross_region_lead_projection",
+        "bilateral_near_synchronous_phenotype_inferred",
+        "bilateral_near_synchronous_requirement",
+        "disk_runner_connected",
+        "trained",
+        "outputs_are_clinical_probabilities"
+      ],
+      "properties": {
+        "projection_id": {
+          "const": "ba_ieg_record_conservative_spatial_resolution_projection_v1"
+        },
+        "python_class": {
+          "const": "src.clinical_eeg_long_recording.ba_ieg_record_spatial_resolution_projection_v1.BAIEGRecordSpatialResolutionProjectionV1"
+        },
+        "selection_status": {
+          "const": "frozen_required_component"
+        },
+        "implementation_status": {
+          "const": "implemented_focused_component_tests_only"
+        },
+        "input_source": {
+          "const": "record_local_capped_lme_typed_unit_logits"
+        },
+        "axes": {
+          "const": [
+            "laterality",
+            "coarse_scalp_region",
+            "joint_laterality_coarse_scalp_region"
+          ]
+        },
+        "ontology_sha256": {
+          "const": "4ee18170fbafdc88b776ed7dc12bd165b40d06557f3fe3921cc184b5c91a8a09"
+        },
+        "physical_electrode_precedence": {
+          "const": true
+        },
+        "whole_bipolar_lead_endpoint_attribution_authorized": {
+          "const": false
+        },
+        "cross_side_lead_projection": {
+          "const": "ineligible_for_laterality_region_and_joint_axes"
+        },
+        "same_side_cross_region_lead_projection": {
+          "const": "laterality_only"
+        },
+        "bilateral_near_synchronous_phenotype_inferred": {
+          "const": false
+        },
+        "bilateral_near_synchronous_requirement": {
+          "const": "external_record_level_temporal_evidence"
+        },
+        "disk_runner_connected": {
+          "const": false
+        },
+        "trained": {
+          "const": false
+        },
+        "outputs_are_clinical_probabilities": {
+          "const": false
+        }
+      }
+    },
+    "eventQualificationStatusManifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "manifest_class",
+        "implementation_status",
+        "allowed_statuses",
+        "target_free_provider_implemented",
+        "threshold_frozen",
+        "qualification_receipt_provider_implemented",
+        "manual_or_target_conditioned_status_authorized"
+      ],
+      "properties": {
+        "manifest_class": {
+          "const": "src.clinical_eeg_long_recording.ba_ieg_capped_log_mean_exp_event_bag_v1.BAIEGRecordEventBagManifest"
+        },
+        "implementation_status": {
+          "const": "implemented_contract_and_focused_component_tests"
+        },
+        "allowed_statuses": {
+          "const": ["qualified_ictal", "uncertain", "not_evaluable"]
+        },
+        "target_free_provider_implemented": {
+          "const": false
+        },
+        "threshold_frozen": {
+          "const": false
+        },
+        "qualification_receipt_provider_implemented": {
+          "const": false
+        },
+        "manual_or_target_conditioned_status_authorized": {
+          "const": false
+        }
+      }
+    },
+    "shadowComponent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "implementation_id",
+        "status",
+        "enabled",
+        "core_route_authorized",
+        "checkpoint_authorized",
+        "claim_support_authorized"
+      ],
+      "properties": {
+        "implementation_id": {
+          "$ref": "#/$defs/id"
+        },
+        "status": {
+          "const": "shadow_off"
+        },
+        "enabled": {
+          "const": false
+        },
+        "core_route_authorized": {
+          "const": false
+        },
+        "checkpoint_authorized": {
+          "const": false
+        },
+        "claim_support_authorized": {
+          "const": false
+        }
+      }
+    },
+    "shadowComponents": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "learned_outer_acquisition",
+        "learned_inner_router",
+        "independent_physical_time_onset_encoder",
+        "learned_mode_mixture",
+        "qwen_renderer"
+      ],
+      "properties": {
+        "learned_outer_acquisition": {
+          "$ref": "#/$defs/shadowComponent"
+        },
+        "learned_inner_router": {
+          "$ref": "#/$defs/shadowComponent"
+        },
+        "independent_physical_time_onset_encoder": {
+          "$ref": "#/$defs/shadowComponent"
+        },
+        "learned_mode_mixture": {
+          "$ref": "#/$defs/shadowComponent"
+        },
+        "qwen_renderer": {
+          "$ref": "#/$defs/shadowComponent"
+        }
+      }
+    },
+    "inferenceFirewall": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "eeg_samples_used",
+        "allowlisted_acquisition_metadata_used",
+        "edf_annotations_used",
+        "excel_fields_used",
+        "doctor_labels_used",
+        "private_labels_used",
+        "clinical_text_used",
+        "patient_demographics_used",
+        "video_or_behavior_used",
+        "sleep_or_activation_labels_used",
+        "ecg_or_other_polygraphy_used",
+        "private_eeg_signal_permitted_under_same_signal_only_contract"
+      ],
+      "properties": {
+        "eeg_samples_used": {
+          "const": true
+        },
+        "allowlisted_acquisition_metadata_used": {
+          "const": true
+        },
+        "edf_annotations_used": {
+          "const": false
+        },
+        "excel_fields_used": {
+          "const": false
+        },
+        "doctor_labels_used": {
+          "const": false
+        },
+        "private_labels_used": {
+          "const": false
+        },
+        "clinical_text_used": {
+          "const": false
+        },
+        "patient_demographics_used": {
+          "const": false
+        },
+        "video_or_behavior_used": {
+          "const": false
+        },
+        "sleep_or_activation_labels_used": {
+          "const": false
+        },
+        "ecg_or_other_polygraphy_used": {
+          "const": false
+        },
+        "private_eeg_signal_permitted_under_same_signal_only_contract": {
+          "const": true
+        }
+      }
+    },
+    "reportInterface": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "report_optimization_in_v1_core_scope",
+        "report_route_connected",
+        "report_eligible_term_allowlist",
+        "qwen_enabled",
+        "model_outputs_may_be_lexicalized_as_clinical_facts"
+      ],
+      "properties": {
+        "report_optimization_in_v1_core_scope": {
+          "const": false
+        },
+        "report_route_connected": {
+          "const": false
+        },
+        "report_eligible_term_allowlist": {
+          "const": []
+        },
+        "qwen_enabled": {
+          "const": false
+        },
+        "model_outputs_may_be_lexicalized_as_clinical_facts": {
+          "const": false
+        }
+      }
+    },
+    "performanceStatus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "end_to_end_checkpoint_available",
+        "source_trained_core_checkpoint_available",
+        "clinical_findings_performance_established",
+        "soz_ranking_performance_established",
+        "adaptive_window_added_value_established",
+        "sota_claim_authorized",
+        "clinical_use_claim_authorized",
+        "current_evidence_scope",
+        "forbidden_claims"
+      ],
+      "properties": {
+        "state": {
+          "const": "performance_not_established"
+        },
+        "end_to_end_checkpoint_available": {
+          "const": false
+        },
+        "source_trained_core_checkpoint_available": {
+          "const": false
+        },
+        "clinical_findings_performance_established": {
+          "const": false
+        },
+        "soz_ranking_performance_established": {
+          "const": false
+        },
+        "adaptive_window_added_value_established": {
+          "const": false
+        },
+        "sota_claim_authorized": {
+          "const": false
+        },
+        "clinical_use_claim_authorized": {
+          "const": false
+        },
+        "current_evidence_scope": {
+          "const": [
+            "software_contract_tests",
+            "typed_head_record_aggregator_and_spatial_projection_focused_component_tests",
+            "complete_patient_training_bridge_focused_component_tests",
+            "a0_oracle_navigation_roster_materialization",
+            "synthetic_and_deterministic_replay",
+            "two_public_tusz_record_one_optimizer_step_smoke"
+          ]
+        },
+        "forbidden_claims": {
+          "const": [
+            "trained_end_to_end_ba_ieg_v1",
+            "variable_window_superiority",
+            "clinical_finding_accuracy",
+            "soz_accuracy",
+            "clinical_validity",
+            "state_of_the_art"
+          ]
+        }
+      }
+    },
+    "executionAuthorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "component_test_execution_authorized",
+        "end_to_end_training_route_connected",
+        "disk_training_runner_connected",
+        "end_to_end_inference_route_connected",
+        "private_inference_route_connected",
+        "report_generation_route_connected",
+        "production_route_connected",
+        "blocking_reason_codes"
+      ],
+      "properties": {
+        "component_test_execution_authorized": {
+          "const": true
+        },
+        "end_to_end_training_route_connected": {
+          "const": false
+        },
+        "disk_training_runner_connected": {
+          "const": false
+        },
+        "end_to_end_inference_route_connected": {
+          "const": false
+        },
+        "private_inference_route_connected": {
+          "const": false
+        },
+        "report_generation_route_connected": {
+          "const": false
+        },
+        "production_route_connected": {
+          "const": false
+        },
+        "blocking_reason_codes": {
+          "const": [
+            "qualified_detector_operating_point_and_runtime_receipt_missing",
+            "adaptive_acquisition_threshold_receipt_missing",
+            "target_free_event_qualification_provider_threshold_receipt_missing",
+            "complete_patient_bridge_not_connected_to_disk_training_runner",
+            "disk_runner_not_connected",
+            "source_trained_core_checkpoint_missing",
+            "performance_not_established"
+          ]
+        }
+      }
+    }
+  }
+}

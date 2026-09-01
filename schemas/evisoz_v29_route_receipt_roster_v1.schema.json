@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evisoz_v29_route_receipt_roster_v1.schema.json",
+  "title": "EviSOZ patient-indexed frozen-v29 route receipt roster v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "roster_id",
+    "method_id",
+    "route",
+    "unit_kind",
+    "patient_count",
+    "resource_config_ref",
+    "resource_registry_projection_sha256",
+    "rows",
+    "index_contract",
+    "replay_contract",
+    "receipt_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "evisoz_v29_route_receipt_roster_v1"},
+    "roster_id": {
+      "type": "string",
+      "pattern": "^EVISOZ-V29-ROSTER-[0-9a-f]{24}$"
+    },
+    "method_id": {
+      "const": "canonical_v29_equal_H_D_probability_ensemble"
+    },
+    "route": {
+      "enum": [
+        "historical_public_oof_held_fold",
+        "frozen_five_fold_event_mean"
+      ]
+    },
+    "unit_kind": {"enum": ["patient", "event"]},
+    "patient_count": {"type": "integer", "minimum": 1},
+    "resource_config_ref": {
+      "allOf": [
+        {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+        {
+          "properties": {
+            "artifact_kind": {"const": "v29_frozen_resource_config"},
+            "media_type": {"const": "application/json"},
+            "content_hash": {
+              "properties": {"domain": {"const": "raw_bytes_v1"}}
+            },
+            "payload_schema_version": {
+              "const": "evisoz_v29_frozen_resources_v1"
+            }
+          }
+        }
+      ]
+    },
+    "resource_registry_projection_sha256": {"$ref": "#/$defs/sha256"},
+    "rows": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/patientRow"}
+    },
+    "index_contract": {
+      "const": {
+        "patient_index_scope": "roster_local",
+        "ordering": "input_route_receipt_order",
+        "continuous_zero_based": true,
+        "unique_typed_identity_required": true,
+        "raw_patient_identifiers_stored": false
+      }
+    },
+    "replay_contract": {
+      "const": {
+        "route_receipt_content_replay_required_before_use": true,
+        "resource_config_content_replay_required_before_use": true,
+        "route_layer_training_authorized": false
+      }
+    },
+    "receipt_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "route": {"const": "historical_public_oof_held_fold"}
+        },
+        "required": ["route"]
+      },
+      "then": {"properties": {"unit_kind": {"const": "patient"}}}
+    },
+    {
+      "if": {
+        "properties": {
+          "route": {"const": "frozen_five_fold_event_mean"}
+        },
+        "required": ["route"]
+      },
+      "then": {"properties": {"unit_kind": {"const": "event"}}}
+    }
+  ],
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "routeReceiptRef": {
+      "allOf": [
+        {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+        {
+          "properties": {
+            "artifact_kind": {"const": "v29_route_receipt"},
+            "media_type": {"const": "application/json"},
+            "content_hash": {
+              "properties": {"domain": {"const": "canonical_json_v1"}}
+            },
+            "payload_schema_version": {
+              "const": "evisoz_v29_route_receipt_v1"
+            }
+          }
+        }
+      ]
+    },
+    "patientRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "patient_index",
+        "identity_namespace",
+        "identity_sha256",
+        "route_receipt_ref"
+      ],
+      "properties": {
+        "patient_index": {"type": "integer", "minimum": 0},
+        "identity_namespace": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9._-]{0,127}$"
+        },
+        "identity_sha256": {"$ref": "#/$defs/sha256"},
+        "route_receipt_ref": {"$ref": "#/$defs/routeReceiptRef"}
+      }
+    }
+  }
+}

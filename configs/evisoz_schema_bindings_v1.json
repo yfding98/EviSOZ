@@ -1,0 +1,500 @@
+{
+  "schema_version": "evisoz_schema_binding_spec_v1",
+  "bindings": [
+    {
+      "bound_schema_version": "evisoz_public_overlap_audit_receipt_v1",
+      "schema_path": "schemas/evisoz_public_overlap_audit_receipt_v1.schema.json",
+      "validator_id": "evisoz_public_overlap_audit_receipt_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.data.public_overlap_audit",
+      "callable": "validate_public_overlap_audit_receipt",
+      "implementation_path": "src/evisoz/data/public_overlap_audit.py"
+    },
+    {
+      "bound_schema_version": "evisoz_teacher_artifact_discovery_v1",
+      "schema_path": "schemas/evisoz_teacher_artifact_discovery_v1.schema.json",
+      "validator_id": "evisoz_teacher_artifact_discovery_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.forge.teacher_discovery",
+      "callable": "validate_teacher_artifact_discovery",
+      "implementation_path": "src/evisoz/forge/teacher_discovery.py"
+    },
+    {
+      "bound_schema_version": "evisoz_holdout_freeze_audit_v1",
+      "schema_path": "schemas/evisoz_holdout_freeze_audit_v1.schema.json",
+      "validator_id": "evisoz_holdout_freeze_audit_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.data.clean_freeze",
+      "callable": "validate_clean_freeze_audit",
+      "implementation_path": "src/evisoz/data/clean_freeze.py"
+    },
+    {
+      "bound_schema_version": "evisoz_artifact_ref_v1",
+      "schema_path": "schemas/evisoz_artifact_ref_v1.schema.json",
+      "validator_id": "evisoz_artifact_ref_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.data.artifact_ref",
+      "callable": "validate_artifact_ref",
+      "implementation_path": "src/evisoz/data/artifact_ref.py"
+    },
+    {
+      "bound_schema_version": "evisoz_channel_registry_v1",
+      "schema_path": "schemas/evisoz_channel_registry_v1.schema.json",
+      "validator_id": "evisoz_channel_registry_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.data.channel_registry",
+      "callable": "validate_channel_registry",
+      "implementation_path": "src/evisoz/data/channel_registry.py"
+    },
+    {
+      "bound_schema_version": "evisoz_event_identity_v1",
+      "schema_path": "schemas/evisoz_event_identity_v1.schema.json",
+      "validator_id": "evisoz_event_identity_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.data.event_identity",
+      "callable": "validate_event_identity",
+      "implementation_path": "src/evisoz/data/event_identity.py"
+    },
+    {
+      "bound_schema_version": "evisoz_field_release_v1",
+      "schema_path": "schemas/evisoz_field_release_v1.schema.json",
+      "validator_id": "evisoz_field_release_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.data.dataset_policy",
+      "callable": "validate_field_release",
+      "implementation_path": "src/evisoz/data/dataset_policy.py"
+    },
+    {
+      "bound_schema_version": "evisoz_private_physician_report_inventory_v1",
+      "schema_path": "schemas/evisoz_private_physician_report_inventory_v1.schema.json",
+      "validator_id": "evisoz_private_physician_report_inventory_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.data.private_physician_reports",
+      "callable": "validate_private_physician_report_inventory",
+      "implementation_path": "src/evisoz/data/private_physician_reports.py"
+    },
+    {
+      "bound_schema_version": "evisoz_private_physician_report_deidentification_candidates_v1",
+      "schema_path": "schemas/evisoz_private_physician_report_deidentification_candidates_v1.schema.json",
+      "validator_id": "evisoz_private_physician_report_deidentification_candidates_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.forge.private_report_deidentification",
+      "callable": "validate_private_report_deidentification_candidates",
+      "implementation_path": "src/evisoz/forge/private_report_deidentification.py"
+    },
+    {
+      "bound_schema_version": "evisoz_private_physician_report_release_v1",
+      "schema_path": "schemas/evisoz_private_physician_report_release_v1.schema.json",
+      "validator_id": "evisoz_private_physician_report_release_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.data.private_physician_report_release",
+      "callable": "validate_private_physician_report_release",
+      "implementation_path": "src/evisoz/data/private_physician_report_release.py"
+    },
+    {
+      "bound_schema_version": "evisoz_private_report_mapping_intake_v1",
+      "schema_path": "schemas/evisoz_private_report_mapping_intake_v1.schema.json",
+      "validator_id": "evisoz_private_report_mapping_intake_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.data.private_report_mapping_intake",
+      "callable": "validate_private_report_mapping_intake",
+      "implementation_path": "src/evisoz/data/private_report_mapping_intake.py"
+    },
+    {
+      "bound_schema_version": "evisoz_private_report_exclusion_v1",
+      "schema_path": "schemas/evisoz_private_report_exclusion_v1.schema.json",
+      "validator_id": "evisoz_private_report_exclusion_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.data.private_report_exclusion",
+      "callable": "validate_private_report_exclusion",
+      "implementation_path": "src/evisoz/data/private_report_exclusion.py"
+    },
+    {
+      "bound_schema_version": "evisoz_private_real_stage0_examples_materialization_v1",
+      "schema_path": "schemas/evisoz_private_real_stage0_examples_materialization_v1.schema.json",
+      "validator_id": "evisoz_private_real_stage0_examples_materialization_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.forge.private_stage0_examples",
+      "callable": "validate_private_stage0_examples_materialization",
+      "implementation_path": "src/evisoz/forge/private_stage0_examples.py"
+    },
+    {
+      "bound_schema_version": "evisoz_public_auxiliary_exposure_projection_v1",
+      "schema_path": "schemas/evisoz_public_auxiliary_exposure_projection_v1.schema.json",
+      "validator_id": "evisoz_public_auxiliary_exposure_projection_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.data.public_exposure_projection",
+      "callable": "validate_public_auxiliary_exposure_projection",
+      "implementation_path": "src/evisoz/data/public_exposure_projection.py"
+    },
+    {
+      "bound_schema_version": "evisoz_public_v29_tusz_crosswalk_v1",
+      "schema_path": "schemas/evisoz_public_v29_tusz_crosswalk_v1.schema.json",
+      "validator_id": "evisoz_public_v29_tusz_crosswalk_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.data.public_v29_tusz_crosswalk",
+      "callable": "validate_public_v29_tusz_crosswalk",
+      "implementation_path": "src/evisoz/data/public_v29_tusz_crosswalk.py"
+    },
+    {
+      "bound_schema_version": "evisoz_public_auxiliary_field_release_v1",
+      "schema_path": "schemas/evisoz_public_auxiliary_field_release_v1.schema.json",
+      "validator_id": "evisoz_public_auxiliary_field_release_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.data.public_auxiliary_field_release",
+      "callable": "validate_public_auxiliary_field_release",
+      "implementation_path": "src/evisoz/data/public_auxiliary_field_release.py"
+    },
+    {
+      "bound_schema_version": "evisoz_montage_derivation_receipt_v1",
+      "schema_path": "schemas/evisoz_montage_derivation_receipt_v1.schema.json",
+      "validator_id": "evisoz_montage_derivation_receipt_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.data.tcp22_views",
+      "callable": "validate_montage_derivation_receipt",
+      "implementation_path": "src/evisoz/data/tcp22_views.py"
+    },
+    {
+      "bound_schema_version": "evisoz_dual_montage_cache_materialization_receipt_v1",
+      "schema_path": "schemas/evisoz_dual_montage_cache_materialization_receipt_v1.schema.json",
+      "validator_id": "evisoz_dual_montage_cache_materialization_receipt_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.data.stage0_dual_montage_cache",
+      "callable": "validate_stage0_dual_montage_cache_materialization_receipt",
+      "implementation_path": "src/evisoz/data/stage0_dual_montage_cache.py"
+    },
+    {
+      "bound_schema_version": "evisoz_deterministic_signal_candidate_cache_v1",
+      "schema_path": "schemas/evisoz_deterministic_signal_candidate_cache_v1.schema.json",
+      "validator_id": "evisoz_deterministic_signal_candidate_cache_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.forge.deterministic_signal_candidates",
+      "callable": "validate_deterministic_signal_candidate_cache",
+      "implementation_path": "src/evisoz/forge/deterministic_signal_candidates.py"
+    },
+    {
+      "bound_schema_version": "evisoz_deterministic_signal_candidate_materialization_v1",
+      "schema_path": "schemas/evisoz_deterministic_signal_candidate_materialization_v1.schema.json",
+      "validator_id": "evisoz_deterministic_signal_candidate_materialization_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.forge.deterministic_signal_candidates",
+      "callable": "validate_deterministic_signal_candidate_materialization",
+      "implementation_path": "src/evisoz/forge/deterministic_signal_candidates.py"
+    },
+    {
+      "bound_schema_version": "evisoz_teacher_candidate_cache_v1",
+      "schema_path": "schemas/evisoz_teacher_candidate_cache_v1.schema.json",
+      "validator_id": "evisoz_teacher_candidate_cache_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.forge.teacher_candidates",
+      "callable": "validate_teacher_candidate_cache",
+      "implementation_path": "src/evisoz/forge/teacher_candidates.py"
+    },
+    {
+      "bound_schema_version": "evisoz_teacher_candidate_materialization_v1",
+      "schema_path": "schemas/evisoz_teacher_candidate_materialization_v1.schema.json",
+      "validator_id": "evisoz_teacher_candidate_materialization_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.forge.teacher_candidates",
+      "callable": "validate_teacher_candidate_materialization",
+      "implementation_path": "src/evisoz/forge/teacher_candidates.py"
+    },
+    {
+      "bound_schema_version": "evisoz_candidate_exposure_ledger_v1",
+      "schema_path": "schemas/evisoz_candidate_exposure_ledger_v1.schema.json",
+      "validator_id": "evisoz_candidate_exposure_ledger_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.forge.candidate_exposure_ledger",
+      "callable": "validate_candidate_exposure_ledger",
+      "implementation_path": "src/evisoz/forge/candidate_exposure_ledger.py"
+    },
+    {
+      "bound_schema_version": "evisoz_event_findings_projection_v1",
+      "schema_path": "schemas/evisoz_event_findings_projection_v1.schema.json",
+      "validator_id": "evisoz_event_findings_projection_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.forge.findings_claims_reports",
+      "callable": "validate_event_findings_projection",
+      "implementation_path": "src/evisoz/forge/findings_claims_reports.py"
+    },
+    {
+      "bound_schema_version": "evisoz_reference_claim_graph_v1",
+      "schema_path": "schemas/evisoz_reference_claim_graph_v1.schema.json",
+      "validator_id": "evisoz_reference_claim_graph_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.forge.findings_claims_reports",
+      "callable": "validate_reference_claim_graph",
+      "implementation_path": "src/evisoz/forge/findings_claims_reports.py"
+    },
+    {
+      "bound_schema_version": "evisoz_signal_candidate_claim_graph_v1",
+      "schema_path": "schemas/evisoz_signal_candidate_claim_graph_v1.schema.json",
+      "validator_id": "evisoz_signal_candidate_claim_graph_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.forge.findings_claims_reports",
+      "callable": "validate_signal_candidate_claim_graph",
+      "implementation_path": "src/evisoz/forge/findings_claims_reports.py"
+    },
+    {
+      "bound_schema_version": "evisoz_knowledge_selection_receipt_v1",
+      "schema_path": "schemas/evisoz_knowledge_selection_receipt_v1.schema.json",
+      "validator_id": "evisoz_knowledge_selection_receipt_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.forge.findings_claims_reports",
+      "callable": "validate_knowledge_selection_receipt",
+      "implementation_path": "src/evisoz/forge/findings_claims_reports.py"
+    },
+    {
+      "bound_schema_version": "evisoz_canonical_report_v1",
+      "schema_path": "schemas/evisoz_canonical_report_v1.schema.json",
+      "validator_id": "evisoz_canonical_report_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.forge.findings_claims_reports",
+      "callable": "validate_canonical_report",
+      "implementation_path": "src/evisoz/forge/findings_claims_reports.py"
+    },
+    {
+      "bound_schema_version": "evisoz_findings_claim_report_materialization_v1",
+      "schema_path": "schemas/evisoz_findings_claim_report_materialization_v1.schema.json",
+      "validator_id": "evisoz_findings_claim_report_materialization_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.forge.findings_claims_reports",
+      "callable": "validate_findings_claim_report_materialization",
+      "implementation_path": "src/evisoz/forge/findings_claims_reports.py"
+    },
+    {
+      "bound_schema_version": "clinical_eeg_montage_reference_observability_v1",
+      "schema_path": "schemas/clinical_eeg_montage_reference_observability_v1.schema.json",
+      "validator_id": "clinical_eeg_montage_reference_observability_v1_validator",
+      "implementation_version": "1",
+      "module": "src.clinical_eeg_long_recording.montage_reference_observability",
+      "callable": "validate_montage_reference_observability_receipt",
+      "implementation_path": "src/clinical_eeg_long_recording/montage_reference_observability.py"
+    },
+    {
+      "bound_schema_version": "evisoz_patient_linkage_evidence_v1",
+      "schema_path": "schemas/evisoz_patient_linkage_evidence_v1.schema.json",
+      "validator_id": "evisoz_patient_linkage_evidence_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.data.split_ledger",
+      "callable": "validate_patient_linkage_evidence",
+      "implementation_path": "src/evisoz/data/split_ledger.py"
+    },
+    {
+      "bound_schema_version": "evisoz_patient_linkage_group_v1",
+      "schema_path": "schemas/evisoz_patient_linkage_group_v1.schema.json",
+      "validator_id": "evisoz_patient_linkage_group_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.data.split_ledger",
+      "callable": "validate_patient_linkage_group",
+      "implementation_path": "src/evisoz/data/split_ledger.py"
+    },
+    {
+      "bound_schema_version": "evisoz_schema_registry_v1",
+      "schema_path": "schemas/evisoz_schema_registry_v1.schema.json",
+      "validator_id": "evisoz_schema_registry_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.data.schema_registry",
+      "callable": "validate_schema_registry",
+      "implementation_path": "src/evisoz/data/schema_registry.py"
+    },
+    {
+      "bound_schema_version": "evisoz_split_roster_v1",
+      "schema_path": "schemas/evisoz_split_roster_v1.schema.json",
+      "validator_id": "evisoz_split_roster_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.data.split_ledger",
+      "callable": "validate_split_roster",
+      "implementation_path": "src/evisoz/data/split_ledger.py"
+    },
+    {
+      "bound_schema_version": "evisoz_stage0_gate_v1",
+      "schema_path": "schemas/evisoz_stage0_gate_v1.schema.json",
+      "validator_id": "evisoz_stage0_gate_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.data.stage0_gate",
+      "callable": "validate_stage0_gate",
+      "implementation_path": "src/evisoz/data/stage0_gate.py"
+    },
+    {
+      "bound_schema_version": "evisoz_training_example_v1",
+      "schema_path": "schemas/evisoz_training_example_v1.schema.json",
+      "validator_id": "evisoz_training_example_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.forge.training_example",
+      "callable": "validate_training_example",
+      "implementation_path": "src/evisoz/forge/training_example.py"
+    },
+    {
+      "bound_schema_version": "evisoz_v29_reference_cache_v1",
+      "schema_path": "schemas/evisoz_v29_reference_cache_v1.schema.json",
+      "validator_id": "evisoz_v29_reference_cache_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.baseline.v29_cache",
+      "callable": "validate_v29_reference_cache",
+      "implementation_path": "src/evisoz/baseline/v29_cache.py"
+    },
+    {
+      "bound_schema_version": "evisoz_v29_public_cache_materialization_receipt_v2",
+      "schema_path": "schemas/evisoz_v29_public_cache_materialization_receipt_v2.schema.json",
+      "validator_id": "evisoz_v29_public_cache_materialization_receipt_v2_validator",
+      "implementation_version": "2",
+      "module": "src.evisoz.baseline.v29_public_cache_materializer",
+      "callable": "validate_public_v29_cache_materialization_receipt",
+      "implementation_path": "src/evisoz/baseline/v29_public_cache_materializer.py"
+    },
+    {
+      "bound_schema_version": "evisoz_v29_route_receipt_v1",
+      "schema_path": "schemas/evisoz_v29_route_receipt_v1.schema.json",
+      "validator_id": "evisoz_v29_route_receipt_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.baseline.v29_route_receipt",
+      "callable": "validate_v29_route_receipt",
+      "implementation_path": "src/evisoz/baseline/v29_route_receipt.py"
+    },
+    {
+      "bound_schema_version": "evisoz_structured_evidence_pipeline_config_v1",
+      "schema_path": "schemas/evisoz_structured_evidence_pipeline_config_v1.schema.json",
+      "validator_id": "evisoz_structured_evidence_pipeline_config_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.models.clinical_evidence",
+      "callable": "validate_structured_evidence_pipeline_config",
+      "implementation_path": "src/evisoz/models/clinical_evidence.py"
+    },
+    {
+      "bound_schema_version": "evisoz_predicted_evidence_v1",
+      "schema_path": "schemas/evisoz_predicted_evidence_v1.schema.json",
+      "validator_id": "evisoz_predicted_evidence_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.models.predicted_evidence",
+      "callable": "validate_predicted_evidence_packet",
+      "implementation_path": "src/evisoz/models/predicted_evidence.py"
+    },
+    {
+      "bound_schema_version": "evisoz_predicted_report_plan_v1",
+      "schema_path": "schemas/evisoz_predicted_report_plan_v1.schema.json",
+      "validator_id": "evisoz_predicted_report_plan_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.reporting.predicted_report_plan",
+      "callable": "validate_predicted_report_plan",
+      "implementation_path": "src/evisoz/reporting/predicted_report_plan.py"
+    },
+    {
+      "bound_schema_version": "evisoz_qwen_structured_input_v1",
+      "schema_path": "schemas/evisoz_qwen_structured_input_v1.schema.json",
+      "validator_id": "evisoz_qwen_structured_input_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.reporting.qwen_structured_input",
+      "callable": "validate_qwen_structured_input",
+      "implementation_path": "src/evisoz/reporting/qwen_structured_input.py"
+    },
+    {
+      "bound_schema_version": "evisoz_qwen_patient_input_v1",
+      "schema_path": "schemas/evisoz_qwen_patient_input_v1.schema.json",
+      "validator_id": "evisoz_qwen_patient_input_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.reporting.qwen_patient_input",
+      "callable": "validate_qwen_patient_input",
+      "implementation_path": "src/evisoz/reporting/qwen_patient_input.py"
+    },
+    {
+      "bound_schema_version": "evisoz_qwen_patient_shadow_materialization_v1",
+      "schema_path": "schemas/evisoz_qwen_patient_shadow_materialization_v1.schema.json",
+      "validator_id": "evisoz_qwen_patient_shadow_materialization_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.reporting.qwen_patient_shadow_materialization",
+      "callable": "validate_qwen_patient_shadow_materialization",
+      "implementation_path": "src/evisoz/reporting/qwen_patient_shadow_materialization.py"
+    },
+    {
+      "bound_schema_version": "evisoz_patient_qwen_shadow_evaluation_v1",
+      "schema_path": "schemas/evisoz_patient_qwen_shadow_evaluation_v1.schema.json",
+      "validator_id": "evisoz_patient_qwen_shadow_evaluation_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.evaluation.patient_qwen_shadow_eval",
+      "callable": "validate_patient_qwen_shadow_evaluation",
+      "implementation_path": "src/evisoz/evaluation/patient_qwen_shadow_eval.py"
+    },
+    {
+      "bound_schema_version": "evisoz_execution_plan_v1",
+      "schema_path": "schemas/evisoz_execution_plan_v1.schema.json",
+      "validator_id": "evisoz_execution_plan_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.training.execution_plan",
+      "callable": "validate_evisoz_execution_plan",
+      "implementation_path": "src/evisoz/training/execution_plan.py"
+    },
+    {
+      "bound_schema_version": "evisoz_bound_evidence_example_v1",
+      "schema_path": "schemas/evisoz_bound_evidence_example_v1.schema.json",
+      "validator_id": "evisoz_bound_evidence_example_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.forge.evidence_binding",
+      "callable": "validate_bound_evidence_example",
+      "implementation_path": "src/evisoz/forge/evidence_binding.py"
+    },
+    {
+      "bound_schema_version": "evisoz_bound_evidence_materialization_v1",
+      "schema_path": "schemas/evisoz_bound_evidence_materialization_v1.schema.json",
+      "validator_id": "evisoz_bound_evidence_materialization_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.forge.evidence_binding",
+      "callable": "validate_bound_evidence_materialization",
+      "implementation_path": "src/evisoz/forge/evidence_binding.py"
+    },
+    {
+      "bound_schema_version": "evisoz_bound_evidence_loader_receipt_v1",
+      "schema_path": "schemas/evisoz_bound_evidence_loader_receipt_v1.schema.json",
+      "validator_id": "evisoz_bound_evidence_loader_receipt_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.data.bound_evidence_loader",
+      "callable": "validate_bound_evidence_loader_receipt",
+      "implementation_path": "src/evisoz/data/bound_evidence_loader.py"
+    },
+    {
+      "bound_schema_version": "evisoz_bound_evidence_shadow_evaluation_v1",
+      "schema_path": "schemas/evisoz_bound_evidence_shadow_evaluation_v1.schema.json",
+      "validator_id": "evisoz_bound_evidence_shadow_evaluation_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.evaluation.bound_evidence_eval",
+      "callable": "validate_bound_evidence_shadow_evaluation",
+      "implementation_path": "src/evisoz/evaluation/bound_evidence_eval.py"
+    },
+    {
+      "bound_schema_version": "evisoz_v29_route_receipt_roster_v1",
+      "schema_path": "schemas/evisoz_v29_route_receipt_roster_v1.schema.json",
+      "validator_id": "evisoz_v29_route_receipt_roster_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.baseline.v29_route_receipt_roster",
+      "callable": "validate_v29_route_receipt_roster",
+      "implementation_path": "src/evisoz/baseline/v29_route_receipt_roster.py"
+    },
+    {
+      "bound_schema_version": "evisoz_real_shadow_inference_receipt_v1",
+      "schema_path": "schemas/evisoz_real_shadow_inference_receipt_v1.schema.json",
+      "validator_id": "evisoz_real_shadow_inference_receipt_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.inference.real_shadow_receipt",
+      "callable": "validate_real_shadow_inference_receipt",
+      "implementation_path": "src/evisoz/inference/real_shadow_receipt.py"
+    },
+    {
+      "bound_schema_version": "evisoz_stage1_training_block_receipt_v1",
+      "schema_path": "schemas/evisoz_stage1_training_block_receipt_v1.schema.json",
+      "validator_id": "evisoz_stage1_training_block_receipt_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.training.training_receipts",
+      "callable": "validate_stage1_training_block_receipt",
+      "implementation_path": "src/evisoz/training/training_receipts.py"
+    },
+    {
+      "bound_schema_version": "evisoz_report_factuality_evaluation_v1",
+      "schema_path": "schemas/evisoz_report_factuality_evaluation_v1.schema.json",
+      "validator_id": "evisoz_report_factuality_evaluation_v1_validator",
+      "implementation_version": "1",
+      "module": "src.evisoz.evaluation.report_factuality",
+      "callable": "validate_report_factuality_evaluation",
+      "implementation_path": "src/evisoz/evaluation/report_factuality.py"
+    }
+  ]
+}

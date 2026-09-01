@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evisoz_reference_claim_graph_v1.schema.json",
+  "title": "EviSOZ evaluator-only reference claim graph v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "graph_id", "graph_role", "event_id", "linkage_group_id", "source_findings_ref", "claims", "permissions", "receipt_sha256"],
+  "properties": {
+    "schema_version": {"const": "evisoz_reference_claim_graph_v1"},
+    "graph_id": {"type": "string", "pattern": "^EVISOZ-REFGRAPH-[0-9a-f]{24}$"},
+    "graph_role": {"const": "reference_evaluator_only"},
+    "event_id": {"type": "string", "minLength": 1},
+    "linkage_group_id": {"type": "string", "pattern": "^EVISOZ-PAT-[0-9a-f]{24}$"},
+    "source_findings_ref": {"$ref": "evisoz_artifact_ref_v1.schema.json"},
+    "claims": {"type": "array"},
+    "permissions": {"type": "object"},
+    "receipt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

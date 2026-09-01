@@ -1,0 +1,253 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/schemas/clinical_eeg_term_qualification_v1.schema.json",
+  "title": "EEG-only clinical term qualification receipt",
+  "description": "Fail-closed qualification ledger for spike/sharp-wave, IFCN-compatible IED morphology, ACNS definite evolution, and EEG-only electrographic seizure. ACNS 2021 criterion A source-definition satisfaction is kept separate from this project's additional interictal-ED safety gate. Clinical correlate, semiology, awareness, behavior, video, medication response, and electroclinical-seizure claims are outside this EEG-only schema.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "receipt_id",
+    "event_id",
+    "producer_id",
+    "morphology",
+    "evolution",
+    "electrographic_seizure",
+    "qualified_terms",
+    "scope_receipt",
+    "policy_sha256",
+    "source_binding_sha256",
+    "receipt_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "clinical_eeg_term_qualification_v1"},
+    "receipt_id": {"$ref": "#/$defs/id"},
+    "event_id": {"$ref": "#/$defs/id"},
+    "producer_id": {"$ref": "#/$defs/id"},
+    "morphology": {"$ref": "#/$defs/morphology"},
+    "evolution": {"$ref": "#/$defs/evolution"},
+    "electrographic_seizure": {"$ref": "#/$defs/electrographicSeizure"},
+    "qualified_terms": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "spike",
+          "sharp_wave",
+          "interictal_epileptiform_discharge",
+          "definite_evolution",
+          "electrographic_seizure"
+        ]
+      }
+    },
+    "scope_receipt": {"$ref": "#/$defs/scope"},
+    "policy_sha256": {"$ref": "#/$defs/sha256"},
+    "source_binding_sha256": {"$ref": "#/$defs/sha256"},
+    "receipt_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "nullableNumber": {"type": ["number", "null"]},
+    "ifcnFeatures": {
+      "type": "object",
+      "required": [
+        "di_or_triphasic_sharp_or_spiky_morphology",
+        "duration_differs_from_background",
+        "waveform_asymmetry",
+        "slow_after_wave",
+        "surrounding_background_disruption",
+        "physiologic_scalp_field"
+      ],
+      "properties": {
+        "di_or_triphasic_sharp_or_spiky_morphology": {"type": "boolean"},
+        "duration_differs_from_background": {"type": "boolean"},
+        "waveform_asymmetry": {"type": "boolean"},
+        "slow_after_wave": {"type": "boolean"},
+        "surrounding_background_disruption": {"type": "boolean"},
+        "physiologic_scalp_field": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "morphology": {
+      "type": "object",
+      "required": [
+        "candidate_type",
+        "main_component_duration_ms",
+        "clearly_distinguished_from_background",
+        "pointed_peak_at_clinical_display_scale",
+        "ifcn_features",
+        "ifcn_criteria_met_count",
+        "historically_suggested_candidate_threshold",
+        "kural_clinical_implementation_threshold",
+        "historically_suggested_four_of_six_candidate",
+        "kural_five_of_six_high_specificity_gate",
+        "target_domain_qualification_passed",
+        "target_domain_qualification_receipt_sha256",
+        "interictal_context_confirmed",
+        "waveform_term_gate_passed",
+        "ied_promotion_gate_passed",
+        "ifcn_features_used_for_ictal_onset_or_evolution",
+        "artifact_or_benign_variant_excluded",
+        "promoted_term"
+      ],
+      "properties": {
+        "candidate_type": {"enum": ["spike", "sharp_wave", "other", "none"]},
+        "main_component_duration_ms": {"$ref": "#/$defs/nullableNumber"},
+        "clearly_distinguished_from_background": {"type": "boolean"},
+        "pointed_peak_at_clinical_display_scale": {"type": "boolean"},
+        "ifcn_features": {"$ref": "#/$defs/ifcnFeatures"},
+        "ifcn_criteria_met_count": {"type": "integer", "minimum": 0, "maximum": 6},
+        "historically_suggested_candidate_threshold": {"const": 4},
+        "kural_clinical_implementation_threshold": {"const": 5},
+        "historically_suggested_four_of_six_candidate": {"type": "boolean"},
+        "kural_five_of_six_high_specificity_gate": {"type": "boolean"},
+        "target_domain_qualification_passed": {"type": "boolean"},
+        "target_domain_qualification_receipt_sha256": {
+          "anyOf": [
+            {"$ref": "#/$defs/sha256"},
+            {"type": "null"}
+          ]
+        },
+        "interictal_context_confirmed": {"type": "boolean"},
+        "waveform_term_gate_passed": {"type": "boolean"},
+        "ied_promotion_gate_passed": {"type": "boolean"},
+        "ifcn_features_used_for_ictal_onset_or_evolution": {"const": false},
+        "artifact_or_benign_variant_excluded": {"type": "boolean"},
+        "promoted_term": {"enum": ["spike", "sharp_wave", null]}
+      },
+      "additionalProperties": false
+    },
+    "evolution": {
+      "type": "object",
+      "required": [
+        "category",
+        "unequivocal_sequential_changes",
+        "frequency_changes_same_direction",
+        "minimum_frequency_step_hz",
+        "minimum_cycles_per_state",
+        "distinct_standard_electrode_locations",
+        "maximum_unchanged_gap_seconds",
+        "amplitude_only_change",
+        "definite_evolution_gate_passed"
+      ],
+      "properties": {
+        "category": {"enum": ["frequency", "morphology", "location", "none"]},
+        "unequivocal_sequential_changes": {"type": "integer", "minimum": 0},
+        "frequency_changes_same_direction": {"type": ["boolean", "null"]},
+        "minimum_frequency_step_hz": {"$ref": "#/$defs/nullableNumber"},
+        "minimum_cycles_per_state": {"type": "integer", "minimum": 0},
+        "distinct_standard_electrode_locations": {"type": "integer", "minimum": 0},
+        "maximum_unchanged_gap_seconds": {"$ref": "#/$defs/nullableNumber"},
+        "amplitude_only_change": {"type": "boolean"},
+        "definite_evolution_gate_passed": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "electrographicSeizure": {
+      "type": "object",
+      "required": [
+        "pattern_duration_seconds",
+        "criterion_a_acns_discharge_type",
+        "criterion_a_acns_discharge_main_component_duration_ms",
+        "criterion_a_acns_source_morphology_gate_passed",
+        "criterion_a_discharge_rate_hz",
+        "criterion_a_acns_source_definition_gate_passed",
+        "criterion_a_project_interictal_ed_qualification_receipt_sha256",
+        "criterion_a_project_interictal_ed_safety_gate_passed",
+        "criterion_a_project_conservative_gate_passed",
+        "criterion_b_definite_evolution",
+        "criterion_b_gate_passed",
+        "esz_gate_passed",
+        "ten_second_rule_used",
+        "electroclinical_seizure_claimed"
+      ],
+      "properties": {
+        "pattern_duration_seconds": {"type": "number", "minimum": 0},
+        "criterion_a_acns_discharge_type": {
+          "description": "ACNS 2021 criterion A source morphology. Both epileptiform discharges and sharply contoured discharges are eligible; none means no eligible source morphology was established.",
+          "enum": [
+            "epileptiform_discharge",
+            "sharply_contoured_discharge",
+            "none"
+          ]
+        },
+        "criterion_a_acns_discharge_main_component_duration_ms": {
+          "description": "Optional descriptive duration of the ACNS criterion A discharge main component. No 200 ms upper bound is imposed on sharply contoured discharges.",
+          "anyOf": [
+            {"type": "number", "exclusiveMinimum": 0},
+            {"type": "null"}
+          ]
+        },
+        "criterion_a_acns_source_morphology_gate_passed": {
+          "description": "Derived source-level morphology gate; true for either ACNS-eligible discharge type, independent of the project safety receipt.",
+          "type": "boolean"
+        },
+        "criterion_a_discharge_rate_hz": {"$ref": "#/$defs/nullableNumber"},
+        "criterion_a_acns_source_definition_gate_passed": {
+          "description": "Derived ACNS 2021 source criterion A: eligible discharge type averaging >2.5 Hz for >=10 seconds. This field does not include the project's extra interictal-ED receipt requirement.",
+          "type": "boolean"
+        },
+        "criterion_a_project_interictal_ed_qualification_receipt_sha256": {
+          "description": "Project-only conservative safety receipt; it is not part of the complete ACNS 2021 criterion A source definition.",
+          "anyOf": [
+            {"$ref": "#/$defs/sha256"},
+            {"type": "null"}
+          ]
+        },
+        "criterion_a_project_interictal_ed_safety_gate_passed": {
+          "description": "Derived project safety gate indicating that the extra interictal-ED qualification receipt is bound.",
+          "type": "boolean"
+        },
+        "criterion_a_project_conservative_gate_passed": {
+          "description": "Project promotion gate: ACNS source criterion A plus the additional project interictal-ED safety gate.",
+          "type": "boolean"
+        },
+        "criterion_b_definite_evolution": {"type": "boolean"},
+        "criterion_b_gate_passed": {"type": "boolean"},
+        "esz_gate_passed": {
+          "description": "Final protected-term promotion gate: project-conservative criterion A or ACNS-derived criterion B. This is intentionally not an alias for source-definition criterion A.",
+          "type": "boolean"
+        },
+        "ten_second_rule_used": {"const": true},
+        "electroclinical_seizure_claimed": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "scope": {
+      "type": "object",
+      "required": [
+        "eeg_signal_only",
+        "edf_annotations_used",
+        "spreadsheet_used",
+        "doctor_labels_used",
+        "clinical_text_used",
+        "video_used",
+        "clinical_correlate_used",
+        "awareness_or_behavior_used",
+        "parenteral_medication_response_used",
+        "semiology_claims_allowed",
+        "electroclinical_seizure_claims_allowed"
+      ],
+      "properties": {
+        "eeg_signal_only": {"const": true},
+        "edf_annotations_used": {"const": false},
+        "spreadsheet_used": {"const": false},
+        "doctor_labels_used": {"const": false},
+        "clinical_text_used": {"const": false},
+        "video_used": {"const": false},
+        "clinical_correlate_used": {"const": false},
+        "awareness_or_behavior_used": {"const": false},
+        "parenteral_medication_response_used": {"const": false},
+        "semiology_claims_allowed": {"const": false},
+        "electroclinical_seizure_claims_allowed": {"const": false}
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,340 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/clinical_eeg_event_card_projection_v2.schema.json",
+  "title": "Clinical EEG event card projection v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "projector_id",
+    "projection_id",
+    "owner",
+    "source_bindings",
+    "record_context_reference",
+    "scope_filter",
+    "slots",
+    "event_findings",
+    "finding_scope_accounting",
+    "closure",
+    "source_firewall",
+    "authorization",
+    "projection_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "clinical_eeg_event_card_projection_v2"},
+    "projector_id": {"const": "clinical_eeg_event_card_event_scope_projector_v2"},
+    "projection_id": {"type": "string", "pattern": "^EVCARDV2-[a-f0-9]{24}$"},
+    "owner": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["owner_kind", "event_id", "recording_id", "canonical_signal_sha256"],
+      "properties": {
+        "owner_kind": {"const": "event"},
+        "event_id": {"$ref": "#/$defs/identifier"},
+        "recording_id": {"$ref": "#/$defs/identifier"},
+        "canonical_signal_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "source_bindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_findings_schema_version",
+        "event_findings_sha256",
+        "registry_closure_schema_version",
+        "registry_closure_receipt_sha256",
+        "minimum_event_card_registry_id",
+        "minimum_event_card_registry_sha256",
+        "atom_roster_id",
+        "atom_roster_policy_sha256",
+        "term_query_policy_id",
+        "term_query_policy_sha256",
+        "record_context_card_id",
+        "source_bundle_sha256"
+      ],
+      "properties": {
+        "event_findings_schema_version": {"const": "event_eeg_findings_v3"},
+        "event_findings_sha256": {"$ref": "#/$defs/sha256"},
+        "registry_closure_schema_version": {"const": "clinical_eeg_minimum_event_evidence_card_closure_receipt_v1"},
+        "registry_closure_receipt_sha256": {"$ref": "#/$defs/sha256"},
+        "minimum_event_card_registry_id": {"const": "CLINICAL-EEG-MINIMUM-EVENT-EVIDENCE-CARD-REGISTRY-V1"},
+        "minimum_event_card_registry_sha256": {"$ref": "#/$defs/sha256"},
+        "atom_roster_id": {"const": "CLINICAL-EEG-EVENT-FINDINGS-ATOM-ROSTER-V1"},
+        "atom_roster_policy_sha256": {"$ref": "#/$defs/sha256"},
+        "term_query_policy_id": {"const": "CLINICAL-EEG-EVENT-FINDINGS-TERM-QUERY-DENOMINATOR-POLICY-V2"},
+        "term_query_policy_sha256": {"$ref": "#/$defs/sha256"},
+        "record_context_card_id": {"$ref": "#/$defs/recordContextCardId"},
+        "source_bundle_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "record_context_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["card_id", "reference_only", "payload_embedded"],
+      "properties": {
+        "card_id": {"$ref": "#/$defs/recordContextCardId"},
+        "reference_only": {"const": true},
+        "payload_embedded": {"const": false}
+      }
+    },
+    "scope_filter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policy_id",
+        "forbidden_temporal_context",
+        "fallback_forbidden_intrinsic_evidence_role",
+        "fallback_forbidden_signal_temporal_context",
+        "unknown_query_term_scope_policy"
+      ],
+      "properties": {
+        "policy_id": {"const": "EVENT-CARD-EVENT-SCOPE-FILTER-V2"},
+        "forbidden_temporal_context": {"const": "record_non_event_context"},
+        "fallback_forbidden_intrinsic_evidence_role": {"const": "non_event_context"},
+        "fallback_forbidden_signal_temporal_context": {"const": "outside_candidate_protection"},
+        "unknown_query_term_scope_policy": {"const": "retain_only_with_validated_event_intrinsic_role"}
+      }
+    },
+    "slots": {
+      "type": "array",
+      "minItems": 12,
+      "maxItems": 12,
+      "items": {"$ref": "#/$defs/slot"}
+    },
+    "event_findings": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/projectedFinding"}
+    },
+    "finding_scope_accounting": {"$ref": "#/$defs/scopeAccounting"},
+    "closure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "expected_slot_count",
+        "observed_slot_count",
+        "source_roster_item_count",
+        "materialized_event_roster_item_count",
+        "excluded_record_context_roster_item_count",
+        "source_query_count",
+        "materialized_event_query_count",
+        "excluded_record_context_query_count",
+        "source_finding_count",
+        "materialized_event_finding_count",
+        "excluded_record_context_finding_count",
+        "registry_closure_replayed",
+        "source_findings_validated",
+        "twelve_slots_preserved",
+        "event_queries_only",
+        "event_roster_items_only",
+        "event_findings_only",
+        "every_materialized_finding_exactly_once",
+        "record_context_reference_only",
+        "record_context_payload_embedded",
+        "finding_to_query_binding_claimed"
+      ],
+      "properties": {
+        "expected_slot_count": {"const": 12},
+        "observed_slot_count": {"const": 12},
+        "source_roster_item_count": {"type": "integer", "minimum": 0},
+        "materialized_event_roster_item_count": {"type": "integer", "minimum": 0},
+        "excluded_record_context_roster_item_count": {"type": "integer", "minimum": 0},
+        "source_query_count": {"type": "integer", "minimum": 0},
+        "materialized_event_query_count": {"type": "integer", "minimum": 0},
+        "excluded_record_context_query_count": {"type": "integer", "minimum": 0},
+        "source_finding_count": {"type": "integer", "minimum": 0},
+        "materialized_event_finding_count": {"type": "integer", "minimum": 0},
+        "excluded_record_context_finding_count": {"type": "integer", "minimum": 0},
+        "registry_closure_replayed": {"const": true},
+        "source_findings_validated": {"const": true},
+        "twelve_slots_preserved": {"const": true},
+        "event_queries_only": {"const": true},
+        "event_roster_items_only": {"const": true},
+        "event_findings_only": {"const": true},
+        "every_materialized_finding_exactly_once": {"const": true},
+        "record_context_reference_only": {"const": true},
+        "record_context_payload_embedded": {"const": false},
+        "finding_to_query_binding_claimed": {"const": false}
+      }
+    },
+    "source_firewall": {"$ref": "#/$defs/sourceFirewall"},
+    "authorization": {"$ref": "#/$defs/authorization"},
+    "projection_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,255}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "recordContextCardId": {
+      "type": "string",
+      "pattern": "^RNECARD-[a-f0-9]{24}$"
+    },
+    "slot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["slot_index", "slot_id", "roster_items", "operational_queries"],
+      "properties": {
+        "slot_index": {"type": "integer", "minimum": 1, "maximum": 12},
+        "slot_id": {"$ref": "#/$defs/identifier"},
+        "roster_items": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/rosterItem"}
+        },
+        "operational_queries": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/operationalQuery"}
+        }
+      }
+    },
+    "rosterItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "roster_item_kind",
+        "roster_item_id",
+        "source_group",
+        "source_implementation_status"
+      ],
+      "properties": {
+        "roster_item_kind": {"enum": ["core_atom", "child_roster"]},
+        "roster_item_id": {"$ref": "#/$defs/identifier"},
+        "source_group": {"$ref": "#/$defs/identifier"},
+        "source_implementation_status": {"$ref": "#/$defs/identifier"}
+      }
+    },
+    "operationalQuery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "term_query_id",
+        "term_id",
+        "claim_kind",
+        "temporal_context",
+        "intrinsic_evidence_role",
+        "scope_id",
+        "primary_roster_item_kind",
+        "primary_roster_item_id",
+        "source_implementation_status",
+        "source_report_promotion_authorized"
+      ],
+      "properties": {
+        "term_query_id": {"$ref": "#/$defs/identifier"},
+        "term_id": {"$ref": "#/$defs/identifier"},
+        "claim_kind": {"$ref": "#/$defs/identifier"},
+        "temporal_context": {"$ref": "#/$defs/identifier"},
+        "intrinsic_evidence_role": {
+          "enum": ["onset_eligible", "early_context", "later_involvement", "non_event_context", "limitation"]
+        },
+        "scope_id": {"$ref": "#/$defs/identifier"},
+        "primary_roster_item_kind": {"enum": ["core_atom", "child_roster"]},
+        "primary_roster_item_id": {"$ref": "#/$defs/identifier"},
+        "source_implementation_status": {"$ref": "#/$defs/identifier"},
+        "source_report_promotion_authorized": {"const": false}
+      }
+    },
+    "projectedFinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence_id",
+        "term_id",
+        "scope_basis",
+        "source_finding_sha256",
+        "finding"
+      ],
+      "properties": {
+        "evidence_id": {"$ref": "#/$defs/identifier"},
+        "term_id": {"$ref": "#/$defs/identifier"},
+        "scope_basis": {
+          "enum": ["trusted_event_query_term", "validated_event_intrinsic_role_no_query_binding"]
+        },
+        "source_finding_sha256": {"$ref": "#/$defs/sha256"},
+        "finding": {"type": "object"}
+      }
+    },
+    "scopeAccounting": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_count",
+        "materialized_event_count",
+        "excluded_record_context_count",
+        "excluded_source_digest_sha256"
+      ],
+      "properties": {
+        "source_count": {"type": "integer", "minimum": 0},
+        "materialized_event_count": {"type": "integer", "minimum": 0},
+        "excluded_record_context_count": {"type": "integer", "minimum": 0},
+        "excluded_source_digest_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "sourceFirewall": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "eeg_signal_and_allowlisted_acquisition_metadata_only",
+        "source_inference_exclusions_replayed",
+        "edf_annotations_used",
+        "spreadsheet_used",
+        "doctor_labels_used",
+        "clinical_reports_used",
+        "patient_metadata_used",
+        "video_or_behavior_used",
+        "sleep_staging_used",
+        "provocation_used",
+        "ecg_emg_eog_used",
+        "qwen_used",
+        "record_context_payload_used"
+      ],
+      "properties": {
+        "eeg_signal_and_allowlisted_acquisition_metadata_only": {"const": true},
+        "source_inference_exclusions_replayed": {"const": true},
+        "edf_annotations_used": {"const": false},
+        "spreadsheet_used": {"const": false},
+        "doctor_labels_used": {"const": false},
+        "clinical_reports_used": {"const": false},
+        "patient_metadata_used": {"const": false},
+        "video_or_behavior_used": {"const": false},
+        "sleep_staging_used": {"const": false},
+        "provocation_used": {"const": false},
+        "ecg_emg_eog_used": {"const": false},
+        "qwen_used": {"const": false},
+        "record_context_payload_used": {"const": false}
+      }
+    },
+    "authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "additive_projection_only",
+        "source_finding_mutation_authorized",
+        "non_event_context_materialization_authorized",
+        "record_context_payload_embedding_authorized",
+        "finding_to_query_binding_claimed",
+        "clinical_absence_authorized",
+        "report_promotion_authorized",
+        "qwen_authorized",
+        "production_connection_authorized",
+        "clinical_correctness_claimed",
+        "soz_or_ez_claim_authorized"
+      ],
+      "properties": {
+        "additive_projection_only": {"const": true},
+        "source_finding_mutation_authorized": {"const": false},
+        "non_event_context_materialization_authorized": {"const": false},
+        "record_context_payload_embedding_authorized": {"const": false},
+        "finding_to_query_binding_claimed": {"const": false},
+        "clinical_absence_authorized": {"const": false},
+        "report_promotion_authorized": {"const": false},
+        "qwen_authorized": {"const": false},
+        "production_connection_authorized": {"const": false},
+        "clinical_correctness_claimed": {"const": false},
+        "soz_or_ez_claim_authorized": {"const": false}
+      }
+    }
+  }
+}

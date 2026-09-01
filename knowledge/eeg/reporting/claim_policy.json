@@ -1,0 +1,81 @@
+{
+  "schema_version": "eeg_report_claim_policy_v2",
+  "claim_levels": [
+    {
+      "id": "observation",
+      "required_semantic_layer": "OBS",
+      "requires": ["patient_evidence_ids", "state", "scope"],
+      "automatic_rendering_allowed": true
+    },
+    {
+      "id": "pattern_interpretation",
+      "required_semantic_layer": "PAT",
+      "requires": ["patient_evidence_ids", "knowledge_card_ids", "differentials", "limitations"],
+      "automatic_rendering_allowed": "only_for_prequalified_terms"
+    },
+    {
+      "id": "scalp_localization",
+      "required_semantic_layer": "LOC",
+      "requires": ["patient_evidence_ids", "target_level", "timing_uncertainty", "coverage", "limitations"],
+      "automatic_rendering_allowed": "research_or_physician_reviewed_only"
+    },
+    {
+      "id": "noninvasive_soz_hypothesis",
+      "required_semantic_layer": "CLIN",
+      "requires": ["multi_event_evidence_ids", "multimodal_evidence_ids", "authorized_reviewer", "discordance_review"],
+      "automatic_rendering_allowed": false
+    },
+    {
+      "id": "invasive_eeg_onset_zone",
+      "required_semantic_layer": "CLIN",
+      "requires": ["typed_invasive_evidence_ids", "implant_coverage", "unsampled_region_limitations", "authorized_reviewer"],
+      "automatic_rendering_allowed": false
+    },
+    {
+      "id": "preoperative_epileptogenic_zone_hypothesis",
+      "required_semantic_layer": "CLIN",
+      "requires": ["multidisciplinary_evidence_ids", "alternative_network_explanations", "authorized_reviewer"],
+      "automatic_rendering_allowed": false
+    },
+    {
+      "id": "outcome_anchored_ez_assessment",
+      "required_semantic_layer": "CLIN",
+      "requires": ["preoperative_hypothesis_id", "treatment_extent", "outcome_and_follow_up", "authorized_reviewer"],
+      "automatic_rendering_allowed": false
+    }
+  ],
+  "preferred_terms": {
+    "single_event_scalp": "最早头皮可见脑电改变/头皮可见起始定位候选",
+    "multi_event_scalp": "跨事件头皮可见定位一致性",
+    "clinical_synthesis": "非侵入性多模态SOZ假设",
+    "invasive": "侵入性EEG观察到的起始区",
+    "preoperative_ez": "术前致痫区假设",
+    "outcome_anchored_ez": "结局锚定的致痫区评估"
+  },
+  "prohibited_unqualified_terms": [
+    "SOZ通道",
+    "头皮SOZ候选",
+    "相位反转点就是源",
+    "IED证明SOZ",
+    "模型置信度等于临床置信度",
+    "无头皮相关所以无发作",
+    "已排除伪迹"
+  ],
+  "required_sections": [
+    "technical_and_assessability",
+    "observations",
+    "pattern_interpretation",
+    "scalp_localization_if_qualified",
+    "supporting_evidence",
+    "contradictory_evidence",
+    "limitations_and_missing_information",
+    "clinical_boundary"
+  ],
+  "rules": [
+    "knowledge_notes_must_be_separate_from_patient_findings",
+    "model_score_must_be_named_by_quantity_kind",
+    "no_fixed_probability_to_certainty_wording_without_a_current_calibration_receipt",
+    "unknown_not_recorded_not_assessable_and_uncertain_must_not_render_as_negative",
+    "unsigned_AI_output_must_be_labeled_as_draft_and_not_clinical_export"
+  ]
+}

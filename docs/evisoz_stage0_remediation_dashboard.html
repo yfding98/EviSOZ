@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>EviSOZ Stage‑0 闭环工作台</title>
+  <style>
+    :root{--bg:#f5f7fb;--card:#fff;--ink:#172033;--muted:#64748b;--line:#dce3ee;--ok:#087443;--warn:#a15c00;--bad:#b42318;--accent:#3857d6;--shadow:0 8px 28px rgba(34,52,84,.08)}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+    header{background:#172554;color:#fff;padding:24px max(20px,calc((100% - 1240px)/2));display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
+    h1,h2,h3{margin:0 0 8px}h1{font-size:24px;letter-spacing:.01em}h2{font-size:18px}h3{font-size:15px}.sub{color:#c7d2fe}.wrap{max-width:1240px;margin:22px auto;padding:0 20px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}.card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:18px;margin-bottom:16px}.card h2{display:flex;justify-content:space-between;gap:12px;align-items:center}.badge{border-radius:999px;padding:3px 10px;font-size:12px;font-weight:700;white-space:nowrap}.bad{background:#fee4e2;color:var(--bad)}.warn{background:#fff1d6;color:var(--warn)}.ok{background:#dcfce7;color:var(--ok)}.neutral{background:#e8edf7;color:#45546d}.small{font-size:12px;color:var(--muted)}.facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}.fact{border:1px solid var(--line);border-radius:9px;padding:9px;background:#fbfcfe}.fact b{display:block;font-size:18px}.fact span{color:var(--muted);font-size:12px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}button{border:0;border-radius:8px;padding:8px 12px;background:var(--accent);color:#fff;cursor:pointer;font-weight:650}button.secondary{background:#e8edf7;color:#263657}button.danger{background:#b42318}button:disabled{opacity:.5;cursor:not-allowed}input,select,textarea{font:inherit;border:1px solid #cbd5e1;border-radius:7px;padding:7px 8px;background:#fff;color:var(--ink)}input:focus,select:focus,textarea:focus{outline:2px solid #b9c4ff;border-color:var(--accent)}label{display:flex;flex-direction:column;gap:4px;font-weight:650;margin:8px 0}label.inline{display:flex;flex-direction:row;align-items:center;font-weight:500}.formgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}.notice{border-left:4px solid var(--warn);background:#fff9ed;padding:12px 14px;border-radius:8px;margin-bottom:16px}.notice strong{color:var(--warn)}table{width:100%;border-collapse:collapse;font-size:12px}th,td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top}th{position:sticky;top:0;background:#f8fafc;z-index:1}.table-scroll{max-height:520px;overflow:auto;border:1px solid var(--line);border-radius:9px}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-all}.checklist{display:grid;gap:7px}.checkline{display:flex;gap:8px;align-items:flex-start;font-weight:500}.checkline input{margin-top:3px}.hidden{display:none}.toast{position:fixed;right:18px;bottom:18px;background:#172033;color:white;padding:11px 14px;border-radius:9px;box-shadow:var(--shadow);opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:none}.footer{color:var(--muted);font-size:12px;padding:4px 0 28px}.progress{height:9px;background:#e5e7eb;border-radius:99px;overflow:hidden}.progress>i{display:block;height:100%;background:var(--accent);width:0}.pill-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.pill{border:1px solid var(--line);border-radius:99px;padding:4px 9px;color:#45546d;background:#fafbff;font-size:12px}
+    @media(max-width:720px){header{padding:18px 16px}.wrap{padding:0 12px}.facts{grid-template-columns:1fr}th:nth-child(4),td:nth-child(4){display:none}}
+  </style>
+</head>
+<body>
+<header><div><h1>EviSOZ Stage‑0 闭环工作台</h1><div class="sub">本地证据登记、人工审查与回执导出</div></div><div id="gateBadge" class="badge bad">NO_GO</div></header>
+<main class="wrap">
+  <div class="notice"><strong>边界：</strong>这是本地工作流页面。它不会覆盖正式 gate、不会把用户声明伪装成机构签名，也不会显示或上传 EDF/报告正文。完成后请导出证据包，再由正常 materializer 重放 gate。</div>
+  <section class="grid" id="summary"></section>
+
+  <section class="card" id="authorizationSection"><h2><span>1 · 私有数据授权声明</span><span id="authBadge" class="badge warn">待记录</span></h2>
+    <p class="small">按当前项目约定，私有数据可直接登记为真实世界已授权；此页保存的是你的工作流声明，不要求上传授权文件，也不替代 SUAT 控制方签发记录。</p>
+    <div class="formgrid"><label>声明人<input id="authName" value="dyf" autocomplete="off"></label><label>机构<input id="authInstitution" value="suat" autocomplete="off"></label><label>授权方<input id="authIssuer" value="suat" autocomplete="off"></label><label>授权范围<select id="authScope"><option value="private_training">私有数据训练/开发</option><option value="evaluation_only">仅评估</option></select></label></div>
+    <label class="inline"><input type="checkbox" id="authConfirm"> 我确认该私有数据在真实世界已获得授权，并承担内部数据治理责任。</label>
+    <div class="actions"><button id="saveAuth">记录授权声明</button><button class="secondary" id="clearAuth">清除本机声明</button></div>
+    <div id="authResult" class="small"></div>
+  </section>
+
+  <section class="card"><h2><span>2 · CerebraGloss / ELM 与 fold-local calibration</span><span id="teacherBadge" class="badge warn">部分完成</span></h2>
+    <div id="teacherFacts" class="facts"></div>
+    <p class="small">候选只能保持 candidate-only/uncalibrated。页面可以登记外部回执，但不会直接把候选变成训练标签。</p>
+    <div class="formgrid"><label>ELM 工件回执 ID<input id="elmReceipt" placeholder="待外部提供"></label><label>fold-local calibration 回执 ID<input id="calReceipt" placeholder="每个 development fold 的回执"></label></div>
+    <label>补充说明<textarea id="teacherNote" rows="2" placeholder="例如：ELM checkpoint、预处理、exposure 与 fold roster 的回执位置"></textarea></label>
+    <div class="actions"><button id="saveTeacher">保存 teacher / calibration 回执</button></div><div id="teacherResult" class="small"></div>
+  </section>
+
+  <section class="card"><h2><span>3 · 三条医生报告关联</span><span id="mappingBadge" class="badge warn">3 条待处理</span></h2>
+    <p class="small">原始 DOCX 已在受控源目录中精确命中，但不能用相似文件名或正文猜测 EDF。每条必须填权威 linkage 或正式 exclusion 回执。</p>
+    <div class="table-scroll"><table><thead><tr><th>report_id</th><th>source SHA-256</th><th>处理</th><th>linkage_group_id / exclusion reason</th><th>权威回执 ID</th></tr></thead><tbody id="mappingRows"></tbody></table></div>
+    <div class="actions"><button id="saveMapping">保存报告处理结果</button><button class="secondary" id="resetMapping">恢复待处理</button></div><div id="mappingResult" class="small"></div>
+  </section>
+
+  <section class="card"><h2><span>4 · 43 份报告人工去标识审核</span><span id="reviewBadge" class="badge warn">0 / 43</span></h2>
+    <p class="small">页面只显示候选 ID、哈希和自动扫描结果，不显示报告正文。机构审查人应逐条确认直接和间接标识符后再选择 release lane。</p>
+    <div class="formgrid"><label>审查人姓名<input id="reviewerName" placeholder="机构审查人"></label><label>审查人角色<input id="reviewerRole" placeholder="data controller / privacy reviewer"></label><label>审查时间<input id="reviewTimestamp" type="datetime-local"></label></div>
+    <div class="progress"><i id="reviewProgress"></i></div><div class="table-scroll" style="margin-top:10px"><table><thead><tr><th>report_id</th><th>candidate_id</th><th>role</th><th>scan</th><th>manual status</th><th>release</th></tr></thead><tbody id="reviewRows"></tbody></table></div>
+    <div class="actions"><button id="saveReview">保存人工审核草案</button><button class="secondary" id="markAllPending">全部设为待审</button></div><div id="reviewResult" class="small"></div>
+  </section>
+
+  <section class="card"><h2><span>5 · 公开 overlap / TUEV 审计</span><span id="publicBadge" class="badge warn">待回执</span></h2>
+    <div id="publicFacts" class="facts"></div>
+    <div class="checklist"><label class="checkline"><input type="checkbox" id="overlapClosed"> TUSZ/TUEV decoded near/partial overlap 审计已由数据管理员签发</label><label class="checkline"><input type="checkbox" id="tuevIdentityClosed"> TUEV eval session → patient identity crosswalk 已签发</label><label class="checkline"><input type="checkbox" id="tuevLabelClosed"> TUEV label/fold exposure receipt 已签发</label></div>
+    <div class="formgrid"><label>overlap 回执 ID<input id="overlapReceipt" placeholder="待外部提供"></label><label>TUEV identity 回执 ID<input id="tuevReceipt" placeholder="待外部提供"></label><label>TUEV label 回执 ID<input id="labelReceipt" placeholder="待外部提供"></label></div>
+    <div class="actions"><button id="savePublic">保存公开审计回执</button></div><div id="publicResult" class="small"></div>
+  </section>
+
+  <section class="card"><h2><span>导出本地证据包</span><span id="projectionBadge" class="badge neutral">不改正式 gate</span></h2><p class="small">导出内容仅包含状态、ID、哈希、reviewer 字段和回执引用。导出后交给项目 materializer；不要把报告正文粘贴到页面。</p><div class="actions"><button id="exportEvidence">下载 evidence_bundle.json</button><button class="secondary" id="clearLocal">清空本机工作流缓存</button></div><div id="exportResult" class="small"></div></section>
+  <div class="footer">初始状态来自嵌入的 Stage‑0 gate / remediation packet。浏览器 localStorage 仅用于本机草案保存。</div>
+</main><div id="toast" class="toast"></div>
+<script>
+const INITIAL_STATE = __INITIAL_STATE__;
+const STORAGE_KEY = "evisoz-stage0-remediation-dashboard-v1";
+const $ = (id) => document.getElementById(id);
+const deep = (x) => JSON.parse(JSON.stringify(x));
+let workflow = (() => { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch (_) { return {}; } })();
+function toast(message){ const n=$("toast"); n.textContent=message; n.classList.add("show"); setTimeout(()=>n.classList.remove("show"),2200); }
+function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(workflow)); }
+function badgeClass(status){ if(["GO","QUALIFIED_GO","resolved","pass","closed"].includes(status))return"ok"; if(["NO_GO","reject"].includes(status))return"bad"; return"warn"; }
+function badge(text,status=text){ return `<span class="badge ${badgeClass(status)}">${escapeHtml(text)}</span>`; }
+function escapeHtml(value){ return String(value ?? "").replace(/[&<>\"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'\"':"&quot;","'":"&#39;"}[c])); }
+function fact(label,value){ return `<div class="fact"><b>${escapeHtml(value)}</b><span>${escapeHtml(label)}</span></div>`; }
+function currentMapping(){ return workflow.mapping || deep(INITIAL_STATE.mapping.unresolved_reports); }
+function currentReviews(){ return workflow.reviews || deep(INITIAL_STATE.manual_review.rows); }
+function renderSummary(){
+  const g=INITIAL_STATE.gate; $("gateBadge").textContent=g.status; $("gateBadge").className=`badge ${badgeClass(g.status)}`;
+  const statuses=Object.values(g.check_statuses); $("summary").innerHTML=[
+    `<div class="card"><h2>正式 gate ${badge(g.status,g.status)}</h2><div class="facts">${fact("阻断检查数",g.blocking_check_ids.length)}${fact("当前 gate",g.source_gate)}${fact("候选/校准",`${INITIAL_STATE.teacher.cerebragloss_candidate_count} / ${INITIAL_STATE.teacher.fold_local_calibration_receipt_count}`)}${fact("报告人工审核",`${INITIAL_STATE.manual_review.manual_review_pass_count} / ${INITIAL_STATE.manual_review.candidate_count}`)}</div><div class="pill-row">${g.blocking_check_ids.map(x=>`<span class="pill">${escapeHtml(x)}</span>`).join("")}</div></div>`,
+    `<div class="card"><h2>本页工作流 ${badge("本机草案","pending")}</h2><p class="small">完成表单后导出 evidence_bundle.json。它不会覆盖正式 gate.json。</p><div class="facts">${fact("报告映射已填",`${currentMapping().filter(x=>x.resolution_status&&x.resolution_status!=="pending").length} / 3`)}${fact("人工审核已通过",`${currentReviews().filter(x=>x.manual_review_status==="pass").length} / 43`)}${fact("TUEV 审计勾选",`${["overlapClosed","tuevIdentityClosed","tuevLabelClosed"].filter(x=>workflow.public&&workflow.public[x]).length} / 3`)}${fact("授权声明",workflow.authorization?.confirmed?"已记录":"未记录")}</div></div>`
+  ].join("");
+}
+function renderTeacher(){
+  const t=INITIAL_STATE.teacher; $("teacherFacts").innerHTML=[fact("CerebraGloss candidate count",t.cerebragloss_candidate_count),fact("CerebraGloss event count",t.cerebragloss_event_count),fact("ELM candidate count",t.elm_candidate_count),fact("fold-local calibration receipt",t.fold_local_calibration_receipt_count)].join("");
+  const x=workflow.teacher||{}; $("elmReceipt").value=x.elmReceipt||""; $("calReceipt").value=x.calReceipt||""; $("teacherNote").value=x.note||"";
+}
+function renderAuthorization(){ const a=workflow.authorization||{}; $("authName").value=a.name||"dyf";$("authInstitution").value=a.institution||"suat";$("authIssuer").value=a.issuer||"suat";$("authConfirm").checked=!!a.confirmed;$("authScope").value=a.scope||"private_training"; $("authBadge").textContent=a.confirmed?"用户声明已记录":"待记录";$("authBadge").className=`badge ${a.confirmed?"ok":"warn"}`; $("authResult").textContent=a.confirmed?`已记录 ${a.name}/${a.institution}/${a.issuer} 的本机声明；正式 gate 仍需按项目治理流程重放。`:""; }
+function renderMapping(){ const rows=currentMapping(); $("mappingRows").innerHTML=rows.map((r,i)=>`<tr><td class="mono">${escapeHtml(r.report_id)}</td><td class="mono">${escapeHtml(r.document_sha256)}</td><td><select data-map-action="${i}"><option value="pending">待处理</option><option value="linked" ${r.resolution_status==="linked"?"selected":""}>权威关联</option><option value="excluded" ${r.resolution_status==="excluded"?"selected":""}>正式排除</option></select></td><td><input data-map-target="${i}" value="${escapeHtml(r.linkage_group_id||r.exclusion_reason||"")}" placeholder="linkage_group_id 或 reason"></td><td><input data-map-receipt="${i}" value="${escapeHtml(r.controller_receipt_reference||"")}" placeholder="receipt ID"></td></tr>`).join(""); $("mappingBadge").textContent=`${rows.filter(r=>r.resolution_status&&r.resolution_status!=="pending").length} / 3 已处理`; }
+function renderReviews(){ const rows=currentReviews(), passed=rows.filter(r=>r.manual_review_status==="pass").length; $("reviewBadge").textContent=`${passed} / ${rows.length}`; $("reviewProgress").style.width=`${rows.length?passed/rows.length*100:0}%`; const a=workflow.reviewMeta||{};$("reviewerName").value=a.name||"";$("reviewerRole").value=a.role||"";$("reviewTimestamp").value=a.timestamp||""; $("reviewRows").innerHTML=rows.map((r,i)=>`<tr><td class="mono">${escapeHtml(r.report_id)}</td><td class="mono">${escapeHtml(r.candidate_id)}</td><td>${escapeHtml(r.split_role)}</td><td>${badge(r.automated_phi_scan,r.automated_phi_scan)}</td><td><select data-review-status="${i}"><option value="pending">待审</option><option value="pass" ${r.manual_review_status==="pass"?"selected":""}>通过</option><option value="reject" ${r.manual_review_status==="reject"?"selected":""}>退回</option></select></td><td><label class="inline"><input type="checkbox" data-review-dev="${i}" ${r.development_qwen_training_release==="true"?"checked":""}>dev</label><label class="inline"><input type="checkbox" data-review-lock="${i}" ${r.locked_language_evaluation_release==="true"?"checked":""}>eval</label></td></tr>`).join(""); }
+function renderPublic(){ const p=workflow.public||{}; $("publicFacts").innerHTML=[fact("TUSZ source-train patients",INITIAL_STATE.public.tusz_source_train_patient_count),fact("DeepSOZ exact overlap",INITIAL_STATE.public.deepsoz_exact_overlap_patient_count),fact("TUEV train-visible overlap",INITIAL_STATE.public.tuev_train_visible_overlap_patient_count),fact("TUEV eval identity",INITIAL_STATE.public.tuev_identity_status)].join(""); ["overlapClosed","tuevIdentityClosed","tuevLabelClosed"].forEach(id=>$(id).checked=!!p[id]);$("overlapReceipt").value=p.overlapReceipt||"";$("tuevReceipt").value=p.tuevReceipt||"";$("labelReceipt").value=p.labelReceipt||""; const n=[p.overlapClosed,p.tuevIdentityClosed,p.tuevLabelClosed].filter(Boolean).length;$("publicBadge").textContent=`${n} / 3 回执`;$("publicBadge").className=`badge ${n===3?"ok":"warn"}`; }
+function render(){renderSummary();renderTeacher();renderAuthorization();renderMapping();renderReviews();renderPublic();}
+$("saveAuth").onclick=()=>{ if(!$("authConfirm").checked){toast("请先勾选真实世界授权确认");return;} workflow.authorization={confirmed:true,name:$("authName").value.trim(),institution:$("authInstitution").value.trim(),issuer:$("authIssuer").value.trim(),scope:$("authScope").value,recorded_at:new Date().toISOString(),formal_gate_override:false};save();render();toast("已记录本机授权声明"); };
+$("clearAuth").onclick=()=>{delete workflow.authorization;save();render();toast("已清除本机声明");};
+$("saveTeacher").onclick=()=>{workflow.teacher={elmReceipt:$("elmReceipt").value.trim(),calReceipt:$("calReceipt").value.trim(),note:$("teacherNote").value.trim(),recorded_at:new Date().toISOString()};save();render();toast("已保存 teacher / calibration 回执引用");};
+$("saveMapping").onclick=()=>{ const rows=currentMapping().map((r,i)=>{const action=document.querySelector(`[data-map-action="${i}"]`).value;const target=document.querySelector(`[data-map-target="${i}"]`).value.trim();const receipt=document.querySelector(`[data-map-receipt="${i}"]`).value.trim();return {...r,resolution_status:action,linkage_group_id:action==="linked"?target:null,exclusion_reason:action==="excluded"?target:null,controller_receipt_reference:receipt};}); const bad=rows.some(r=>r.resolution_status!=="pending"&&!r.controller_receipt_reference);if(bad){toast("关联/排除必须填写权威回执 ID");return;}workflow.mapping=rows;save();render();toast("已保存报告处理草案");};
+$("resetMapping").onclick=()=>{delete workflow.mapping;save();render();toast("已恢复待处理");};
+$("saveReview").onclick=()=>{const rows=currentReviews().map((r,i)=>({...r,manual_review_status:document.querySelector(`[data-review-status="${i}"]`).value,development_qwen_training_release:document.querySelector(`[data-review-dev="${i}"]`).checked?"true":"false",locked_language_evaluation_release:document.querySelector(`[data-review-lock="${i}"]`).checked?"true":"false"}));workflow.reviews=rows;workflow.reviewMeta={name:$("reviewerName").value.trim(),role:$("reviewerRole").value.trim(),timestamp:$("reviewTimestamp").value};save();render();toast("已保存人工审核草案");};
+$("markAllPending").onclick=()=>{workflow.reviews=currentReviews().map(r=>({...r,manual_review_status:"pending",development_qwen_training_release:"false",locked_language_evaluation_release:"false"}));save();render();toast("已全部设为待审");};
+$("savePublic").onclick=()=>{workflow.public={overlapClosed:$("overlapClosed").checked,tuevIdentityClosed:$("tuevIdentityClosed").checked,tuevLabelClosed:$("tuevLabelClosed").checked,overlapReceipt:$("overlapReceipt").value.trim(),tuevReceipt:$("tuevReceipt").value.trim(),labelReceipt:$("labelReceipt").value.trim(),recorded_at:new Date().toISOString()};save();render();toast("已保存公开审计回执引用");};
+function evidence(){return {schema_version:"evisoz_stage0_dashboard_evidence_bundle_v1",generated_at:new Date().toISOString(),formal_gate:{status:INITIAL_STATE.gate.status,source_gate:INITIAL_STATE.gate.source_gate,blocking_check_ids:INITIAL_STATE.gate.blocking_check_ids},workflow:deep(workflow),initial_facts:deep(INITIAL_STATE),safety:{raw_edf_or_report_text_included:false,formal_gate_overridden:false,user_authority_claim_is_institutional_signature:false}};}
+function download(name,content){const blob=new Blob([content],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500);}
+$("exportEvidence").onclick=()=>{download("evidence_bundle.json",JSON.stringify(evidence(),null,2));$("exportResult").textContent="已生成 evidence_bundle.json（仅本地草案，未改变正式 gate）";toast("已下载 evidence_bundle.json");};
+$("clearLocal").onclick=()=>{if(confirm("确认清空本机工作流缓存？")){localStorage.removeItem(STORAGE_KEY);workflow={};render();toast("本机缓存已清空");}};
+render();
+</script>
+</body></html>

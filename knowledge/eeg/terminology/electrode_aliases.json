@@ -1,0 +1,35 @@
+{
+  "schema_version": "eeg_electrode_aliases_v2",
+  "normalization_policy": "preserve_original_and_normalized_labels",
+  "aliases": [
+    {"original": "T3", "normalized": "T7", "anatomic_usage": "left_mid_temporal"},
+    {"original": "T4", "normalized": "T8", "anatomic_usage": "right_mid_temporal"},
+    {"original": "T5", "normalized": "P7", "anatomic_usage": "left_posterior_temporal"},
+    {"original": "T6", "normalized": "P8", "anatomic_usage": "right_posterior_temporal"}
+  ],
+  "conditional_aliases": [
+    {
+      "original": "A1",
+      "candidate_normalized": "M1",
+      "automatic_mapping_allowed": false,
+      "requires": "acquisition_metadata_confirming_left_mastoid_or_auricular_semantics"
+    },
+    {
+      "original": "A2",
+      "candidate_normalized": "M2",
+      "automatic_mapping_allowed": false,
+      "requires": "acquisition_metadata_confirming_right_mastoid_or_auricular_semantics"
+    },
+    {
+      "original": "T1/T2",
+      "candidate_normalized": "FT9/FT10",
+      "automatic_mapping_allowed": false,
+      "requires": "record_specific_electrode_position_metadata"
+    }
+  ],
+  "rules": [
+    "never_discard_original_label",
+    "normalization_does_not_prove_anatomic_source",
+    "electrode_channel_and_derivation_are_distinct_entity_types"
+  ]
+}

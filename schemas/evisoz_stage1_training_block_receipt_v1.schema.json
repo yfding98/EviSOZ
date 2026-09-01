@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evisoz_stage1_training_block_receipt_v1.schema.json",
+  "title": "EviSOZ guarded Stage-1 training block receipt v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "status", "stage0_gate_id", "stage0_status", "blocking_check_ids", "error", "runtime", "receipt_sha256"],
+  "properties": {
+    "schema_version": {"const": "evisoz_stage1_training_block_receipt_v1"},
+    "status": {"const": "blocked_before_model_or_loader_construction"},
+    "stage0_gate_id": {"type": "string", "minLength": 1},
+    "stage0_status": {"const": "NO_GO"},
+    "blocking_check_ids": {"type": "array", "items": {"type": "string"}},
+    "error": {"type": "string", "minLength": 1},
+    "runtime": {
+      "type": "object", "additionalProperties": false,
+      "required": ["model_constructed", "optimizer_constructed", "training_loader_opened", "teacher_runtime_opened", "qwen_generation", "residual_enabled"],
+      "properties": {
+        "model_constructed": {"const": false},
+        "optimizer_constructed": {"const": false},
+        "training_loader_opened": {"const": false},
+        "teacher_runtime_opened": {"const": false},
+        "qwen_generation": {"const": false},
+        "residual_enabled": {"const": false}
+      }
+    },
+    "receipt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

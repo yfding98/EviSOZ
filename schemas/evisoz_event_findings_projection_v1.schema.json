@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evisoz_event_findings_projection_v1.schema.json",
+  "title": "EviSOZ Stage-0 event Findings projection v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "findings_id", "event_id", "linkage_group_id", "evisoz_role", "outer_holdout_fold", "source_refs", "lanes", "permissions", "counts", "receipt_sha256"],
+  "properties": {
+    "schema_version": {"const": "evisoz_event_findings_projection_v1"},
+    "findings_id": {"type": "string", "pattern": "^EVISOZ-FIND-[0-9a-f]{24}$"},
+    "event_id": {"type": "string", "minLength": 1},
+    "linkage_group_id": {"type": "string", "pattern": "^EVISOZ-PAT-[0-9a-f]{24}$"},
+    "evisoz_role": {"enum": ["development_cv", "locked_test"]},
+    "outer_holdout_fold": {"type": ["integer", "null"], "minimum": 0},
+    "source_refs": {"type": "object"},
+    "lanes": {"type": "object"},
+    "permissions": {"type": "object"},
+    "counts": {"type": "object"},
+    "receipt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

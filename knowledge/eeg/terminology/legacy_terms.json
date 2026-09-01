@@ -1,0 +1,13 @@
+{
+  "schema_version": "eeg_legacy_terms_v2",
+  "mappings": [
+    {"legacy": "PLED/PLEDs", "preferred": "LPD/LPDs", "scope": "ACNS_2021"},
+    {"legacy": "BIPLED/BIPLEDs", "preferred": "BIPD/BIPDs", "scope": "ACNS_2021"},
+    {"legacy": "triphasic waves", "preferred": "GPDs with triphasic morphology", "scope": "when_periodic_pattern_criteria_apply"},
+    {"legacy": "subclinical seizure", "preferred": "electrographic seizure", "scope": "state_clinical_correlate_separately"},
+    {"legacy": "secondarily generalized", "preferred": "focal to bilateral tonic-clonic", "scope": "clinical_classification"},
+    {"legacy": "BECTS", "preferred": "SeLECTS", "scope": "syndrome_level_only"}
+  ],
+  "version_rule": "classification_terms_must_declare_the_adopted_ILAE_version",
+  "do_not_mix_versions_silently": true
+}

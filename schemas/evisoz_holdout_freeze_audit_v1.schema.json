@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evisoz_holdout_freeze_audit_v1.schema.json",
+  "title": "EviSOZ non-authorizing clean/holdout freeze audit v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "audit_id", "status", "git_snapshot",
+    "required_contracts", "stage0_gate_path_present", "checks",
+    "training_authorized", "non_authorizing", "receipt_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "evisoz_holdout_freeze_audit_v1"},
+    "audit_id": {"type": "string", "pattern": "^EVISOZ-FREEZE-[0-9a-f]{24}$"},
+    "status": {"enum": ["GO", "NO_GO"]},
+    "git_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "head_sha", "branch", "git_status_exit_code",
+        "git_status_error_present", "status_counts", "status_rows_sha256", "excluded_status_paths", "clean"
+      ],
+      "properties": {
+        "head_sha": {"type": ["string", "null"], "pattern": "^[0-9a-f]{40}$"},
+        "branch": {"type": ["string", "null"]},
+        "git_status_exit_code": {"type": "integer", "minimum": 0},
+        "git_status_error_present": {"type": "boolean"},
+        "status_counts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["tracked_modified", "untracked", "other"],
+          "properties": {
+            "tracked_modified": {"type": "integer", "minimum": 0},
+            "untracked": {"type": "integer", "minimum": 0},
+            "other": {"type": "integer", "minimum": 0}
+          }
+        },
+        "status_rows_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "excluded_status_paths": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "clean": {"type": "boolean"}
+      }
+    },
+    "required_contracts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "present", "regular", "sha256", "size_bytes"],
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "present": {"type": "boolean"},
+          "regular": {"type": "boolean"},
+          "sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+          "size_bytes": {"type": ["integer", "null"], "minimum": 0}
+        }
+      }
+    },
+    "stage0_gate_path_present": {"type": "boolean"},
+    "checks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["check_id", "status", "blocker_codes", "facts"],
+        "properties": {
+          "check_id": {"type": "string", "minLength": 1},
+          "status": {"enum": ["GO", "NO_GO"]},
+          "blocker_codes": {"type": "array", "items": {"type": "string", "minLength": 1}},
+          "facts": {"type": "object"}
+        }
+      }
+    },
+    "training_authorized": {"const": false},
+    "non_authorizing": {"const": true},
+    "receipt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}
