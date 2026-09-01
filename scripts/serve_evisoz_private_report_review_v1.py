@@ -42,8 +42,16 @@ from src.evisoz.forge.private_report_deidentification import (  # noqa: E402
 
 
 DEFAULT_REPORT_ROOT = Path("/mnt/hd1/dyf/dataset/EEG_Reports/Reports")
-DEFAULT_SOURCE_MANIFEST = ROOT / "outputs/soz_pre/private_edf_soz_manifest.csv"
-DEFAULT_BUNDLE_ROOT = ROOT / "outputs/private_public_mapping_split_deid_v1_20260901_r4"
+# Private report inventory, exclusion and patient-name authority remain in the
+# controlled parent artifact store.  The clean worktree deliberately does not
+# contain these files, so defaults must not point at migration-era repository
+# paths.  Raw DOCX bytes are still read only in memory by ``_build_dataset``.
+DEFAULT_SOURCE_MANIFEST = Path(
+    "/mnt/hd1/dyf/workspace/laptop/EEG_Seizure/outputs/soz_pre/private_edf_soz_manifest.csv"
+)
+DEFAULT_BUNDLE_ROOT = Path(
+    "/mnt/hd1/dyf/workspace/laptop/EEG_Seizure/outputs/private_public_mapping_split_deid_v1_20260901_r4"
+)
 DEFAULT_OUTPUT = ROOT / "outputs/evisoz_private_report_manual_review_service_v1_20260901/reviews.json"
 _REPORT_ID_RE = re.compile(r"^EVISOZ-PRPT-[0-9a-f]{24}$")
 _ALLOWED_STATUS = {"pending", "pass", "reject"}

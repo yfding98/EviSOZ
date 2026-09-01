@@ -58,6 +58,13 @@ Updated: 2026-09-01 16:27 CST (Asia/Shanghai)
   packets; all remain `shadow_input_no_generation` with patient-fact,
   localization-change and generation permissions disabled.
 
+- The private report review service defaults now resolve its inventory/bundle
+  and patient-name manifest from the controlled external
+  `EEG_Seizure/outputs` store rather than absent repository paths. A read-only
+  `_build_dataset` replay found 43 inventory reports, 40 reviewable reports
+  and 3 explicitly excluded reports; raw report text/bytes were not persisted
+  or copied.
+
 ## Three excluded reports
 
 Receipt (external to this clean worktree):
