@@ -31,12 +31,10 @@ Updated: 2026-09-01 17:20 CST (Asia/Shanghai)
   candidates or copy model bytes into the repository.
 
 - Post-change clean-freeze audit
-  `outputs/clean_freeze_audit_target_v1_20260901_r11.json` is `NO_GO` solely
-  because the two tracked files in this change are not committed yet
-  (`tracked_modified=2`, no untracked files). The sandbox refused Git index
-  writes when attempting the commit; the code/schema checks and remediation
-  receipts themselves pass. A writable Git session must commit or review this
-  patch before a new clean-freeze `GO` can be claimed.
+  `outputs/clean_freeze_audit_target_v1_20260901_r12.json` is `GO` after commit
+  `0e71671` (`tracked_modified=0`, no untracked files). The superseded r11
+  audit was the expected transient `NO_GO` while the patch was uncommitted;
+  r12 is the current clean snapshot and remains non-authorizing for training.
 
 - Remediation packet r4 was materialized in this clean worktree using explicit
   controlled external JSON inputs (no private/raw bytes copied):
