@@ -22,11 +22,12 @@ Updated: 2026-09-01 18:45 CST (Asia/Shanghai)
   `9191f6c84435a19e19c2fd70125b0fa06754b876b6e4c911c2a22cf4eed48cd4` and its
   patient evaluation receipt is
   `ef05f837d8c9d4ffbc7b05c8e0dd0b6ca016fb672af62107255b1fc3b35dc052`.
-- The input-boundary change is committed as `f0342e1`; a post-commit
+- The input-boundary change is committed as `f0342e1` and this handoff update
+  as `2c71d61`; a post-commit
   clean-freeze audit at
-  `outputs/clean_freeze_audit_target_v1_20260901_r19.json` was `GO` with
+  `outputs/clean_freeze_audit_target_v1_20260901_r20.json` was `GO` with
   `git_clean=true` (receipt SHA-256
-  `8191b50df61675a472422327538d174591f1ac75a80ff2f102ec8181c74684e1`).
+  `5c0b8a8b4d60242a1cabfcbd2a609ff584f249b6138e165ebe2a22d492470d0b`).
 
 - All commands for this turn were run from the clean worktree
   `/mnt/hd1/dyf/workspace/laptop/EviSOZ`; `EEG_Seizure` was used only through
