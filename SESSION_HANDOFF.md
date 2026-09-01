@@ -8,7 +8,7 @@ Updated: 2026-09-01 (Asia/Shanghai)
   `/mnt/hd1/dyf/workspace/laptop/EEG_Seizure/outputs/evisoz_stage0_gate_v1_20260901_r68/gate.json`.
 - `private_report_linkage`: `GO` after an explicit operational quarantine receipt.
 - Independent EviSOZ clean-freeze audit: `GO` at the target worktree's ignored
-  `outputs/clean_freeze_audit_target_v1.json`. The receipt is regenerated
+  `outputs/clean_freeze_audit_migration_v1.json`. The receipt is regenerated
   after each committed change; inspect its audit ID and SHA-256 in the local
   file rather than treating this handoff line as an authorization.
 - Remaining independent blockers are unchanged: private governance training
