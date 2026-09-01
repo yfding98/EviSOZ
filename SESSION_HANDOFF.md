@@ -65,6 +65,14 @@ Updated: 2026-09-01 16:27 CST (Asia/Shanghai)
   and 3 explicitly excluded reports; raw report text/bytes were not persisted
   or copied.
 
+- A clean-worktree review service instance is currently running loopback-only
+  at `http://127.0.0.1:8792/` (session bound outside the restricted shell).
+  Controlled API checks report 40 reviewable and 3 explicitly excluded
+  reports, with `raw_report_text_persisted=false` and
+  `raw_report_bytes_copied=false`. This service only stores local review
+  drafts; it never issues an institutional release receipt or training
+  authorization.
+
 ## Three excluded reports
 
 Receipt (external to this clean worktree):
