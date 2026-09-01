@@ -1582,3 +1582,35 @@ identity 审计。即使报告 linkage 通过 exclusion closure，`private_field
 仍是 evaluator-only，`private_report_text_release` 仍为 `NO_GO`，所以所有
 正式 Query/Residual、Qwen SFT、alignment、非零 residual 和私有 label training
 继续保持 fail-closed。
+
+## 23. clean-worktree 当前重放（r83，2026-09-01）
+
+本节是对前述历史回执的追加，不覆盖任何历史结论。所有命令均从
+`/mnt/hd1/dyf/workspace/laptop/EviSOZ` 执行；受控的 `EEG_Seizure` 路径只作为
+显式只读输入，ELM checkpoint/config 位于仓库外的
+`EviSOZ_artifacts/elm_public_artifacts_v1_20260901_r1/`。
+
+当前不可变回执为：
+
+```text
+freeze:    outputs/clean_freeze_audit_target_v1_20260901_r17.json
+gate:      outputs/evisoz_stage0_gate_v1_20260901_r83/gate.json
+plan:      outputs/evisoz_execution_plan_v1_20260901_r41/plan.json
+remediate: outputs/evisoz_stage0_remediation_packet_v1_20260901_r10/
+elm:       outputs/evisoz_teacher_artifact_discovery_v1_20260901_evisoz_artifacts_r2.json
+```
+
+`private_report_text_release` 已通过外部 SUAT authorization ref、40 条人工审核
+行和 candidate/text hash 绑定（development Qwen 33 条、locked language evaluation
+7 条）；对应 gate 输入必须显式使用 `--private-report-release`，不能通过修改
+de-identification candidate manifest 冒充 release。该 release 只开放
+physician-authored text 的相应文本用途，不能监督 SOZ 定位，也不会解除 aggregate
+Stage-0 训练门。
+
+当前 aggregate `Stage0_overall=NO_GO`，剩余阻断为私有训练治理 authority、ELM
+candidate/preprocessing/exposure 与 fold-local calibration、public near/partial
+overlap 和 TUEV eval identity，以及双 montage reference observability/locked-test
+exposure 限制。ELM discovery r2 只表示 4 个外部文件已完整哈希并仍为
+`found_unvalidated`；在获得 audited candidate cache 和校准 receipt 前，不得运行
+大规模 ELM 推理、正式 DataLoader、optimizer、Qwen SFT、EEG-to-Qwen alignment 或
+非零 residual。

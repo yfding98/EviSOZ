@@ -356,3 +356,29 @@ outputs/evisoz_stage0_gate_v1_20260901_r66/gate.json
 outputs/evisoz_execution_plan_v1_20260901_r31/plan.json
 outputs/evisoz_stage0_remediation_packet_v1_20260901_r28/
 ```
+
+## 13. 当前 clean-worktree release 与 gate（r83，2026-09-01）
+
+最新聚合回执已更新为：
+
+```text
+freeze:    outputs/clean_freeze_audit_target_v1_20260901_r17.json
+gate:      outputs/evisoz_stage0_gate_v1_20260901_r83/gate.json
+plan:      outputs/evisoz_execution_plan_v1_20260901_r41/plan.json
+remediate: outputs/evisoz_stage0_remediation_packet_v1_20260901_r10/
+```
+
+`private_report_text_release` 现在为 `GO`，证据是外部
+`evisoz_private_physician_report_release_v1` manifest：40 条候选均绑定到同一
+candidate bundle 和 text bytes，人工审核状态为 `passed`，其中 33 条只进入
+development Qwen text training，7 条只进入 locked language evaluation。release
+manifest 只保存引用和权限，不复制报告正文；未解析的 3 条报告仍保持 quarantine，
+不进入任何文本或数据 lane。后续 gate 重放必须使用
+`--private-report-release <external>/release.json`，candidate manifest 不匹配时应
+直接 fail closed。
+
+ELM 当前最新 discovery 为
+`outputs/evisoz_teacher_artifact_discovery_v1_20260901_evisoz_artifacts_r2.json`，
+4 个 checkpoint/config 文件已完整哈希，但状态仍为 `found_unvalidated`，没有
+candidate cache、预处理/exposure manifest 或 fold-local calibration。该 receipt
+不授权 teacher runtime、训练或定位监督。
